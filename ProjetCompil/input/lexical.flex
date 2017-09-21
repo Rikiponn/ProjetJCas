@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Fichier d'entrÃ©e JFLex pour l'analyseur lexical
+// Fichier d'entrée JFLex pour l'analyseur lexical
 // ---------------------------------------------------------------------------
 
 package fr.esisar.compilation.syntaxe;
@@ -14,17 +14,17 @@ import java.util.Hashtable;
 %%
 
 // -------------------------------------
-// DÃ©but de la partie "directives JFLex"
+// Début de la partie "directives JFLex"
 // -------------------------------------
 
 // Nom de la classe qui contient l'analyseur lexical.
 // En l'absence de cette directive, cette classe s'appelle Yylex.
 %class Lexical
 
-// Cette classe doit Ãªtre publique.
+// Cette classe doit être publique.
 %public
 
-// On crÃ©e un analyseur lexical compatible avec Cup.
+// On crée un analyseur lexical compatible avec Cup.
 %cup
 
 // Active le comptage des lignes 
@@ -37,7 +37,7 @@ import java.util.Hashtable;
 
 %{
    /**
-    * Le dictionnaire associe Ã  chaque mot rÃ©servÃ© le code du lexÃ¨me 
+    * Le dictionnaire associe à chaque mot réservé le code du lexème 
     * correspondant.
     */
    private final Hashtable<String,Integer> 
@@ -74,7 +74,7 @@ import java.util.Hashtable;
    }
 
    /**
-    * Le numÃ©ro de la ligne courante.
+    * Le numéro de la ligne courante.
     */
    int numLigne() {
       return yyline + 1;
@@ -89,7 +89,7 @@ import java.util.Hashtable;
    }
 
    /**
-    * Convertit un code de lexÃ¨me en String correspondante.
+    * Convertit un code de lexème en String correspondante.
     */
    static String toString(int code_lexeme) {
       switch (code_lexeme) {
@@ -193,7 +193,7 @@ import java.util.Hashtable;
 
 
    /**
-    * Convertit un lexÃ¨me ("Symbole") en String correspondante.
+    * Convertit un lexème ("Symbole") en String correspondante.
     */
    static String toString(Symbol s) {
       String ts;
@@ -223,11 +223,34 @@ import java.util.Hashtable;
 %}
 
 // -------------------------------------
-// DÃ©finition des macros
+// Définition des macros
 // -------------------------------------
 
 CHIFFRE        = [0-9]
 LETTRE         = [a-zA-Z]
+
+IDF = {LETTRE}({LETTRE}|{CHIFFRE}|"_")*
+
+
+// Macro Delètre
+CHAINE_CAR = " "|"!"|[\043-\176]
+CHAINE = \"({CHAINE_CAR}|(\"\"))*\"
+
+COMM_CAR = \t|[\040-\176]
+COMM = "--"{COMM_CAR}*
+
+// ------------
+// Macro Numérique
+// ------------
+
+NUM = {CHIFFRE}{CHIFFRE}*
+SIGNE = [\+\-]?
+EXP = (E{SIGNE}{NUM})|(e{SIGNE}{NUM})
+DEC  = {NUM}.{NUM}
+
+INT = {NUM}
+REEL = {DEC}|{DEC}{EXP}
+
 
 // ------------
 // A COMPLETER
@@ -239,11 +262,65 @@ LETTRE         = [a-zA-Z]
 // Debut de la partie "regles"
 // ---------------------------
 
+{COMM}          { }
+{CHAINE}                { try {
+                         return symbol(sym.CONST_CHAINE, new String(yytext()));
+                    } catch(NumberFormatException e) {
+                         System.out.println("Expect string");
+                         throw new ErreurLexicale();
+                      }
+                        }
+CONST_CHAINE
+{INT}                { try {
+                         return symbol(sym.CONST_ENT, new Integer(yytext()));
+                    } catch(NumberFormatException e) {
+                         System.out.println("Expect integer");
+                         throw new ErreurLexicale();
+                      }
+                        }
+{REEL}                { try {
+                                        return symbol(sym.CONST_REEL, new Float(yytext ()));
+                                } catch(NumberFormatException e){
+                                        System.out.println("Expect float");
+                                        throw new ErreurLexicale();
+                                }
+                        }
+{IDF}         { try {
+                                        return symbol(sym.IDF, new String(yytext ()));
+                                } catch(NumberFormatException e){
+                                        System.out.println("Expect idf");
+                                        throw new ErreurLexicale();
+                                }
+                        }
+
 [ \t]+                 { }
 
 \n                     { }
 
+
+
+//Liste d'opérande
+"<"                    { return symbol(sym.INF); }
+">"                    { return symbol(sym.SUP); }
 "+"                    { return symbol(sym.PLUS); }
+"="                    { return symbol(sym.EGAL); }
+"-"                    { return symbol(sym.MOINS); }
+"*"                    { return symbol(sym.MULT); }
+"/"                    { return symbol(sym.DIV_REEL); }
+"."                    { return symbol(sym.POINT); }
+"["                    { return symbol(sym.CROCH_OUVR); }
+"]"                    { return symbol(sym.CROCH_FERM); }
+","                    { return symbol(sym.VIRGULE); }
+":"                    { return symbol(sym.DEUX_POINTS); }
+"("                    { return symbol(sym.PAR_OUVR); }
+")"                    { return symbol(sym.PAR_FERM); }
+";"                    { return symbol(sym.POINT_VIRGULE); }
+".."                    { return symbol(sym.DOUBLE_POINT); }
+":="                    { return symbol(sym.AFFECT); }
+"/="                    { return symbol(sym.DIFF); }
+">="                    { return symbol(sym.SUP_EGAL); }
+"<="                    { return symbol(sym.INF_EGAL); }
+
 
 .                      { System.out.println("Erreur Lexicale : '" +
                             yytext() + "' non reconnu ... ligne " + 
