@@ -1,0 +1,8 @@
+program
+	a,b:float;
+begin
+	a:=5;
+	b:=2*a/2+3;
+	IF(b>a) THEN write("b est supérieur à a");
+	ELSE write ("a est supérieur à b");	
+end.
