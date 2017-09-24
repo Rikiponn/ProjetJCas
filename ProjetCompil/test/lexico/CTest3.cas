@@ -1,0 +1,33 @@
+program
+	op1,op2:float;
+	operateur:char;
+	result: float;
+	erreur: int;
+	
+	
+begin
+	erreur:=0;
+	write("Calculatrice de qualité effectuant des...calculs entre 2 opérandes\n");
+	write("Premier opérande: ");
+	read(op1);
+	write("\nDeuxième opérande: ");
+	read(op2);
+	write("\nOpération à effectuer: ");
+	read(operateur);
+	
+	
+	IF(operateur = '+') THEN result:=op1+op2;
+	ELSE IF(operateur = '-') THEN result:=op1-op2;
+	ELSE IF(operateur = '*') THEN result = op1*op2;
+	ELSE IF(operateur = '/') THEN IF(op2 /= 0) THEN result!=op1/op2;
+	END;
+	ELSE erreur:=1;
+	END;
+	END;
+	END;
+	END;
+	
+	IF(erreur = 0) THEN write(result);
+	ELSE write("ERREUR");	
+
+end.
