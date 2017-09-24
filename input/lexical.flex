@@ -266,25 +266,25 @@ REEL = {DEC}|{DEC}{EXP}
 [wW][rR][iI][tT][eE]			{ return symbol(sym.WRITE); }
 [wW][hH][iI][lL][eE]				{ return symbol(sym.WHILE); }
 [tT][oO]				{ return symbol(sym.TO); }
-(?i:then)				{ return symbol(sym.THEN); }
-"read"				{ return symbol(sym.READ); }
-"program"				{ return symbol(sym.PROGRAM); }
-"or"				{ return symbol(sym.OR); }
-"of"				{ return symbol(sym.OF); }
-"null"				{ return symbol(sym.NULL); }
-"not"				{ return symbol(sym.NOT); }
-"new_line"				{ return symbol(sym.NEW_LINE); }
-"mod"				{ return symbol(sym.MOD); }
-"if"				{ return symbol(sym.IF); }
-"for"				{ return symbol(sym.FOR); }
-"else"				{ return symbol(sym.ELSE); }
-"end"				{ return symbol(sym.END); }
-"downto"				{ return symbol(sym.DOWNTO); }
-"do"				{ return symbol(sym.DO); }
-"div"				{ return symbol(sym.DIV); }
-"begin"				{ return symbol(sym.BEGIN); }
-"array"				{ return symbol(sym.ARRAY); }
-"and"				{ return symbol(sym.AND); }
+[tT][hH][eE][nN]				{ return symbol(sym.THEN); }
+[rR][eE][aA][dD]				{ return symbol(sym.READ); }
+[pP][rR][oO][gG][rR][aA][mM]				{ return symbol(sym.PROGRAM); }
+[oO][rR]				{ return symbol(sym.OR); }
+[oO][fF]				{ return symbol(sym.OF); }
+[nN][uU][lL][lL]				{ return symbol(sym.NULL); }
+[nN][oO][tT]				{ return symbol(sym.NOT); }
+[nN][eE][wW][_][lL][iI][nN][eE]				{ return symbol(sym.NEW_LINE); }
+[mM][oO][dD]				{ return symbol(sym.MOD); }
+[iI][fF]				{ return symbol(sym.IF); }
+[fF][oO][rR]				{ return symbol(sym.FOR); }
+[eE][lL][sS][eE]				{ return symbol(sym.ELSE); }
+[eE][nN][dD]				{ return symbol(sym.END); }
+[dD][oO][wW][nN][tT][oO]				{ return symbol(sym.DOWNTO); }
+[dD][oO]				{ return symbol(sym.DO); }
+[dD][iI][vV]				{ return symbol(sym.DIV); }
+[bB][eE][gG][iI][nN]			{ return symbol(sym.BEGIN); }
+[aA][rR][rR][aA][yY]				{ return symbol(sym.ARRAY); }
+[aA][nN][dD]				{ return symbol(sym.AND); }
 
 {REEL}                { try {
                                         return symbol(sym.CONST_REEL, new Float(yytext ()));
@@ -298,13 +298,13 @@ REEL = {DEC}|{DEC}{EXP}
                       }
                         }
                         
-
-                        
 {COMM}          { }
 
 {CHAINE}                { try {
                          return symbol(sym.CONST_CHAINE, new String(yytext()));
                     } catch(NumberFormatException e) {
+                    					System.out.println("Expect String");
+                                        throw new ErreurLexicale();
                       }
                         }
                 
