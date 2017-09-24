@@ -1,5 +1,8 @@
 program
+    a, b : float;
 begin
-   null;
+    a : 42;
+    b : -69;
+    write(a);
+    write("OUI"-"ad41"nb);
 end.
-
