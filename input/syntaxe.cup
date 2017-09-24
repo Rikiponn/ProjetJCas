@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // syntaxe.cup
-// Fichier cup qui définit l'analyseur syntaxique
+// Fichier cup qui dÃ©finit l'analyseur syntaxique
 // ---------------------------------------------------------------------------
 
 package fr.esisar.compilation.syntaxe;
@@ -13,25 +13,25 @@ import java.io.InputStream;
 parser code {:
 
    /**
-    * Réalise l'analyse syntaxique du fichier passé en argument (ou de
-    * l'entrée standard si args est un tableau vide) et retourne
+    * RÃ©alise l'analyse syntaxique du fichier passÃ© en argument (ou de
+    * l'entrÃ©e standard si args est un tableau vide) et retourne
     * l'abstrait correspondant.
-    * Lève l'exception ErreurLexicale en cas d'erreur lexicale, et
+    * LÃ¨ve l'exception ErreurLexicale en cas d'erreur lexicale, et
     * ErreurSyntaxe en cas d'erreur de syntaxe.
     */
    public static Arbre analyseSyntaxique(String[] args)
          throws Exception, ErreurLexicale, ErreurSyntaxe {
 
-      // On récupère le fichier à analyser
+      // On rÃ©cupÃ¨re le fichier Ã  analyser
       InputStream fichierCas = ArgsFichier.ouvrir(args);
 
-      // Création de l'analyseur lexical
+      // CrÃ©ation de l'analyseur lexical
       Lexical analyseurLex = new Lexical(fichierCas);
 
-      // Création de l'analyseur syntaxique
+      // CrÃ©ation de l'analyseur syntaxique
       parser analyseurSynt = new parser(analyseurLex);
 
-      // Appel de l'analyseur syntaxique et récupération de l'arbre résultat
+      // Appel de l'analyseur syntaxique et rÃ©cupÃ©ration de l'arbre rÃ©sultat
       Object result = analyseurSynt.parse().value;
       Arbre arbre = (Arbre) result;
 
@@ -43,12 +43,12 @@ parser code {:
     * Affiche un message d'erreur en cas d'erreur de syntaxe.
     */
    public void syntax_error(Symbol cur_token) {
-      // Affichage du message d'erreur, avec le numéro de ligne
+      // Affichage du message d'erreur, avec le numÃ©ro de ligne
       System.out.println("Erreur de syntaxe ... ligne " + numLigne()) ;
    }
 
    /**
-    * Méthode appelée en cas d'erreur de syntaxe.
+    * MÃ©thode appelÃ©e en cas d'erreur de syntaxe.
     */
    public void unrecovered_syntax_error(Symbol cur_token)
          throws ErreurSyntaxe {
@@ -56,22 +56,22 @@ parser code {:
    }
 
    /**
-    * Retourne le numéro de ligne courant.
+    * Retourne le numÃ©ro de ligne courant.
     */
    public int numLigne() {
-      // On récupère l'analyseur lexical
+      // On rÃ©cupÃ¨re l'analyseur lexical
       Lexical anaLex = (Lexical) getScanner();
       return anaLex.numLigne();
    }
 :};
 
-/* Terminaux (tokens retournés par l'analyseur lexical. */
+/* Terminaux (tokens retournÃ©s par l'analyseur lexical. */
 terminal String IDF;          // Identificateur
-terminal Integer CONST_ENT;   // Constante entière
-terminal Float CONST_REEL;    // Constante réelle
-terminal String CONST_CHAINE; // Constante chaîne
+terminal Integer CONST_ENT;   // Constante entiÃ¨re
+terminal Float CONST_REEL;    // Constante rÃ©elle
+terminal String CONST_CHAINE; // Constante chaÃ®ne
 
-/* Mots réservés */
+/* Mots rÃ©servÃ©s */
 terminal   AND,         ARRAY,       BEGIN;
 terminal   DIV,         DO,          DOWNTO;
 terminal   ELSE,        END,         FOR;
@@ -81,7 +81,7 @@ terminal   OR,          PROGRAM,     READ;
 terminal   THEN,        TO,          WHILE;
 terminal   WRITE;
 
-/* Opérateurs */
+/* OpÃ©rateurs */
 terminal INF, SUP, EGAL, DIFF, // "<", ">", "=", "/="
          INF_EGAL, SUP_EGAL,   // "<=", ">="
          PLUS, MOINS,          // "+", "-"
@@ -98,7 +98,7 @@ terminal CROCH_FERM;         // "]"
 terminal AFFECT;             // ":="
 terminal POINT;              // "."
 
-/* Définition des non terminaux de la grammaire */
+/* DÃ©finition des non terminaux de la grammaire */
 non terminal Arbre program;
 non terminal Arbre liste_decl;
 non terminal Arbre liste_inst;
@@ -117,9 +117,9 @@ non terminal Arbre facteur;
 non terminal Arbre place;
 
 /*
-   On définit les priorités des opérateurs
-   Les priorités vont dans l'ordre croissant
-   On déclare egalement l'associativité des opérateurs
+   On dÃ©finit les prioritÃ©s des opÃ©rateurs
+   Les prioritÃ©s vont dans l'ordre croissant
+   On dÃ©clare egalement l'associativitÃ© des opÃ©rateurs
    (left, right, ou nonassoc)
 */
 
@@ -131,7 +131,7 @@ precedence nonassoc NOT;
 program ::= PROGRAM:p liste_decl:a1 BEGIN liste_inst:a2 END POINT
    {:
       RESULT = Arbre.creation2(Noeud.Programme, a1, a2, pleft);
-      // pleft : Numéro de ligne du mot réservé "program".
+      // pleft : NumÃ©ro de ligne du mot rÃ©servÃ© "program".
    :}
    ;
 
@@ -155,6 +155,10 @@ liste_idf ::= liste_idf:a1 VIRGULE idf:a2
    {:
         RESULT = Arbre.creation2(Noeud.ListeIdent, a1, a2, a2.getNumLigne());
    :}
+   |    idf:a2
+   {:
+        RESULT = Arbre.creation0(Noeud.Ident, parser.numLigne());
+   :}
    |  // epsilon
    {:
         RESULT = Arbre.creation0(Noeud.Vide, parser.numLigne());
@@ -169,11 +173,11 @@ idf ::= IDF
 
 type ::= idf:a1
    {:
-        RESULT = Arbre.creation1(Noeud.Ident, a1, a1.getNumLigne());
+        RESULT = Arbre.creation0(Noeud.Ident, parser.numLigne());
    :}
    |  type_intervalle:a1
    {:
-        RESULT = Arbre.creation1(Noeud.Intervalle, a1, a1.getNumLigne());
+        RESULT = Arbre.creation1(Noeud.Conversion, a1, a1.getNumLigne());
    :}
    |  ARRAY CROCH_OUVR type_intervalle:a1 CROCH_FERM OF type:a2
    {:
@@ -193,7 +197,7 @@ constante ::= CONST_ENT
     :}
    |    idf:a1
    {:
-           RESULT = Arbre.creation1(Noeud.Ident, a1, a1.getNumLigne());
+           RESULT = Arbre.creation0(Noeud.Ident, parser.numLigne());
     :}
    |  PLUS constante:a1
    {:
@@ -215,11 +219,7 @@ liste_inst ::= liste_inst:a1 inst:a2 POINT_VIRGULE
    :}
    ;
 
-inst ::= NULL
-  {:
-	RESULT = Arbre.creation0(Noeud.Nop, parser.numLigne());
-  :}
-  |  place:a1 AFFECT exp:a2
+inst ::=  place:a1 AFFECT exp:a2
   {:
      RESULT = Arbre.creation2(Noeud.Affect, a1, a2, a2.getNumLigne());
   :}
@@ -251,6 +251,10 @@ inst ::= NULL
   {:
      RESULT = Arbre.creation0(Noeud.Ligne, parser.numLigne());
   :}
+  | NULL
+  {:
+    RESULT = Arbre.creation0(Noeud.Nop, parser.numLigne());
+  :}
   ;
 
 pas ::= idf:a1 AFFECT exp:a2 TO exp:a3
@@ -265,7 +269,7 @@ pas ::= idf:a1 AFFECT exp:a2 TO exp:a3
 
 place ::= idf:a1
     {:
-        RESULT = Arbre.creation1(Noeud.Ident, a1, a1.getNumLigne());
+        RESULT = Arbre.creation0(Noeud.Ident, parser.numLigne());
     :}
     |  place:a1 CROCH_OUVR exp:a2 CROCH_FERM
     {:
@@ -273,7 +277,7 @@ place ::= idf:a1
     :}
 ;
 
-liste_exp ::= liste_exp:a1 VIRGULE exp:a2
+liste_exp ::= exp:a1 VIRGULE liste_exp:a2
   {:
      RESULT = Arbre.creation2(Noeud.ListeExp, a1, a2, a2.getNumLigne());
   :}
