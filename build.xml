@@ -50,7 +50,7 @@
 				<pathelement location="${lib.dir}/java-cup-11a.jar"/>
 				<pathelement location="${lib.dir}/java-cup-11a-runtime.jar"/>
 			</classpath>
-			<arg value="test/lexico/simple.cas"/>
+			<arg value="test/lexico/CTest2.cas"/>
 		</java>
 	</target>
 
