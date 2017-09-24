@@ -7,19 +7,19 @@ program
 	
 begin
 	erreur:=0;
-	write("Calculatrice de qualité effectuant des...calculs entre 2 opérandes\n");
-	write("Premier opérande: ");
+	write("Calculatrice de qualite effectuant des...calculs entre 2 operandes\n");
+	write("Premier operande: ");
 	read(op1);
-	write("\nDeuxième opérande: ");
+	write("\nDeuxieme operande: ");
 	read(op2);
-	write("\nOpération à effectuer: ");
+	write("\nOperation a effectuer: ");
 	read(operateur);
 	
 	
-	IF(operateur = '+') THEN result:=op1+op2;
-	ELSE IF(operateur = '-') THEN result:=op1-op2;
-	ELSE IF(operateur = '*') THEN result = op1*op2;
-	ELSE IF(operateur = '/') THEN IF(op2 /= 0) THEN result!=op1/op2;
+	IF(operateur = "+") THEN result:=op1+op2;
+	ELSE IF(operateur = "-") THEN result:=op1-op2;
+	ELSE IF(operateur = "*") THEN result := op1*op2;
+	ELSE IF(operateur = "/") THEN IF(op2 /= 0) THEN result:=op1/op2;
 	END;
 	ELSE erreur:=1;
 	END;
