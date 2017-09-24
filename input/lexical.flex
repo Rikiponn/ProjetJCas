@@ -233,7 +233,7 @@ IDF = {LETTRE}({LETTRE}|{CHIFFRE}|"_")*
 
 
 // Macro Delètre
-CHAINE_CAR = " "|"!"|[\043-\176]
+CHAINE_CAR = "\ "|"!"|[\043-\176]
 CHAINE = \"({CHAINE_CAR}|(\"\"))*\"
 
 COMM_CAR = \t|[\040-\176]
@@ -262,29 +262,52 @@ REEL = {DEC}|{DEC}{EXP}
 // Debut de la partie "regles"
 // ---------------------------
 
-{COMM}          { }
-{CHAINE}                { try {
-                         return symbol(sym.CONST_CHAINE, new String(yytext()));
-                    } catch(NumberFormatException e) {
-                         System.out.println("Expect string");
-                         throw new ErreurLexicale();
-                      }
-                        }
-CONST_CHAINE
-{INT}                { try {
-                         return symbol(sym.CONST_ENT, new Integer(yytext()));
-                    } catch(NumberFormatException e) {
-                         System.out.println("Expect integer");
-                         throw new ErreurLexicale();
-                      }
-                        }
+// Liste des mots connus
+[wW][rR][iI][tT][eE]			{ return symbol(sym.WRITE); }
+[wW][hH][iI][lL][eE]				{ return symbol(sym.WHILE); }
+[tT][oO]				{ return symbol(sym.TO); }
+(?i:then)				{ return symbol(sym.THEN); }
+"read"				{ return symbol(sym.READ); }
+"program"				{ return symbol(sym.PROGRAM); }
+"or"				{ return symbol(sym.OR); }
+"of"				{ return symbol(sym.OF); }
+"null"				{ return symbol(sym.NULL); }
+"not"				{ return symbol(sym.NOT); }
+"new_line"				{ return symbol(sym.NEW_LINE); }
+"mod"				{ return symbol(sym.MOD); }
+"if"				{ return symbol(sym.IF); }
+"for"				{ return symbol(sym.FOR); }
+"else"				{ return symbol(sym.ELSE); }
+"end"				{ return symbol(sym.END); }
+"downto"				{ return symbol(sym.DOWNTO); }
+"do"				{ return symbol(sym.DO); }
+"div"				{ return symbol(sym.DIV); }
+"begin"				{ return symbol(sym.BEGIN); }
+"array"				{ return symbol(sym.ARRAY); }
+"and"				{ return symbol(sym.AND); }
+
 {REEL}                { try {
                                         return symbol(sym.CONST_REEL, new Float(yytext ()));
                                 } catch(NumberFormatException e){
-                                        System.out.println("Expect float");
-                                        throw new ErreurLexicale();
                                 }
                         }
+                        
+{INT}                { try {
+                         return symbol(sym.CONST_ENT, new Integer(yytext()));
+                    } catch(NumberFormatException e) {
+                      }
+                        }
+                        
+
+                        
+{COMM}          { }
+
+{CHAINE}                { try {
+                         return symbol(sym.CONST_CHAINE, new String(yytext()));
+                    } catch(NumberFormatException e) {
+                      }
+                        }
+                
 {IDF}         { try {
                                         return symbol(sym.IDF, new String(yytext ()));
                                 } catch(NumberFormatException e){
