@@ -105,6 +105,9 @@ non terminal Arbre liste_inst;
 non terminal Arbre inst;
 non terminal Arbre decl;
 non terminal Arbre liste_idf;
+// NEW
+non terminal Arbre liste_vide;
+
 non terminal Arbre type;
 non terminal Arbre idf;
 non terminal Arbre type_intervalle;
@@ -155,7 +158,7 @@ liste_idf ::= liste_idf:a1 VIRGULE idf:a2
    {:
         RESULT = Arbre.creation2(Noeud.ListeIdent, a1, a2, a2.getNumLigne());
    :}
-   | liste_idf:a1 idf:a2
+   | liste_vide:a1 idf:a2
       {:
            RESULT = Arbre.creation2(Noeud.ListeIdent, a1, a2, a2.getNumLigne());
       :}
@@ -164,6 +167,12 @@ liste_idf ::= liste_idf:a1 VIRGULE idf:a2
         RESULT = Arbre.creation0(Noeud.Vide, parser.numLigne());
    :}
    ;
+
+// NEW
+liste_vide ::= //epsilon
+    {:
+        RESULT = Arbre.creation0(Noeud.Vide, parser.nulLigne());
+    :}
 
 idf ::= IDF:a1
     {:
@@ -281,7 +290,7 @@ liste_exp ::= liste_exp:a1 VIRGULE exp:a2
   {:
      RESULT = Arbre.creation2(Noeud.ListeExp, a1, a2, a2.getNumLigne());
   :}
-  | liste_exp:a1 exp:a2
+  | liste_vide:a1 exp:a2
   {:
     RESULT = Arbre.creation2(Noeud.ListeExp, a1, a2, a2.getNumLigne());
   :}
