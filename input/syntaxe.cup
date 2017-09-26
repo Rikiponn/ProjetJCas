@@ -293,7 +293,7 @@ liste_exp ::= liste_exp:a1 VIRGULE exp:a2
 
 exp ::= facteur:a1
   {:
-    RESULT = Arbre.creation1(Noeud.PlusUnaire, a1, a1.getNumLigne());
+    RESULT = a1;
   :}
   | exp:a1 AND exp:a2
   {:
@@ -379,10 +379,10 @@ facteur ::= CONST_ENT:a1
     :}
     |  place:a1
     {:
-        RESULT = Arbre.creation1(Noeud.Conversion, a1, a1.getNumLigne());
+        RESULT = a1;
     :}
     |  PAR_OUVR exp:a1 PAR_FERM
     {:
-        RESULT = Arbre.creation1(Noeud.PlusUnaire, a1, a1.getNumLigne());
+        RESULT = a1;
     :}
 ;
