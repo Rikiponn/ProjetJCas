@@ -104,9 +104,6 @@ non terminal Arbre liste_inst;
 non terminal Arbre inst;
 non terminal Arbre decl;
 non terminal Arbre liste_idf;
-// NEW
-non terminal Arbre liste_vide;
-
 non terminal Arbre type;
 non terminal Arbre idf;
 non terminal Arbre type_intervalle;
@@ -157,21 +154,15 @@ liste_idf ::= liste_idf:a1 VIRGULE idf:a2
    {:
         RESULT = Arbre.creation2(Noeud.ListeIdent, a1, a2, a2.getNumLigne());
    :}
-   | liste_vide:a1 idf:a2
+   | idf:a2
       {:
-           RESULT = Arbre.creation2(Noeud.ListeIdent, a1, a2, a2.getNumLigne());
+           RESULT = Arbre.creation2(Noeud.ListeIdent, Arbre.creation0(Noeud.Vide, parser.numLigne()), a2, a2.getNumLigne());
       :}
    |  // epsilon
    {:
         RESULT = Arbre.creation0(Noeud.Vide, parser.numLigne());
    :}
    ;
-
-// NEW
-liste_vide ::= //epsilon
-    {:
-        RESULT = Arbre.creation0(Noeud.Vide, parser.nulLigne());
-    :}
 
 idf ::= IDF:a1
     {:
@@ -244,8 +235,9 @@ inst ::=  place:a1 AFFECT exp:a2
      RESULT = Arbre.creation3(Noeud.Si, a1, a2, a3, a2.getNumLigne());
   :}
   |  IF exp:a1 THEN liste_inst:a2 END
+  // ATTENTION CHIANT
   {:
-     RESULT = Arbre.creation2(Noeud.Si, a1, a2, a2.getNumLigne());
+     RESULT = Arbre.creation3(Noeud.Si, a1, a2, Arbre.creation2(Noeud.ListeInst, Arbre.creation0(Noeud.Vide, parser.numLigne()), Arbre.creation0(Noeud.Nop, parser.numLigne()), parser.numLigne()), a2.getNumLigne());
   :}
   |  WRITE PAR_OUVR liste_exp:a1 PAR_FERM
   {:
@@ -289,9 +281,9 @@ liste_exp ::= liste_exp:a1 VIRGULE exp:a2
   {:
      RESULT = Arbre.creation2(Noeud.ListeExp, a1, a2, a2.getNumLigne());
   :}
-  | liste_vide:a1 exp:a2
+  | exp:a2
   {:
-    RESULT = Arbre.creation2(Noeud.ListeExp, a1, a2, a2.getNumLigne());
+    RESULT = Arbre.creation2(Noeud.ListeExp, Arbre.creation0(Noeud.Vide,parser.numLigne()), a2, a2.getNumLigne());
   :}
   | // epsilon
   {:
@@ -301,7 +293,7 @@ liste_exp ::= liste_exp:a1 VIRGULE exp:a2
 
 exp ::= facteur:a1
   {:
-    RESULT = Arbre.creation1(Noeud.facteur, a1, a1.getNumLigne());
+    RESULT = Arbre.creation1(Noeud.PlusUnaire, a1, a1.getNumLigne());
   :}
   | exp:a1 AND exp:a2
   {:
@@ -371,7 +363,7 @@ exp ::= facteur:a1
   {:
      RESULT = Arbre.creation1(Noeud.Non, a1, a1.getNumLigne());
   :}
-  ;
+;
 
 facteur ::= CONST_ENT:a1
     {:
@@ -391,6 +383,6 @@ facteur ::= CONST_ENT:a1
     :}
     |  PAR_OUVR exp:a1 PAR_FERM
     {:
-        RESULT = Arbre.creation1(Noeud.ListeExp, a1, a1.getNumLigne());
+        RESULT = Arbre.creation1(Noeud.PlusUnaire, a1, a1.getNumLigne());
     :}
-  ;
+;
