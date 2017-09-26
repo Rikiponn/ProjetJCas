@@ -4,7 +4,6 @@
 // ---------------------------------------------------------------------------
 
 package fr.esisar.compilation.syntaxe;
-
 import java_cup.runtime.*;
 import fr.esisar.compilation.global.src.*;
 import java.io.InputStream;
@@ -300,7 +299,11 @@ liste_exp ::= liste_exp:a1 VIRGULE exp:a2
   :}
   ;
 
-exp ::= exp:a1 AND exp:a2
+exp ::= facteur:a1
+  {:
+    RESULT = Arbre.creation1(Noeud.facteur, a1, a1.getNumLigne());
+  :}
+  | exp:a1 AND exp:a2
   {:
      RESULT = Arbre.creation2(Noeud.Et, a1, a2, a2.getNumLigne());
   :}
@@ -368,7 +371,9 @@ exp ::= exp:a1 AND exp:a2
   {:
      RESULT = Arbre.creation1(Noeud.Non, a1, a1.getNumLigne());
   :}
-  | CONST_ENT:a1
+  ;
+
+facteur ::= CONST_ENT:a1
     {:
         RESULT = Arbre.creationEntier(a1, parser.numLigne());
     :}
