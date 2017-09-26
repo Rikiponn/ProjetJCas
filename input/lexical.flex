@@ -305,7 +305,7 @@ REEL = {DEC}|{DEC}{EXP}
 {COMM}          { }
 
 {CHAINE}                { try {
-                         return symbol(sym.CONST_CHAINE, new String(yytext()));
+                         return symbol(sym.CONST_CHAINE, new String((yytext().substring(1,yytext().length()-1).replace("\"\"","\""))));
                     } catch(NumberFormatException e) {
                     					System.out.println("Expect String");
                                         throw new ErreurLexicale();
