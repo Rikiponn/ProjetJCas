@@ -246,7 +246,7 @@ COMM = "--"{COMM_CAR}*
 NUM = {CHIFFRE}{CHIFFRE}*
 SIGNE = [\+\-]?
 EXP = (E{SIGNE}{NUM})|(e{SIGNE}{NUM})
-DEC  = {NUM}.{NUM}
+DEC  = {NUM}\.{NUM}
 
 INT = {NUM}
 REEL = {DEC}|{DEC}{EXP}
@@ -289,12 +289,16 @@ REEL = {DEC}|{DEC}{EXP}
 {REEL}                { try {
                                         return symbol(sym.CONST_REEL, new Float(yytext ()));
                                 } catch(NumberFormatException e){
+                                		System.out.println("Expect Float");
+                                        throw new ErreurLexicale();
                                 }
                         }
                         
 {INT}                { try {
                          return symbol(sym.CONST_ENT, new Integer(yytext()));
                     } catch(NumberFormatException e) {
+                    			System.out.println("Expect Integer");
+                              	throw new ErreurLexicale();
                       }
                         }
                         
