@@ -30,7 +30,7 @@ public class Verif {
    }
 
    /**
-    * Initialisation de l'environnement avec les identificateurs prÃ©dÃ©finis.
+    * Initialisation de l'environnement avec les identificateurs prédéfinis.
     */
    private void initialiserEnv() {
       Defn def;
@@ -39,6 +39,30 @@ public class Verif {
       def.setGenre(Genre.PredefInteger);
       env.enrichir("integer", def);
       
+      // boolean
+      def = Defn.creationType(Type.Boolean);
+      def.setGenre(Genre.PredefBoolean);
+      env.enrichir("boolean", def);
+      
+      // real
+      def = Defn.creationType(Type.Real);
+      def.setGenre(Genre.PredefReal);
+      env.enrichir("real", def);
+      
+      // true
+      def = Defn.creationConstBoolean(true);
+      def.setValeurBoolean(true);
+      env.enrichir("true", def);
+      
+      // false
+      def = Defn.creationConstBoolean(false);
+      def.setValeurBoolean(false);
+      env.enrichir("false", def);
+      
+      // max_int
+      def = Defn.creationConstInteger();
+      def.setValeurInteger();
+      env.enrichir("MAX", def);
       // ------------
       // A COMPLETER
       // ------------
