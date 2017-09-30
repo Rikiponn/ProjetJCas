@@ -51,18 +51,21 @@ public class Verif {
       
       // true
       def = Defn.creationConstBoolean(true);
+      def.setGenre(Genre.PredefTrue);
       def.setValeurBoolean(true);
       env.enrichir("true", def);
       
       // false
       def = Defn.creationConstBoolean(false);
+      def.setGenre(Genre.PredefFalse);
       def.setValeurBoolean(false);
       env.enrichir("false", def);
       
       // max_int
-      def = Defn.creationConstInteger();
-      def.setValeurInteger();
-      env.enrichir("MAX", def);
+      def = Defn.creationConstInteger(java.lang.Integer.MAX_VALUE);
+      def.setGenre(Genre.PredefMaxInt);
+      def.setValeurInteger(java.lang.Integer.MAX_VALUE);
+      env.enrichir("max_int", def);
       // ------------
       // A COMPLETER
       // ------------
