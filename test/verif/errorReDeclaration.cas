@@ -1,0 +1,8 @@
+program
+    v1 : integer;
+    v2 : integer;
+    v1 : bool;
+begin
+    v1 := v2;
+end.
+

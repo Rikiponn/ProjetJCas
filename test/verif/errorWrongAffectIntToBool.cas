@@ -1,0 +1,6 @@
+program
+    a : bool;
+begin
+    a := 12563;
+end.
+
