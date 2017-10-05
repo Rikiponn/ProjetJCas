@@ -26,11 +26,11 @@ public class Verif {
     * l'exception ErreurVerif est levée.
     */
    public void verifierDecorer(Arbre a) throws ErreurVerif {
-      verifier_PROGRAMME(a);
+      verif_PROGRAMME(a);
    }
 
    /**
-    * Initialisation de l'environnement avec les identificateurs pr�d�finis.
+    * Initialisation de l'environnement avec les identificateurs prédéfinis.
     */
    private void initialiserEnv() {
       Defn def;
@@ -74,29 +74,261 @@ public class Verif {
    /**************************************************************************
     * PROGRAMME
     **************************************************************************/
-   private void verifier_PROGRAMME(Arbre a) throws ErreurVerif {
+   private void verif_PROGRAMME(Arbre a) throws ErreurVerif {
       initialiserEnv();
-      verifier_LISTE_DECL(a.getFils1());
-      verifier_LISTE_INST(a.getFils2());
+      verif_LISTE_DECL(a.getFils1());
+      verif_LISTE_INST(a.getFils2());
    }
 
    /**************************************************************************
     * LISTE_DECL
     **************************************************************************/
-   private void verifier_LISTE_DECL(Arbre a) throws ErreurVerif {
-      // A COMPLETER
+   private void verif_LISTE_DECL(Arbre a) throws ErreurVerif {
+	   switch(a.getNoeud()){
+    	case Vide:
+    		break;
+    	case ListeDecl:
+    		verif_LISTE_DECL(a.getFils1());
+    		verif_DECL(a.getFils2());
+    		break;    		
+    	default:
+    		throw new ErreurInterneVerif("Arbre incorrect dans verif_LISTE_DECL");
+    }
+   }
+
+   
+   private void verif_DECL(Arbre a) throws ErreurVerif {
+	   switch(a.getNoeud()){
+	   case Decl:
+		   verif_ListeIdent(a.getFils1());
+		   verif_Type(a.getFils2());
+		   break;
+	   default:
+		   throw new ErreurInterneVerif("Arbre incorrect dans verif_DECL");
+    }
+   }
+   
+   
+   private void verif_ListeIdent(Arbre a) throws ErreurVerif{
+	   switch(a.getNoeud()){
+	   case Vide:
+		   break;
+	   case ListeIdent:
+		   verif_ListeIdent(a.getFils1());
+		   verif_Ident(a.getFils2());
+		   break;
+	   
+	   default:
+		   throw new ErreurInterneVerif("Arbre incorrect dans verif_ListeIdent");
+	   }
+   }
+   
+	private void verif_Ident(Arbre a) throws ErreurVerif{
+		
+	}
+   
+   private void verif_Type(Arbre a) {
+	   switch(a.getNoeud()){
+	   case Entier:
+	   case Reel:
+	   case Chaine:
+	   case Tableau:
+		   break;
+	   default:
+		   throw new ErreurInterneVerif("Arbre incorrect dans verif_Type");
+			   
+	   }
+	
+   }
+
+/**************************************************************************
+    * LISTE_INST
+    **************************************************************************/
+   private void verif_LISTE_INST(Arbre a) throws ErreurVerif {
+	   switch(a.getNoeud()){
+     	case Vide:
+     		break;
+     	case ListeInst:
+     		verif_LISTE_INST(a.getFils1());
+     		verif_INST(a.getFils2());
+     		break;
+     		
+     	default:
+     		throw new ErreurInterneVerif("Arbre incorrect dans verifier_LISTE_INST");
+     }
    }
 
    /**************************************************************************
-    * LISTE_INST
+    * INST
     **************************************************************************/
-   private void verifier_LISTE_INST(Arbre a) throws ErreurVerif {
-      // A COMPLETER
+   private void verif_INST(Arbre a) throws ErreurVerif {
+	   switch(a.getNoeud()){
+	   case Nop:
+		   break;
+	   case Affect:
+		   verif_Affect(a);
+		   break;
+	   case Conversion:
+		   verif_Conversion(a);
+		   break;		   
+	   case Decrement:
+	   case Increment:
+		   verif_Decrement(a);
+		   break;
+	   case DivReel:
+	   case Reste:
+		   verif_DivReel(a);
+		   break;
+	   case Ecriture:
+		   verif_Ecriture(a);
+		   break;
+	   case Egal:
+	   case Inf:
+	   case InfEgal:
+	   case NonEgal:
+	   case Sup:
+	   case SupEgal:
+		   verif_Egal(a);
+		   break;
+	   case Et:
+	   case Ou:
+		   verif_Et(a);
+		   break;
+	   case Lecture:
+		   verif_Lecture(a);
+		   break;
+	   case Moins:
+	   case Plus:
+		   verif_Moins(a);
+		   break;
+	   case MoinsUnaire:
+	   case PlusUnaire:
+		   verif_MoinsUnaire(a);
+		   break;
+	   case Mult:
+		   verif_Mult(a);
+		   break;
+	   case Non:
+		   verif_Non(a);
+		   break;
+	   case Pour:
+		   verif_Pour(a);
+		   break;
+	   case Quotient:
+		   verif_Quotient(a);
+		   break;
+	   case Si:
+		   verif_Si(a);
+		   break;
+	   case TantQue:
+		   verif_TantQue(a);
+		   break;
+	   default:	   
+		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_INST"); 
    }
-
    // ------------------------------------------------------------------------
    // COMPLETER les operations de vérifications et de décoration pour toutes 
    // les constructions d'arbres
    // ------------------------------------------------------------------------
 
+}
+
+	private void verif_Et(Arbre a) {
+	// TODO Auto-generated method stub
+	
+}
+
+	private void verif_TantQue(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Tableau(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Si(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Quotient(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Pour(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Ou(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void verif_Non(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Mult(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_MoinsUnaire(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Moins(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_ListeExp(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Lecture(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Intervalle(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Egal(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Ecriture(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_DivReel(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Decrement(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void verif_Conversion(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
+	private void verif_Affect(Arbre a) throws ErreurVerif{
+		// TODO Auto-generated method stub
+		
+	}
 }
