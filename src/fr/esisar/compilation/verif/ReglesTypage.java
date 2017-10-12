@@ -102,8 +102,21 @@ public class ReglesTypage {
 			   }
 		   }
 	   }
-	   // []
-	   //if(noeud.toString().equals(anObject))
+	   // [Array] : Array(Type.Interval, <type>), Type.Interval -> <type>
+	   if(noeud.toString().equals("Tableau")){
+		   if(t1.getNature().equals(NatureType.Array) && t1.getIndice().equals(NatureType.Interval) && t2.getNature().equals(NatureType.Interval)){
+			   result.setTypeRes(t1.getElement());
+			   result.setOk(true);
+		   }
+	   }
+	   /* pas certain que ce soit nécessaire, pas marqué dans Context.txt
+	   // [Index]
+	   if(noeud.toString().equals("Index")){
+		   if(t1.getNature().equals(NatureType.Interval)){
+			   result.setTypeRes(Type.);
+		   }
+	   }
+	   */
       return null;
    }
 
