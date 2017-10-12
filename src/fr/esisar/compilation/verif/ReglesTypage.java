@@ -3,7 +3,7 @@ package fr.esisar.compilation.verif;
 import fr.esisar.compilation.global.src.*;
 
 /**
- * La classe ReglesTypage permet de définir les différentes règles 
+ * La classe ReglesTypage permet de dÃ©finir les diffÃ©rentes rÃ¨gles 
  * de typage du langage JCas.
  */
 
@@ -11,7 +11,7 @@ public class ReglesTypage {
 
    /**
     * Teste si le type t1 et le type t2 sont compatibles pour l'affectation, 
-    * c'est à dire si on peut affecter un objet de t2 à un objet de type t1.
+    * c'est Ã  dire si on peut affecter un objet de t2 Ã  un objet de type t1.
     */
 
    static ResultatAffectCompatible affectCompatible(Type t1, Type t2) {
@@ -39,8 +39,8 @@ public class ReglesTypage {
    }
 
    /**
-    * Teste si le type t1 et le type t2 sont compatible pour l'opération 
-    * binaire représentée dans noeud.
+    * Teste si le type t1 et le type t2 sont compatible pour l'opÃ©ration 
+    * binaire reprÃ©sentÃ©e dans noeud.
     */
 
    static ResultatBinaireCompatible binaireCompatible
@@ -102,13 +102,26 @@ public class ReglesTypage {
 			   }
 		   }
 	   }
-	   // []
-	   //if(noeud.toString().equals(anObject))
+	   // [Array] : Array(Type.Interval, <type>), Type.Interval -> <type>
+	   if(noeud.toString().equals("Tableau")){
+		   if(t1.getNature().equals(NatureType.Array) && t1.getIndice().equals(NatureType.Interval) && t2.getNature().equals(NatureType.Interval)){
+			   result.setTypeRes(t1.getElement());
+			   result.setOk(true);
+		   }
+	   }
+	   /* pas certain que ce soit nécessaire, pas marqué dans Context.txt
+	   // [Index]
+	   if(noeud.toString().equals("Index")){
+		   if(t1.getNature().equals(NatureType.Interval)){
+			   result.setTypeRes(Type.);
+		   }
+	   }
+	   */
       return null;
    }
 
    /**
-    * Teste si le type t est compatible pour l'opÃ©ration unaire représentée 
+    * Teste si le type t est compatible pour l'opÃ©ration unaire reprÃ©sentÃ©e 
     * dans noeud.
     */
    static ResultatUnaireCompatible unaireCompatible

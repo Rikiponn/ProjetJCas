@@ -69,7 +69,7 @@ public class Type {
     * Constructeur de type de nature spécifiée.
     * La taille du type est initialisée à -1.
     */
-   Type(NatureType nature) {
+   public Type(NatureType nature) {
       this.nature = nature;
       this.taille = -1;
    }
