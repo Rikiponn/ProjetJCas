@@ -246,7 +246,7 @@ public class Verif {
 
 }
    private void verif_Affect(Arbre a) throws ErreurVerif{
-       if(a.getArite() != 2){
+       if(a.getArite() != Noeud.Affect.arite){
            ErreurContext e = ErreurContext.ErreurAriteAffect;
            e.leverErreurContext(null, a.getNumLigne());
        }
@@ -256,10 +256,17 @@ public class Verif {
                ErreurContext e = ErreurContext.ErreurType;
                e.leverErreurContext(null, a.getNumLigne());
            }
+           // TODO
+           // Faut-il insérer les noeud.conversion dans ces fonctions ? exemple ci-dessous
+           if(affectOk.getConv2()) {
+        	   Arbre filsTamp = a.getFils2();
+        	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+           }
        }
+
    }
 	private void verif_Et(Arbre a) throws ErreurVerif {
-		if(a.getArite() != 2){
+		if(a.getArite() != Noeud.Et.arite){
 			ErreurContext e = ErreurContext.ErreurAriteAffect;
 			e.leverErreurContext(null, a.getNumLigne());
 		}
@@ -273,28 +280,56 @@ public class Verif {
 	}
 
 	private void verif_TantQue(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
+		if(a.getArite() != Noeud.TantQue.arite){
+			ErreurContext e = ErreurContext.ErreurAriteAffect;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
+		else{
+			ResultatBinaireCompatible affectOk = ReglesTypage.binaireCompatible(a.getNoeud(),a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
+			if(affectOk.getOk() == false){
+               ErreurContext e = ErreurContext.ErreurType;
+               e.leverErreurContext(null, a.getNumLigne());
+	        }
+		}
 	}
 	
 	private void verif_Tableau(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
+		if(a.getArite() != Noeud.Tableau.arite){
+			ErreurContext e = ErreurContext.ErreurAriteAffect;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
+		else{
+			ResultatBinaireCompatible affectOk = ReglesTypage.binaireCompatible(a.getNoeud(),a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
+			if(affectOk.getOk() == false){
+               ErreurContext e = ErreurContext.ErreurType;
+               e.leverErreurContext(null, a.getNumLigne());
+	        }
+		}
 	}
 	
+	// TODO Faut-il créer une classe ternaireCompatible pour les noeud SI et INCREMENT ? (arite 3)
 	private void verif_Si(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
+		if(a.getArite() != Noeud.Si.arite){
+			ErreurContext e = ErreurContext.ErreurAriteAffect;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
+		else{
+			if(a.getFils1().getDecor().getType() != Type.Boolean) {
+	               ErreurContext e = ErreurContext.ErreurType;
+	               e.leverErreurContext(null, a.getNumLigne());
+	        }
+		}
 	}
 	
 	private void verif_Pour(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
+		if(a.getArite() != Noeud.Pour.arite){
+			ErreurContext e = ErreurContext.ErreurAriteAffect;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
 	}
 	
 	private void verif_MoinsUnaire(Arbre a) throws ErreurVerif{
 		// TODO Auto-generated method stub
-		
 	}
 	
 	
