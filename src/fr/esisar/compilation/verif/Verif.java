@@ -66,6 +66,7 @@ public class Verif {
       def.setGenre(Genre.PredefMaxInt);
       def.setValeurInteger(java.lang.Integer.MAX_VALUE);
       env.enrichir("max_int", def);
+      
       // ------------
       // A COMPLETER
       // ------------
@@ -100,7 +101,7 @@ public class Verif {
    private void verif_DECL(Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
 	   case Decl:
-		   verif_ListeIdent(a.getFils1());
+		   verif_ListeIdent(a,a.getFils1());
 		   verif_Type(a.getFils2());
 		   break;
 	   default:
@@ -109,12 +110,12 @@ public class Verif {
    }
    
    
-   private void verif_ListeIdent(Arbre a) throws ErreurVerif{
+   private void verif_ListeIdent(Arbre pere,Arbre a) throws ErreurVerif{
 	   switch(a.getNoeud()){
 	   case Vide:
 		   break;
 	   case ListeIdent:
-		   verif_ListeIdent(a.getFils1());
+		   verif_ListeIdent(a,a.getFils1());
 		   verif_Ident(a,a.getFils2());
 		   break;
 	   
@@ -124,11 +125,23 @@ public class Verif {
    }
    
 	private void verif_Ident(Arbre pere, Arbre a) throws ErreurVerif{
-		//timothée complète ça
-		//a.getDecor().setDefn(new Defn(NatureDefn.Var,)
+		//a.getDecor().setDefn(new Defn(NatureDefn.Var,verif_Type2(pere.getFils2())));
 		
 	}
-   
+   private NatureType verif_Type2(Arbre a){
+	   switch(a.getNoeud()){
+		   case Entier:
+			   return(Type.Integer.getNature());
+		   case Reel:
+			   return(NatureType.Real);
+		   case Chaine:
+			   return(NatureType.String);
+		   case Tableau:
+			   //return(NatureType.Array(verif_Type2(a.getFils2())));
+		default:
+			   throw new ErreurInterneVerif("Arbre incorrect dans verif_Type2");
+	   }
+   }
    private void verif_Type(Arbre a) {
 	   switch(a.getNoeud()){
 	   case Entier:

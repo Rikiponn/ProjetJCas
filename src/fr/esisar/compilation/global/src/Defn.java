@@ -20,7 +20,7 @@ public class Defn {
    /**
     * Constructeur de defn.
     */
-   Defn(NatureDefn nature, Type type) {
+   public Defn(NatureDefn nature, Type type) {
       this.nature = nature;
       this.type = type;
       this.genre = Genre.NonPredefini;

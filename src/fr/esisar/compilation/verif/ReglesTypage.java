@@ -109,7 +109,7 @@ public class ReglesTypage {
 			   result.setOk(true);
 		   }
 	   }
-	   /* pas certain que ce soit nécessaire, pas marqué dans Context.txt
+	   /* pas certain que ce soit nÃ©cessaire, pas marquÃ© dans Context.txt
 	   // [Index]
 	   if(noeud.toString().equals("Index")){
 		   if(t1.getNature().equals(NatureType.Interval)){

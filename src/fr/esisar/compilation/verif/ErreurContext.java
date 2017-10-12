@@ -13,17 +13,29 @@ package fr.esisar.compilation.verif;
 
 public enum ErreurContext {
    
-   ErreurNonRepertoriee;
+   ErreurNonRepertoriee,
+   ErreurType,
+   ErreurDefn,
+   ErreurAriteAffect;
 
-   void leverErreurContext(String s, int numLigne) throws ErreurVerif {
-      System.err.println("Erreur contextuelle : ");
-      switch (this) {
-         default:
-            System.err.print("non repertoriee");
-      }
-      System.err.println(" ... ligne " + numLigne);
-      throw new ErreurVerif();
-   }
+	   void leverErreurContext(String s, int numLigne) throws ErreurVerif {
+	      System.err.println("Erreur contextuelle : ");
+	      switch (this) {
+	      case ErreurType : 
+	          System.err.print("Erreur de type");
+	          break;
+	      case ErreurDefn:
+	          System.err.print("Erreur de définition");
+	          break;          
+	      case ErreurAriteAffect:
+	    	  System.err.print("Erreur d'arité");
+	          break; 
+	         default:
+	            System.err.print("non repertoriee");
+	      }
+	      System.err.println(" ... ligne " + numLigne);
+	      throw new ErreurVerif();
+	   }
 
 }
 
