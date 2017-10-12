@@ -5,4 +5,4 @@ program
     f : Array[1..10] of integer;
 begin
     c := e >= d;
-end
+end.

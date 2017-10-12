@@ -21,6 +21,8 @@ begin
     c := true;
     d := false;
 
+    o := a;
+
     e := f;
     g[1] := e;
 
@@ -54,18 +56,39 @@ begin
     d := a >= p;
     d := a /= p;
 
-    
-
-
 
     d := not c;
     d := c and d;
     d := c or d;
 
     
+    n := +n;
+    n := -n;
+    o := +o;
+    o := -o;
+
+    n := n + n;
+    o := n + o;
+    o := o + n;
+    o := o + o;
+
+    n := n * n;
+    o := n * o;
+    o := o * n;
+    o := o * o;
+
+    n := n - n;
+    o := n - o;
+    o := o - n;
+    o := o - o;
 
 
+    m := m div n;
+    m := m mod n;
 
+    o := m / n;
+    o := m / o;
+    o := o / n;
+    o := o / p;
 
 end.
-
