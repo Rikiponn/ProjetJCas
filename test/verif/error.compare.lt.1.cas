@@ -4,6 +4,5 @@ program
     e : array[1..10] of integer;
     f : Array[1..10] of integer;
 begin
-    c := d and e;
-end.
-
+    c := d < c;
+end

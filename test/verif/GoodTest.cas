@@ -54,10 +54,12 @@ begin
     d := a >= p;
     d := a /= p;
 
+    
+
 
 
     d := not c;
-    d := c mnd d;
+    d := c and d;
     d := c or d;
 
     

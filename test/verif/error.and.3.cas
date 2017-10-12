@@ -5,5 +5,4 @@ program
     f : Array[1..10] of integer;
 begin
     c := a and e;
-end.
-
+end
