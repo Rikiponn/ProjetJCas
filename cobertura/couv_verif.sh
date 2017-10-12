@@ -27,7 +27,7 @@ BASEDIR=cobertura-2.1.1
 echo "Instrumentation du code ..."
 echo
 
-$BASEDIR/cobertura-instrument.sh --destination code_instru --datafile couverture.ser --auxClasspath $CLASSES $CLASSES/fr/esisar/compilation/verif 
+$BASEDIR/cobertura-instrument.bat --destination code_instru --datafile couverture.ser --auxClasspath $CLASSES $CLASSES/fr/esisar/compilation/verif 
 
 echo
 echo "Execution des tests ..."
@@ -45,6 +45,6 @@ echo
 echo "Génération du rapport ..."
 echo
 
-cobertura-2.1.1/cobertura-report.sh --format html --datafile couverture.ser --destination report $SOURCE
+cobertura-2.1.1/cobertura-report.bat --format html --datafile couverture.ser --destination report $SOURCE
 
 
