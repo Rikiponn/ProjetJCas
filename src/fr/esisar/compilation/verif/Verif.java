@@ -77,7 +77,7 @@ public class Verif {
    private void verif_PROGRAMME(Arbre a) throws ErreurVerif {
       initialiserEnv();
       verif_LISTE_DECL(a.getFils1());
-      verif_LISTE_INST(a.getFils2());
+      verif_LISTE_INST(a,a.getFils2());
    }
 
    /**************************************************************************
@@ -115,7 +115,7 @@ public class Verif {
 		   break;
 	   case ListeIdent:
 		   verif_ListeIdent(a.getFils1());
-		   verif_Ident(a.getFils2());
+		   verif_Ident(a,a.getFils2());
 		   break;
 	   
 	   default:
@@ -123,16 +123,25 @@ public class Verif {
 	   }
    }
    
-	private void verif_Ident(Arbre a) throws ErreurVerif{
+	private void verif_Ident(Arbre pere, Arbre a) throws ErreurVerif{
+		//timothée complète ça
+		//a.getDecor().setDefn(new Defn(NatureDefn.Var,)
 		
 	}
    
    private void verif_Type(Arbre a) {
 	   switch(a.getNoeud()){
 	   case Entier:
+		   a.getDecor().setDefn(new Defn(NatureDefn.Type,Type.Integer));
+		   break;
 	   case Reel:
+		   a.getDecor().setDefn(new Defn(NatureDefn.Type,Type.Real));
+		   break;
 	   case Chaine:
+		   a.getDecor().setDefn(new Defn(NatureDefn.Type,Type.String));
+		   break;
 	   case Tableau:
+		   verif_Type(a.getFils2());
 		   break;
 	   default:
 		   throw new ErreurInterneVerif("Arbre incorrect dans verif_Type");
@@ -144,13 +153,13 @@ public class Verif {
 /**************************************************************************
     * LISTE_INST
     **************************************************************************/
-   private void verif_LISTE_INST(Arbre a) throws ErreurVerif {
+   private void verif_LISTE_INST(Arbre pere,Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
      	case Vide:
      		break;
      	case ListeInst:
-     		verif_LISTE_INST(a.getFils1());
-     		verif_INST(a.getFils2());
+     		verif_LISTE_INST(a,a.getFils1());
+     		//verif_INST(a,a.getFils2());
      		break;
      		
      	default:
@@ -175,47 +184,38 @@ public class Verif {
 	   case Increment:
 		   verif_Decrement(a);
 		   break;
-	   case DivReel:
-	   case Reste:
-		   verif_DivReel(a);
-		   break;
 	   case Ecriture:
 		   verif_Ecriture(a);
 		   break;
+		   
+		   /* opérateur binaire*/
+	   case DivReel:
+	   case Reste:
 	   case Egal:
 	   case Inf:
 	   case InfEgal:
 	   case NonEgal:
 	   case Sup:
 	   case SupEgal:
-		   verif_Egal(a);
-		   break;
+	   case Moins:
+	   case Plus:
 	   case Et:
 	   case Ou:
+	   case Mult:
+	   case Quotient:
 		   verif_Et(a);
 		   break;
 	   case Lecture:
 		   verif_Lecture(a);
 		   break;
-	   case Moins:
-	   case Plus:
-		   verif_Moins(a);
-		   break;
+		   /*opérateur unaire*/
 	   case MoinsUnaire:
 	   case PlusUnaire:
-		   verif_MoinsUnaire(a);
-		   break;
-	   case Mult:
-		   verif_Mult(a);
-		   break;
 	   case Non:
-		   verif_Non(a);
+		   verif_MoinsUnaire(a);
 		   break;
 	   case Pour:
 		   verif_Pour(a);
-		   break;
-	   case Quotient:
-		   verif_Quotient(a);
 		   break;
 	   case Si:
 		   verif_Si(a);
@@ -232,11 +232,32 @@ public class Verif {
    // ------------------------------------------------------------------------
 
 }
-
-	private void verif_Et(Arbre a) {
-	// TODO Auto-generated method stub
-	
-}
+   private void verif_Affect(Arbre a) throws ErreurVerif{
+       if(a.getArite() != 2){
+           ErreurContext e = ErreurContext.ErreurAriteAffect;
+           e.leverErreurContext(null, a.getNumLigne());
+       }
+       else{
+           ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
+           if(affectOk.getOk() == false){
+               ErreurContext e = ErreurContext.ErreurType;
+               e.leverErreurContext(null, a.getNumLigne());
+           }
+       }
+   }
+	private void verif_Et(Arbre a) throws ErreurVerif {
+		if(a.getArite() != 2){
+			ErreurContext e = ErreurContext.ErreurAriteAffect;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
+		else{
+			ResultatBinaireCompatible affectOk = ReglesTypage.binaireCompatible(a.getNoeud(),a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
+			if(affectOk.getOk() == false){
+               ErreurContext e = ErreurContext.ErreurType;
+               e.leverErreurContext(null, a.getNumLigne());
+	        }
+		}
+	}
 
 	private void verif_TantQue(Arbre a) throws ErreurVerif{
 		// TODO Auto-generated method stub
@@ -253,27 +274,7 @@ public class Verif {
 		
 	}
 	
-	private void verif_Quotient(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
 	private void verif_Pour(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Ou(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void verif_Non(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Mult(Arbre a) throws ErreurVerif{
 		// TODO Auto-generated method stub
 		
 	}
@@ -283,10 +284,6 @@ public class Verif {
 		
 	}
 	
-	private void verif_Moins(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
 	
 	private void verif_ListeExp(Arbre a) throws ErreurVerif{
 		// TODO Auto-generated method stub
@@ -313,21 +310,12 @@ public class Verif {
 		
 	}
 	
-	private void verif_DivReel(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
 	private void verif_Decrement(Arbre a) throws ErreurVerif{
 		// TODO Auto-generated method stub
 		
 	}
 	
 	private void verif_Conversion(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	private void verif_Affect(Arbre a) throws ErreurVerif{
 		// TODO Auto-generated method stub
 		
 	}
