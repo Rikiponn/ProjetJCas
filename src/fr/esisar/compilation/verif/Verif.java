@@ -125,33 +125,36 @@ public class Verif {
    }
    
 	private void verif_Ident(Arbre pere, Arbre a) throws ErreurVerif{
-		//a.getDecor().setDefn(new Defn(NatureDefn.Var,verif_Type2(pere.getFils2())));
-		
+		Defn def = Defn.creationVar(cherche_Type(pere.getFils2()));
+		a.setDecor(new Decor(def));
+		//TODO recuperer le nom de la variable pour enrichir l'environnement
+		//env.enrichir(a.getNoeud()., def);
 	}
-   private NatureType verif_Type2(Arbre a){
+   private Type cherche_Type(Arbre a){
 	   switch(a.getNoeud()){
 		   case Entier:
-			   return(Type.Integer.getNature());
+			   return(Type.Integer);
 		   case Reel:
-			   return(NatureType.Real);
+			   return(Type.Real);
 		   case Chaine:
-			   return(NatureType.String);
+			   return(Type.String);
 		   case Tableau:
-			   //return(NatureType.Array(verif_Type2(a.getFils2())));
+			   return(Type.creationArray(Type.Integer, cherche_Type(a.getFils2())));
 		default:
-			   throw new ErreurInterneVerif("Arbre incorrect dans verif_Type2");
+			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type");
 	   }
    }
+   
    private void verif_Type(Arbre a) {
 	   switch(a.getNoeud()){
 	   case Entier:
-		   a.getDecor().setDefn(new Defn(NatureDefn.Type,Type.Integer));
+		   a.setDecor(new Decor(new Defn(NatureDefn.Type,Type.Integer),Type.Integer));
 		   break;
 	   case Reel:
-		   a.getDecor().setDefn(new Defn(NatureDefn.Type,Type.Real));
+		   a.setDecor(new Decor(new Defn(NatureDefn.Type,Type.Real),Type.Real));
 		   break;
 	   case Chaine:
-		   a.getDecor().setDefn(new Defn(NatureDefn.Type,Type.String));
+		   a.setDecor(new Decor(new Defn(NatureDefn.Type,Type.String),Type.String));
 		   break;
 	   case Tableau:
 		   verif_Type(a.getFils2());
@@ -172,7 +175,7 @@ public class Verif {
      		break;
      	case ListeInst:
      		verif_LISTE_INST(a,a.getFils1());
-     		//verif_INST(a,a.getFils2());
+     		verif_INST(a.getFils2());
      		break;
      		
      	default:
