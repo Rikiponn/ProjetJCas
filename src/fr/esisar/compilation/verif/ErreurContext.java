@@ -15,7 +15,12 @@ public enum ErreurContext {
    
    ErreurType,
    ErreurArite,
+   ErreurBooleenAttendu,
+   ErreurChaineAttendue,
+   ErreurEntierAttendu,
    ErreurIdentNonDeclaree;
+	
+	
 
 	   void leverErreurContext(String s, int numLigne) throws ErreurVerif {
 	      System.err.println("Erreur contextuelle : ");
@@ -27,7 +32,16 @@ public enum ErreurContext {
 	    	  System.err.print("Erreur d'arité");
 	          break; 
 	      case ErreurIdentNonDeclaree:
-	    	  System.err.print("Ident non déclarer : "+s);
+	    	  System.err.print("Ident non déclaré : "+s);
+	    	  break;
+	      case ErreurBooleenAttendu:
+	    	  System.err.print("Boolean attendu");
+	    	  break;
+	      case ErreurChaineAttendue:
+	    	  System.err.print("Chaine attendue");
+	    	  break;
+	      case ErreurEntierAttendu:
+	    	  System.err.print("Entier attendue");
 	    	  break;
 	      default:
 	            System.err.print("non repertoriee");
