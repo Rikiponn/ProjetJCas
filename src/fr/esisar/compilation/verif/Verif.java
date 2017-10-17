@@ -139,7 +139,7 @@ public class Verif {
 		   case Chaine:
 			   return(Type.String);
 		   case Tableau:
-			   return(Type.creationArray(Type.Integer, cherche_Type(a.getFils2())));
+			   return(Type.creationArray(Type.creationInterval(a.getFils1().getFils1().getEntier(), a.getFils1().getFils2().getEntier()), cherche_Type(a.getFils2())));
 		default:
 			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type");
 	   }
@@ -437,6 +437,8 @@ public class Verif {
 	   			//return verif_Index(a);
 	   		
 	   }
+	   // pour que ça puisse compiler
+	   return null;
    }
    /*
    private Type verif_Index(Arbre a) throws ErreurVerif{

@@ -29,10 +29,10 @@ public enum ErreurContext {
 	          System.err.print("Erreur de type");
 	          break;
 	      case ErreurArite:
-	    	  System.err.print("Erreur d'arité");
+	    	  System.err.print("Erreur d'aritÃ©");
 	          break; 
 	      case ErreurIdentNonDeclaree:
-	    	  System.err.print("Ident non déclaré : "+s);
+	    	  System.err.print("Ident non dÃ©clarÃ© : "+s);
 	    	  break;
 	      case ErreurBooleenAttendu:
 	    	  System.err.print("Boolean attendu");
