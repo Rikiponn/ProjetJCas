@@ -1,0 +1,30 @@
+Liste des erreurs définies pour Verif.java:
+	
+	ErreurType:
+		Indique que le type des fils (ou du fils) n'est pas compatible avec le noeud actuel, par exemple l'instruction : 1>true levera une ErreurType 
+		car l'opérande Sup ne peux pas prendre un Integer et un Boolean.
+   		
+   	ErreurArite:
+   		Indique que l'arite du noeud n'est pas égale à celle attendu (d'après la classe Noeud.java)
+   		Exemple:....Noeud.Plus
+   				........Noeud.Ident	"t"
+   				........Noeud.Entier "8"
+   				........Noeud.Entier "9"
+   		Ici, l'arite de Noeud.Plus est de 3, alors que l'arite attendu est 2. Nous levons donc une ErreurArite
+   			
+   	ErreurIdentNonDeclaree:
+   		Indique que l'identificateur utilisé n'a jamais été déclaré auparavant (ne se lève qu'en dehors des déclarations)
+   		Exemple:
+   		Program
+   			a : Integer;
+   		begin
+   			a = b + 2;
+   		end.
+   		Ici, b n'a jamais été déclarée, et est pourtant utilisée. Nous levons donc une ErreurIdentNonDeclaree
+   		
+   	
+Architecture de la passe 2
+
+	void*
+	
+Méthodologie de test
