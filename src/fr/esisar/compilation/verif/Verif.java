@@ -77,7 +77,7 @@ public class Verif {
     **************************************************************************/
    private void verif_PROGRAMME(Arbre a) throws ErreurVerif {
       initialiserEnv();
-      decor(a);
+      decor(a.getFils2());
       verif_LISTE_DECL(a.getFils1());
       verif_LISTE_INST(a,a.getFils2());
    }
@@ -192,19 +192,43 @@ public class Verif {
 		   verif_Affect(a);
 		   break;
 	   case Ecriture:
-		   //verif_Ecriture(a);
+		   if(!a.getFils1().getDecor().getType().equals(Type.String)){
+			   ErreurContext e = ErreurContext.ErreurChaineAttendue;
+			   e.leverErreurContext(null, a.getNumLigne());
+		   }
 		   break;
 	   case Lecture:
 		   //verif_Lecture(a);
 		   break;
 	   case Pour:
-		   //verif_Pour(a);
-		   break;
-	   case Si:
-		   //verif_Si(a);
+		   if(a.getArite()!=2){
+			   ErreurContext e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());			   
+		   }
+		   if(a.getFils1().getArite()!=3){
+			   ErreurContext e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());				   
+		   }
+		   if(!a.getFils1().getFils1().getDecor().getType().equals(Type.Integer)){
+			   ErreurContext e = ErreurContext.ErreurEntierAttendue;
+			   e.leverErreurContext(null, a.getNumLigne());
+		   }
+		   if(!a.getFils1().getFils2().getDecor().getType().equals(Type.Integer)){
+			   ErreurContext e = ErreurContext.ErreurEntierAttendue;
+			   e.leverErreurContext(null, a.getNumLigne());
+			   
+		   }
+		   if(!a.getFils1().getFils3().getDecor().getType().equals(Type.Integer)){
+			   ErreurContext e = ErreurContext.ErreurEntierAttendue;
+			   e.leverErreurContext(null, a.getNumLigne());
+		   }		
 		   break;
 	   case TantQue:
-		   //verif_TantQue(a);
+	   case Si:
+		   if(!verif_Exp(a.getFils1()).equals(Type.Boolean)){
+			   ErreurContext e = ErreurContext.ErreurBooleenAttendu;
+			   e.leverErreurContext(null, a.getNumLigne());
+		   }
 		   break;
 	   default:
 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_INST"); 
@@ -231,7 +255,11 @@ public class Verif {
 		   verif_Type(a.getFils2());
 		   break;
 	   case Ident:
-		   a.setDecor(new Decor(env.chercher(a.getFils1().toString()), env.chercher(a.getFils1().toString()).getType()));
+		   if(env.chercher(a.getFils1().toString()) != null) a.setDecor(new Decor(env.chercher(a.getFils1().toString()), env.chercher(a.getFils1().toString()).getType()));
+		   else{
+			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+			   e.leverErreurContext(a.getChaine(), a.getNumLigne());
+		   }
 		   break;
 	   case Conversion:
 		   if(a.getFils1().getNoeud()==Noeud.Entier){
