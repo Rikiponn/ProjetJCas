@@ -59,12 +59,12 @@ public class ReglesTypage {
 		   result.setConv2(true);
 	   }
 	   // and, or
-	   if((noeud.toString().equals("Ou") || noeud.toString().equals("Et")) && t1.equals(Type.Boolean) && t2.equals(Type.Boolean)){
+	   if((noeud.toString().equals("Noeud.Ou") || noeud.toString().equals("Noeud.Et")) && t1.equals(Type.Boolean) && t2.equals(Type.Boolean)){
 		   result.setOk(true);
 		   result.setTypeRes(Type.Boolean);
 	   }
 	   // =, <, >, /=, <=, >=
-	   if(noeud.toString().equals("Sup") || noeud.toString().equals("SupEgal") || noeud.toString().equals("Inf") || noeud.toString().equals("InfEgal") || noeud.toString().equals("NonEgal") || noeud.toString().equals("Egal")){
+	   if(noeud.toString().equals("Noeud.Sup") || noeud.toString().equals("Noeud.SupEgal") || noeud.toString().equals("Noeud.Inf") || noeud.toString().equals("Noeud.InfEgal") || noeud.toString().equals("Noeud.NonEgal") || noeud.toString().equals("Noeud.Egal")){
 		   result.setTypeRes(Type.Boolean);
 		   if(t1.getNature().equals(NatureType.Interval) || t1.getNature().equals(NatureType.Real)){
 			   if(t2.getNature().equals(NatureType.Interval) || t2.getNature().equals(NatureType.Real)){
@@ -73,7 +73,7 @@ public class ReglesTypage {
 		   }
 	   }
 	   // +,-,*
-	   if(noeud.toString().equals("Plus") || noeud.toString().equals("Moins") || noeud.toString().equals("Mult")){
+	   if(noeud.toString().equals("Noeud.Plus") || noeud.toString().equals("Noeud.Moins") || noeud.toString().equals("Noeud.Mult")){
 		   if(t1.equals(t2)){
 			   if(t1.equals(Type.Real) || t1.getNature().equals(NatureType.Interval)){
 				   result.setOk(true);
@@ -87,14 +87,14 @@ public class ReglesTypage {
 		   }
 	   }
 	   //div, mod
-	   if(noeud.toString().equals("Reste") || noeud.toString().equals("Quotient")){
+	   if(noeud.toString().equals("Noeud.Reste") || noeud.toString().equals("Noeud.Quotient")){
 		   if(t1.getNature().equals(NatureType.Interval) && t2.getNature().equals(NatureType.Interval)){
 			   result.setOk(true);
 			   result.setTypeRes(Type.Integer);
 		   }
 	   }
 	   // /
-	   if(noeud.toString().equals("DivReel")){
+	   if(noeud.toString().equals("Noeud.DivReel")){
 		   result.setTypeRes(Type.Real);
 		   if(t1.getNature().equals(NatureType.Interval) || t1.equals(Type.Real)){
 			   if(t2.getNature().equals(NatureType.Interval) || t2.equals(Type.Real)){
@@ -103,7 +103,7 @@ public class ReglesTypage {
 		   }
 	   }
 	   // [Array] : Array(Type.Interval, <type>), Type.Interval -> <type>
-	   if(noeud.toString().equals("Tableau")){
+	   if(noeud.toString().equals("Noeud.Tableau")){
 		   if(t1.getNature().equals(NatureType.Array) && t1.getIndice().equals(NatureType.Interval) && t2.getNature().equals(NatureType.Interval)){
 			   result.setTypeRes(t1.getElement());
 			   result.setOk(true);
@@ -132,7 +132,7 @@ public class ReglesTypage {
 		   return result;
 	   }
 	   // not
-	   if (noeud.toString().equals("Non")){
+	   if (noeud.toString().equals("Noeud.Non")){
 		   if(t.equals(Type.Boolean)){
 			   result.setOk(true);
 		   }
@@ -140,7 +140,7 @@ public class ReglesTypage {
 		   return result;
 	   }
 	   // +, -
-	   if (noeud.toString().equals("PlusUnaire") || noeud.toString().equals("MoinsUnaire")){
+	   if (noeud.toString().equals("Noeud.PlusUnaire") || noeud.toString().equals("Noeud.MoinsUnaire")){
 		   if(t.equals(Type.Real) || t.equals(Type.Integer)){
 			   result.setOk(true);
 		   }

@@ -13,10 +13,8 @@ package fr.esisar.compilation.verif;
 
 public enum ErreurContext {
    
-   ErreurNonRepertoriee,
    ErreurType,
-   ErreurDefn,
-   ErreurAriteAffect,
+   ErreurArite,
    ErreurIdentNonDeclaree;
 
 	   void leverErreurContext(String s, int numLigne) throws ErreurVerif {
@@ -25,10 +23,7 @@ public enum ErreurContext {
 	      case ErreurType : 
 	          System.err.print("Erreur de type");
 	          break;
-	      case ErreurDefn:
-	          System.err.print("Erreur de définition");
-	          break;          
-	      case ErreurAriteAffect:
+	      case ErreurArite:
 	    	  System.err.print("Erreur d'arité");
 	          break; 
 	      case ErreurIdentNonDeclaree:

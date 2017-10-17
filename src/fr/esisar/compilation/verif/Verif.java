@@ -192,19 +192,19 @@ public class Verif {
 		   verif_Affect(a);
 		   break;
 	   case Ecriture:
-		   verif_Ecriture(a);
+		   //verif_Ecriture(a);
 		   break;
 	   case Lecture:
-		   verif_Lecture(a);
+		   //verif_Lecture(a);
 		   break;
 	   case Pour:
-		   verif_Pour(a);
+		   //verif_Pour(a);
 		   break;
 	   case Si:
-		   verif_Si(a);
+		   //verif_Si(a);
 		   break;
 	   case TantQue:
-		   verif_TantQue(a);
+		   //verif_TantQue(a);
 		   break;
 	   default:
 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_INST"); 
@@ -263,12 +263,11 @@ public class Verif {
 		   break;		   
 	   
 	   default:
-		   ErreurContext e = ErreurContext.ErreurAriteAffect;
+		   ErreurContext e = ErreurContext.ErreurArite;
 		   e.leverErreurContext(null, a.getNumLigne());
 	   }
    }
-   
-<<<<<<< HEAD
+
    private void add_Conversion(Arbre a, ResultatBinaireCompatible checker) {
 	   if(checker.getConv1()) {
     	   Arbre filsTamp = a.getFils1();
@@ -278,15 +277,11 @@ public class Verif {
     	   Arbre filsTamp = a.getFils2();
     	   a.setFils2(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
 	   }
-   }
-   
-   private void verif_Affect(Arbre a) throws ErreurVerif{
-=======
-   
+   } 
    private void verif_Affect(Arbre a) throws ErreurVerif{ 
->>>>>>> 08a524456dbd59fe656ccfe8fe890c512ceddd11
+
 	   if(a.getArite() != Noeud.Affect.arite){
-		   ErreurContext e = ErreurContext.ErreurAriteAffect;
+		   ErreurContext e = ErreurContext.ErreurArite;
 		   e.leverErreurContext(null, a.getNumLigne());
 	   }else{
 		   //Si l'ident utilisé n'existe pas dans l'environnement : erreur
@@ -295,12 +290,8 @@ public class Verif {
 			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
 		   }
 		   else{
-<<<<<<< HEAD
 			   Type type2 = verif_Exp(a.getFils2());
 			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),type2);
-=======
-			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),env.chercher(a.getFils2().getChaine()).getType());
->>>>>>> 5a3cbae8c4c4cbb0ea19d659e7117e68eef05ec6
 			   
 	           if(affectOk.getOk() == false){
 	               ErreurContext e = ErreurContext.ErreurType;
@@ -337,7 +328,7 @@ public class Verif {
 	   		case Sup :
 	   		case NonEgal :
 	   		   if(a.getArite() != 2){
-	   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+	   			   ErreurContext e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 	   		   resultB = ReglesTypage.binaireCompatible(a.getNoeud(), t1 =  verif_Exp(a.getFils1()), t2 = verif_Exp(a.getFils2()));
@@ -352,7 +343,7 @@ public class Verif {
 	   		// opération unaire donnant un boolean
 	   		case Non :
 	   		   if(a.getArite() != 1){
-	   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+	   			   ErreurContext e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 	   		   resultU = ReglesTypage.unaireCompatible(a.getNoeud(), t1 = verif_Exp(a.getFils1()));
@@ -366,7 +357,7 @@ public class Verif {
 	   		case PlusUnaire :
 	   		case MoinsUnaire :
 	   		   if(a.getArite() != 1){
-	   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+	   			   ErreurContext e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 	   		   resultU = ReglesTypage.unaireCompatible(a.getNoeud(), t1 = verif_Exp(a.getFils1()));
@@ -384,7 +375,7 @@ public class Verif {
 	   		case DivReel :
 	   		case Reste :
 	   			if(a.getArite() != 2){
-		   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+		   			   ErreurContext e = ErreurContext.ErreurArite;
 		   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 	   		   resultB = ReglesTypage.binaireCompatible(a.getNoeud(), t1 =  verif_Exp(a.getFils1()), t2 = verif_Exp(a.getFils2()));
@@ -415,11 +406,11 @@ public class Verif {
 	   		// Si c'est un ident / index
 	   		case Ident :
 	   		case Index :
-	   			return verif_Index(a);
+	   			//return verif_Index(a);
 	   		
 	   }
    }
-   
+   /*
    private Type verif_Index(Arbre a) throws ErreurVerif{
 	   
 		if(a.getNoeud() == Noeud.Ident) {
@@ -434,5 +425,5 @@ public class Verif {
 		else {
 			
 		}
-   }
+   }*/
 }
