@@ -187,47 +187,14 @@ public class Verif {
     **************************************************************************/
    private void verif_INST(Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
-	   case Nop:
-		   break;
 	   case Affect:
 		   verif_Affect(a);
-		   break;
-	   case Conversion:
-		   verif_Conversion(a);
-		   break;		   
-	   case Decrement:
-	   case Increment:
-		   verif_Decrement(a);
 		   break;
 	   case Ecriture:
 		   verif_Ecriture(a);
 		   break;
-		   
-		   /* opérateur binaire*/
-	   case DivReel:
-	   case Reste:
-	   case Egal:
-	   case Inf:
-	   case InfEgal:
-	   case NonEgal:
-	   case Sup:
-	   case SupEgal:
-	   case Moins:
-	   case Plus:
-	   case Et:
-	   case Ou:
-	   case Mult:
-	   case Quotient:
-		   verif_Et(a);
-		   break;
 	   case Lecture:
 		   verif_Lecture(a);
-		   break;
-		   /*opérateur unaire*/
-	   case MoinsUnaire:
-	   case PlusUnaire:
-	   case Non:
-		   verif_MoinsUnaire(a);
 		   break;
 	   case Pour:
 		   verif_Pour(a);
@@ -238,7 +205,7 @@ public class Verif {
 	   case TantQue:
 		   verif_TantQue(a);
 		   break;
-	   default:	   
+	   default:
 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_INST"); 
    }
    // ------------------------------------------------------------------------
@@ -250,28 +217,36 @@ public class Verif {
    private void decor_verif(Arbre a) throws ErreurVerif{
 	   
    }
-   private void verif_Affect(Arbre a) throws ErreurVerif{ 
+   
+   private void add_Conversion(Arbre a, ResultatBinaireCompatible checker) {
+	   if(checker.getConv1()) {
+    	   Arbre filsTamp = a.getFils1();
+    	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+	   }
+	   if(checker.getConv2()) {
+    	   Arbre filsTamp = a.getFils2();
+    	   a.setFils2(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+	   }
+   }
+   
+   private void verif_Affect(Arbre a) throws ErreurVerif{
 	   if(a.getArite() != Noeud.Affect.arite){
 		   ErreurContext e = ErreurContext.ErreurAriteAffect;
 		   e.leverErreurContext(null, a.getNumLigne());
 	   }else{
-		   //Si l'ident utilisé n'existe pas dans l'environnement
-		   if(env.chercher(a.getFils1().toString()) != null){
-	   
+		   //Si l'ident utilisé n'existe pas dans l'environnement : erreur
+		   if(env.chercher(a.getFils1().toString()) == null){
 			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
 			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
 		   }
 		   else{
-			   decor_verif(a.getFils2());
-			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),env.chercher(a.getFils2().getChaine()).getType());
+			   Type type2 = verif_Exp(a.getFils2());
+			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),type2);
 			   
-	          // ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
 	           if(affectOk.getOk() == false){
 	               ErreurContext e = ErreurContext.ErreurType;
 	               e.leverErreurContext(null, a.getNumLigne());
 	           }
-	           // TODO
-	           // Faut-il insérer les noeud.conversion dans ces fonctions ? exemple ci-dessous
 	           if(affectOk.getConv2()) {
 	        	   Arbre filsTamp = a.getFils2();
 	        	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
@@ -279,106 +254,126 @@ public class Verif {
 		   }
        }
    }
-	private void verif_Et(Arbre a) throws ErreurVerif {
-		if(a.getArite() != Noeud.Et.arite){
-			ErreurContext e = ErreurContext.ErreurAriteAffect;
-			e.leverErreurContext(null, a.getNumLigne());
-		}
-		else{
-			ResultatBinaireCompatible affectOk = ReglesTypage.binaireCompatible(a.getNoeud(),a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
-			if(affectOk.getOk() == false){
-               ErreurContext e = ErreurContext.ErreurType;
-               e.leverErreurContext(null, a.getNumLigne());
-	        }
-		}
-	}
-
-	private void verif_TantQue(Arbre a) throws ErreurVerif{
-		if(a.getArite() != Noeud.TantQue.arite){
-			ErreurContext e = ErreurContext.ErreurAriteAffect;
-			e.leverErreurContext(null, a.getNumLigne());
-		}
-		else{
-			ResultatBinaireCompatible affectOk = ReglesTypage.binaireCompatible(a.getNoeud(),a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
-			if(affectOk.getOk() == false){
-               ErreurContext e = ErreurContext.ErreurType;
-               e.leverErreurContext(null, a.getNumLigne());
-	        }
-		}
-	}
-	
-	private void verif_Tableau(Arbre a) throws ErreurVerif{
-		if(a.getArite() != Noeud.Tableau.arite){
-			ErreurContext e = ErreurContext.ErreurAriteAffect;
-			e.leverErreurContext(null, a.getNumLigne());
-		}
-		else{
-			ResultatBinaireCompatible affectOk = ReglesTypage.binaireCompatible(a.getNoeud(),a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
-			if(affectOk.getOk() == false){
-               ErreurContext e = ErreurContext.ErreurType;
-               e.leverErreurContext(null, a.getNumLigne());
-	        }
-		}
-	}
-	
-	// TODO Faut-il créer une classe ternaireCompatible pour les noeud SI et INCREMENT ? (arite 3)
-	private void verif_Si(Arbre a) throws ErreurVerif{
-		if(a.getArite() != Noeud.Si.arite){
-			ErreurContext e = ErreurContext.ErreurAriteAffect;
-			e.leverErreurContext(null, a.getNumLigne());
-		}
-		else{
-			if(a.getFils1().getDecor().getType() != Type.Boolean) {
+   
+   /**
+    * Cette fonction vérifie tous les noeuds expression possible 
+    * 	- Identifiants.
+    * 	- Arité.
+    * @param a Arbre partant d'un Noeud expression
+    * @return le Type de l'expression : bool / reel / interval.
+    * @throws ErreurVerif
+    */
+   private Type verif_Exp(Arbre a) throws ErreurVerif{
+	   Type t1, t2, t3;
+	   ResultatBinaireCompatible resultB;
+	   ResultatUnaireCompatible resultU;
+	   switch(a.getNoeud()) {
+	   		// opération binaire donnant un boolean
+	   		case Et :
+	   		case Ou :
+	   		case Egal :
+	   		case InfEgal :
+	   		case Inf :
+	   		case SupEgal :
+	   		case Sup :
+	   		case NonEgal :
+	   		   if(a.getArite() != 2){
+	   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+	   			   e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   resultB = ReglesTypage.binaireCompatible(a.getNoeud(), t1 =  verif_Exp(a.getFils1()), t2 = verif_Exp(a.getFils2()));
+	   		   if(resultB.getOk() == false) {
 	               ErreurContext e = ErreurContext.ErreurType;
 	               e.leverErreurContext(null, a.getNumLigne());
-	        }
+	   		   }
+	   		   else {
+	   			   add_Conversion(a,resultB);
+	   		   }
+	   		   return Type.Boolean;
+	   		// opération unaire donnant un boolean
+	   		case Non :
+	   		   if(a.getArite() != 1){
+	   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+	   			   e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   resultU = ReglesTypage.unaireCompatible(a.getNoeud(), t1 = verif_Exp(a.getFils1()));
+	   		   if(resultU.getOk() == false) {
+	               ErreurContext e = ErreurContext.ErreurType;
+	               e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   return Type.Boolean;
+	   		   
+	   		// opération unaire donnant un real/integer
+	   		case PlusUnaire :
+	   		case MoinsUnaire :
+	   		   if(a.getArite() != 1){
+	   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+	   			   e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   resultU = ReglesTypage.unaireCompatible(a.getNoeud(), t1 = verif_Exp(a.getFils1()));
+	   		   if(resultU.getOk() == false) {
+	               ErreurContext e = ErreurContext.ErreurType;
+	               e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   return t1;
+	   		   
+	   		// Opération binaire donnant un real/integer
+	   		case Plus :
+	   		case Moins :
+	   		case Mult :
+	   		case Quotient :
+	   		case DivReel :
+	   		case Reste :
+	   			if(a.getArite() != 2){
+		   			   ErreurContext e = ErreurContext.ErreurAriteAffect;
+		   			   e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   resultB = ReglesTypage.binaireCompatible(a.getNoeud(), t1 =  verif_Exp(a.getFils1()), t2 = verif_Exp(a.getFils2()));
+	   		   if(resultB.getOk() == false) {
+	               ErreurContext e = ErreurContext.ErreurType;
+	               e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+	   		   else {
+	   			   add_Conversion(a,resultB);
+	   		   }
+	   		   if(a.getNoeud() == Noeud.DivReel)
+	   			   return Type.Integer;
+	   		   if(t1 == Type.Integer || t2 == Type.Integer) {
+	   			   return Type.Integer;
+	   		   }
+	   		   else {
+	   			   return Type.Real;
+	   		   }
+	   		   
+	   		// Si c'est un facteur
+	   		case Entier :
+	   			return Type.Integer;
+	   		case Chaine :
+	   			return Type.String;
+	   		case Reel :
+	   			return Type.Real;
+	   			
+	   		// Si c'est un ident / index
+	   		case Ident :
+	   		case Index :
+	   			return verif_Index(a);
+	   		
+	   }
+   }
+   
+   private Type verif_Index(Arbre a) throws ErreurVerif{
+	   
+		if(a.getNoeud() == Noeud.Ident) {
+			if(env.chercher(a.toString()) == null){
+ 			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+ 			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
+   			}
+   			else {
+   				return a.getDecor().getType();
+   			}
 		}
-	}
-	
-	private void verif_Pour(Arbre a) throws ErreurVerif{
-		if(a.getArite() != Noeud.Pour.arite){
-			ErreurContext e = ErreurContext.ErreurAriteAffect;
-			e.leverErreurContext(null, a.getNumLigne());
+		else {
+			
 		}
-	}
-	
-	private void verif_MoinsUnaire(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-	}
-	
-	
-	private void verif_ListeExp(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Lecture(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Intervalle(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Egal(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Ecriture(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Decrement(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verif_Conversion(Arbre a) throws ErreurVerif{
-		// TODO Auto-generated method stub
-		
-	}
+   }
 }
