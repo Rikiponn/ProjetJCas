@@ -17,7 +17,7 @@ public enum ErreurContext {
    ErreurArite,
    ErreurBooleenAttendu,
    ErreurChaineAttendue,
-   ErreurEntierAttendue,
+   ErreurEntierAttendu,
    ErreurIdentNonDeclaree;
 	
 	
@@ -40,7 +40,7 @@ public enum ErreurContext {
 	      case ErreurChaineAttendue:
 	    	  System.err.print("Chaine attendue");
 	    	  break;
-	      case ErreurEntierAttendue:
+	      case ErreurEntierAttendu:
 	    	  System.err.print("Entier attendue");
 	    	  break;
 	      default:

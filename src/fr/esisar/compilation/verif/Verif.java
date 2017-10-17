@@ -201,25 +201,25 @@ public class Verif {
 		   //verif_Lecture(a);
 		   break;
 	   case Pour:
-		   if(a.getArite()!=2){
+		   if(a.getArite()!=Noeud.Pour.arite){
 			   ErreurContext e = ErreurContext.ErreurArite;
 			   e.leverErreurContext(null, a.getNumLigne());			   
 		   }
-		   if(a.getFils1().getArite()!=3){
+		   if(a.getFils1().getArite()!=Noeud.Increment.arite){
 			   ErreurContext e = ErreurContext.ErreurArite;
 			   e.leverErreurContext(null, a.getNumLigne());				   
 		   }
 		   if(!a.getFils1().getFils1().getDecor().getType().equals(Type.Integer)){
-			   ErreurContext e = ErreurContext.ErreurEntierAttendue;
+			   ErreurContext e = ErreurContext.ErreurEntierAttendu;
 			   e.leverErreurContext(null, a.getNumLigne());
 		   }
 		   if(!a.getFils1().getFils2().getDecor().getType().equals(Type.Integer)){
-			   ErreurContext e = ErreurContext.ErreurEntierAttendue;
+			   ErreurContext e = ErreurContext.ErreurEntierAttendu;
 			   e.leverErreurContext(null, a.getNumLigne());
 			   
 		   }
 		   if(!a.getFils1().getFils3().getDecor().getType().equals(Type.Integer)){
-			   ErreurContext e = ErreurContext.ErreurEntierAttendue;
+			   ErreurContext e = ErreurContext.ErreurEntierAttendu;
 			   e.leverErreurContext(null, a.getNumLigne());
 		   }		
 		   break;
