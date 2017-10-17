@@ -1,7 +1,7 @@
 Liste des erreurs définies pour Verif.java:
 	
 	ErreurType:
-		Indique que le type des fils (ou du fils) n'est pas compatible avec le noeud actuel, par exemple l'instruction : 1>true levera une ErreurType 
+		Indique que le type d'au moins l'un des fils n'est pas compatible avec le noeud actuel, par exemple l'instruction : 1>true levera une ErreurType 
 		car l'opérande Sup ne peux pas prendre un Integer et un Boolean.
    		
    	ErreurArite:
@@ -22,9 +22,14 @@ Liste des erreurs définies pour Verif.java:
    		end.
    		Ici, b n'a jamais été déclarée, et est pourtant utilisée. Nous levons donc une ErreurIdentNonDeclaree
    		
+   	ErreurBooleenAttendu:
+   		L'erreur booléen attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est un booléen.   
    	
-Architecture de la passe 2
+   	ErreurChaineAttendu:
+   		L'erreur chaine attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est une chaine.   
+   	
+Architecture de la passe 2:
 
 	void*
 	
-Méthodologie de test
+Méthodologie de test:
