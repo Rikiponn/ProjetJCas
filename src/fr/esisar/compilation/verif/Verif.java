@@ -78,20 +78,20 @@ public class Verif {
    private void verif_PROGRAMME(Arbre a) throws ErreurVerif {
       initialiserEnv();
       decor(a);
-      verif_LISTE_DECL(a.getFils1());
-      verif_LISTE_INST(a,a.getFils2());
+      verif_ListeDecl(a.getFils1());
+      verif_ListeInst(a.getFils2());
    }
 
    /**************************************************************************
     * LISTE_DECL
     **************************************************************************/
-   private void verif_LISTE_DECL(Arbre a) throws ErreurVerif {
+   private void verif_ListeDecl(Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
     	case Vide:
     		break;
     	case ListeDecl:
-    		verif_LISTE_DECL(a.getFils1());
-    		verif_DECL(a.getFils2());
+    		verif_ListeDecl(a.getFils1());
+			verif_Decl(a.getFils2());
     		break;    		
     	default:
     		throw new ErreurInterneVerif("Arbre incorrect dans verif_LISTE_DECL");
@@ -99,7 +99,7 @@ public class Verif {
    }
 
    
-   private void verif_DECL(Arbre a) throws ErreurVerif {
+   private void verif_Decl(Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
 	   case Decl:
 		   verif_ListeIdent(a,a.getFils1());
@@ -130,7 +130,8 @@ public class Verif {
 	   a.setDecor(new Decor(def));
 	   env.enrichir(a.getChaine(), def);
    }
-   private Type cherche_Type(Arbre a){
+   
+   private Type cherche_Type(Arbre a) throws ErreurVerif{
 	   switch(a.getNoeud()){
 		   case Entier:
 			   return(Type.Integer);
@@ -139,7 +140,18 @@ public class Verif {
 		   case Chaine:
 			   return(Type.String);
 		   case Tableau:
-			   return(Type.creationArray(Type.Integer, cherche_Type(a.getFils2())));
+			   if(a.getArite() != 2){
+	   			   ErreurContext e = ErreurContext.ErreurArite;
+	   			   e.leverErreurContext(null, a.getNumLigne());
+	   		   }
+			   return(Type.creationArray(Type.creationInterval(a.getFils1().getFils1().getEntier(), a.getFils1().getFils2().getEntier()), cherche_Type(a.getFils2())));
+		   case Ident:
+			   if(env.chercher(a.toString()) == null){
+	  			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+	  			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
+	    		}
+			   return(a.getDecor().getType());
+			   
 		default:
 			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type");
 	   }
@@ -169,12 +181,12 @@ public class Verif {
 /**************************************************************************
     * LISTE_INST
     **************************************************************************/
-   private void verif_LISTE_INST(Arbre pere,Arbre a) throws ErreurVerif {
+   private void verif_ListeInst(Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
      	case Vide:
      		break;
      	case ListeInst:
-     		verif_LISTE_INST(a,a.getFils1());
+     		verif_ListeInst(a.getFils1());
      		verif_INST(a.getFils2());
      		break;
      		
@@ -192,19 +204,19 @@ public class Verif {
 		   verif_Affect(a);
 		   break;
 	   case Ecriture:
-		   //verif_Ecriture(a);
+		   verif_Ecriture(a);
 		   break;
 	   case Lecture:
-		   //verif_Lecture(a);
+		   verif_Lecture(a);
 		   break;
 	   case Pour:
-		   //verif_Pour(a);
+		   verif_Pour(a);
 		   break;
 	   case Si:
-		   //verif_Si(a);
+		   verif_Si(a);
 		   break;
 	   case TantQue:
-		   //verif_TantQue(a);
+		   verif_TantQue(a);
 		   break;
 	   default:
 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_INST"); 
@@ -268,6 +280,11 @@ public class Verif {
 	   }
    }
 
+   /**
+    * Insère un Noeud Conversion sur les Noeuds signalés
+    * @param a : arbre dont la racine est un Noeud d'arite 2, dont au moins un des fils doit utiliser un Noeud Conversion
+    * @param checker : objet contenant le signalement sur les deux fils de a
+    */
    private void add_Conversion(Arbre a, ResultatBinaireCompatible checker) {
 	   if(checker.getConv1()) {
     	   Arbre filsTamp = a.getFils1();
@@ -278,6 +295,13 @@ public class Verif {
     	   a.setFils2(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
 	   }
    } 
+   
+   /**
+    * Verification AFFECT
+    * 		les fils doivent avoir un type compatible, si besoin avec une conversion.
+    * @param a : arbre dont la racine est un Noeud Affect
+    * @throws ErreurVerif
+    */
    private void verif_Affect(Arbre a) throws ErreurVerif{ 
 
 	   if(a.getArite() != Noeud.Affect.arite){
@@ -314,7 +338,7 @@ public class Verif {
     * @throws ErreurVerif
     */
    private Type verif_Exp(Arbre a) throws ErreurVerif{
-	   Type t1, t2, t3;
+	   Type t1, t2;
 	   ResultatBinaireCompatible resultB;
 	   ResultatUnaireCompatible resultU;
 	   switch(a.getNoeud()) {
@@ -405,25 +429,166 @@ public class Verif {
 	   			
 	   		// Si c'est un ident / index
 	   		case Ident :
+	   			if(env.chercher(a.toString()) == null){
+	  			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+	  			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
+	    		}
+	    		else {
+	    			return a.getDecor().getType();
+	    		}
 	   		case Index :
-	   			//return verif_Index(a);
-	   		
+	   			return verif_Index(a);
+	   		default:
+	 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_EXP");
+	 		   
 	   }
    }
-   /*
-   private Type verif_Index(Arbre a) throws ErreurVerif{
-	   
-		if(a.getNoeud() == Noeud.Ident) {
-			if(env.chercher(a.toString()) == null){
- 			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
- 			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
-   			}
-   			else {
-   				return a.getDecor().getType();
-   			}
+   
+   /**
+    * Verification INDEX (place)
+    * @param a : arbre dont la racine est un Noeud Index
+    * @return le type du tableau indexé
+    * @throws ErreurVerif
+    */
+   private Type verif_Index(Arbre a) throws ErreurVerif {
+	   ErreurContext e;
+	   if(a.getNoeud() == Noeud.Ident) {
+		   if(a.getArite() != Noeud.Ident.arite) {
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+		   }
+		   else {
+			   return a.getDecor().getType();
+		   }
+	   }
+	   else {
+		   if(a.getArite() != Noeud.Index.arite) {
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+		   }
+		   else {
+			   verif_Index(a.getFils1());
+		   	   return verif_Exp(a.getFils2());
+		   }
+	   }
+	   // retour nécessaire pour ne pas avoir d'erreur, est théoriquement inutilisé
+	   return Type.String;
+   }
+	
+   /**
+    * Verification READ
+    * 		Fils1 doit être un identificateur (potentiel tableau) de type Interval/Real.
+    * @param a : arbre dont la racine est Noeud Lecture
+    * @throws ErreurVerif
+    */
+	private void verif_Lecture(Arbre a) throws ErreurVerif{
+		Type t1 = verif_Index(a);
+		if(t1 != Type.Integer && t1 != Type.Real) {
+			ErreurContext e = ErreurContext.ErreurType;
+            e.leverErreurContext(null, a.getNumLigne());
 		}
-		else {
+	}
+	
+	/**
+	 * Verification WRITE
+	 * 		Fils1 doit être une liste d'expressions de type Interval/String/Integer.
+	 * @param a : arbre dont la racine est Noeud Ecriture
+	 * @throws ErreurVerif
+	 */
+	private void verif_Ecriture(Arbre a) throws ErreurVerif{
+		ErreurContext e;
+		if(a.getArite() != 2){
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+	   }
+		while(a.getFils1().getNoeud() != Noeud.Vide) {
+			// les arguments de write ne peuvent pas être des boolean
+			if(verif_Exp(a.getFils2()) == Type.Boolean) {
+				e = ErreurContext.ErreurType;
+	            e.leverErreurContext(null, a.getNumLigne());
+			}
+			
+			a = a.getFils1();
+			
+			if(a.getArite() != 2){
+	   			   e = ErreurContext.ErreurArite;
+	   			   e.leverErreurContext(null, a.getNumLigne());
+		   }
 			
 		}
-   }*/
+	}
+
+	/**
+	 * Verification POUR
+	 * 		Fils1 : Doit être un noeud In/Decrement, ses 3 Fils doivent être de type Integer.
+	 * 		Fils2 : Doit être une liste d'instructions valide.
+	 * @param a : arbre dont la racine est un Noeud Pour
+	 * @throws ErreurVerif
+	 */
+	private void verif_Pour(Arbre a) throws ErreurVerif{
+		ErreurContext e;
+		if(a.getArite() != Noeud.Pour.arite){
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+	   }
+		if(a.getFils1().getNoeud() == Noeud.Increment || a.getFils1().getNoeud() == Noeud.Decrement) {
+			if(a.getFils1().getFils1().getDecor().getType() != Type.Integer) {
+				e = ErreurContext.ErreurType;
+	            e.leverErreurContext(null, a.getNumLigne());
+			}
+			if(verif_Exp(a.getFils2()) != Type.Integer || verif_Exp(a.getFils3()) != Type.Integer) {
+				e = ErreurContext.ErreurType;
+	            e.leverErreurContext(null, a.getNumLigne());
+			}
+		}
+		else {
+			// TODO Nouveau type d'errreur : mauvais noeud increment/decrement dans FOR
+			e = ErreurContext.ErreurType;
+            e.leverErreurContext(null, a.getNumLigne());
+		}
+		verif_ListeInst(a.getFils2());
+	}
+
+	/**
+	 * Verification SI :
+	 * 		Fils1 doit être de type boolean.
+	 * 		Fils2 et Fils3 doivent être des listes d'instruction valides
+	 * @param a : arbre dont la racine est un Noeud Si
+	 * @throws ErreurVerif
+	 */
+	private void verif_Si(Arbre a) throws ErreurVerif{
+		ErreurContext e;
+		if(a.getArite() != Noeud.Si.arite){
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+	   }
+		if(a.getFils1().getDecor().getType() != Type.Boolean) {
+			// TODO Nouveau type d'errreur : mauvais type de condition if, expected boolean
+			e = ErreurContext.ErreurType;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
+		verif_ListeInst(a.getFils2());
+		verif_ListeInst(a.getFils3());
+	}
+	
+	/**
+	 * Verification TANTQUE :
+	 * 		Fils1 doit être de type boolean.
+	 * 		Fils2 doit être une liste d'instructions valide
+	 * @param a : arbre dont la racine est un Noeud TantQue
+	 * @throws ErreurVerif
+	 */
+	private void verif_TantQue(Arbre a) throws ErreurVerif{
+		ErreurContext e;
+		if(a.getArite() != Noeud.TantQue.arite){
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+	   }
+		if(a.getFils1().getDecor().getType() != Type.Boolean) {
+			// TODO Nouveau type d'errreur : mauvais type de condition while, expected boolean
+			e = ErreurContext.ErreurType;
+			e.leverErreurContext(null, a.getNumLigne());
+		}
+		verif_ListeInst(a.getFils2());
+	}
 }
