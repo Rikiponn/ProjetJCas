@@ -77,6 +77,7 @@ public class Verif {
     **************************************************************************/
    private void verif_PROGRAMME(Arbre a) throws ErreurVerif {
       initialiserEnv();
+      decor(a);
       verif_LISTE_DECL(a.getFils1());
       verif_LISTE_INST(a,a.getFils2());
    }
@@ -247,7 +248,7 @@ public class Verif {
    // ------------------------------------------------------------------------
 
 }
-   private void decor_verif(Arbre a) throws ErreurVerif{
+   private void decor(Arbre a) throws ErreurVerif{
 	   
 	   switch(a.getNoeud()){
 	   case Entier:
@@ -268,18 +269,35 @@ public class Verif {
 	   case Conversion:
 		   if(a.getFils1().getNoeud()==Noeud.Entier){
 			   a.setDecor(new Decor(new Defn(NatureDefn.Type, Type.Real), Type.Real));
-			   decor_verif(a.getFils1());
 			   break;
 		   }
 		   else if(a.getFils1().getNoeud()==Noeud.Reel){
 			   a.setDecor(new Decor(new Defn(NatureDefn.Type, Type.Integer), Type.Integer));
-			   decor_verif(a.getFils1());
 			   break;
 		   }
 		   
 	   default:
-		   throw new ErreurInterneVerif("Arbre incorrect dans verif_Type");
 			   
+	   }
+	   
+	   switch(a.getArite()){
+	   case 0: break;
+	   case 1: 
+		   decor(a.getFils1());
+		   break;
+	   case 2:
+		   decor(a.getFils1());
+		   decor(a.getFils2());
+		   break;
+	   case 3:
+		   decor(a.getFils1());
+		   decor(a.getFils2());
+		   decor(a.getFils3());
+		   break;		   
+	   
+	   default:
+		   ErreurContext e = ErreurContext.ErreurAriteAffect;
+		   e.leverErreurContext(null, a.getNumLigne());
 	   }
    }
    
@@ -296,7 +314,6 @@ public class Verif {
 			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
 		   }
 		   else{
-			   decor_verif(a.getFils2());
 			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),env.chercher(a.getFils2().getChaine()).getType());
 			   
 	          // ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
