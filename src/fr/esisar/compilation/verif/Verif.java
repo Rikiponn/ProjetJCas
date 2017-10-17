@@ -216,8 +216,41 @@ public class Verif {
 }
    private void decor_verif(Arbre a) throws ErreurVerif{
 	   
+	   switch(a.getNoeud()){
+	   case Entier:
+		   a.setDecor(new Decor(Type.Integer));
+		   break;
+	   case Reel:
+		   a.setDecor(new Decor(Type.Real));
+		   break;
+	   case Chaine:
+		   a.setDecor(new Decor(Type.String));
+		   break;
+	   case Tableau:
+		   verif_Type(a.getFils2());
+		   break;
+	   case Ident:
+		   a.setDecor(new Decor(env.chercher(a.getFils1().toString()), env.chercher(a.getFils1().toString()).getType()));
+		   break;
+	   case Conversion:
+		   if(a.getFils1().getNoeud()==Noeud.Entier){
+			   a.setDecor(new Decor(new Defn(NatureDefn.Type, Type.Real), Type.Real));
+			   decor_verif(a.getFils1());
+			   break;
+		   }
+		   else if(a.getFils1().getNoeud()==Noeud.Reel){
+			   a.setDecor(new Decor(new Defn(NatureDefn.Type, Type.Integer), Type.Integer));
+			   decor_verif(a.getFils1());
+			   break;
+		   }
+		   
+	   default:
+		   throw new ErreurInterneVerif("Arbre incorrect dans verif_Type");
+			   
+	   }
    }
    
+<<<<<<< HEAD
    private void add_Conversion(Arbre a, ResultatBinaireCompatible checker) {
 	   if(checker.getConv1()) {
     	   Arbre filsTamp = a.getFils1();
