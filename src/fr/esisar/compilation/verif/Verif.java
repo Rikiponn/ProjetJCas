@@ -333,6 +333,7 @@ public class Verif {
     * Cette fonction vérifie tous les noeuds expression possible 
     * 	- Identifiants.
     * 	- Arité.
+    *  décors également le noeud expression.
     * @param a Arbre partant d'un Noeud expression
     * @return le Type de l'expression : bool / reel / interval.
     * @throws ErreurVerif
@@ -363,6 +364,7 @@ public class Verif {
 	   		   else {
 	   			   add_Conversion(a,resultB);
 	   		   }
+	   		   a.setDecor(new Decor(Type.Boolean));
 	   		   return Type.Boolean;
 	   		// opération unaire donnant un boolean
 	   		case Non :
@@ -375,6 +377,7 @@ public class Verif {
 	               ErreurContext e = ErreurContext.ErreurType;
 	               e.leverErreurContext(null, a.getNumLigne());
 	   		   }
+	   		   a.setDecor(new Decor(Type.Boolean));
 	   		   return Type.Boolean;
 	   		   
 	   		// opération unaire donnant un real/integer
@@ -389,6 +392,7 @@ public class Verif {
 	               ErreurContext e = ErreurContext.ErreurType;
 	               e.leverErreurContext(null, a.getNumLigne());
 	   		   }
+	   		a.setDecor(new Decor(t1));
 	   		   return t1;
 	   		   
 	   		// Opération binaire donnant un real/integer
@@ -410,21 +414,28 @@ public class Verif {
 	   		   else {
 	   			   add_Conversion(a,resultB);
 	   		   }
-	   		   if(a.getNoeud() == Noeud.DivReel)
+	   		   if(a.getNoeud() == Noeud.DivReel) {
+	   			   a.setDecor(new Decor(Type.Integer));
 	   			   return Type.Integer;
+	   		   }
 	   		   if(t1 == Type.Integer || t2 == Type.Integer) {
+	   			a.setDecor(new Decor(Type.Integer));
 	   			   return Type.Integer;
 	   		   }
 	   		   else {
+	   			   a.setDecor(new Decor(Type.Real));
 	   			   return Type.Real;
 	   		   }
 	   		   
 	   		// Si c'est un facteur
 	   		case Entier :
+	   			a.setDecor(new Decor(Type.Integer));
 	   			return Type.Integer;
 	   		case Chaine :
+	   			a.setDecor(new Decor(Type.String));
 	   			return Type.String;
 	   		case Reel :
+	   			a.setDecor(new Decor(Type.Real));
 	   			return Type.Real;
 	   			
 	   		// Si c'est un ident / index
@@ -437,7 +448,9 @@ public class Verif {
 	    			return a.getDecor().getType();
 	    		}
 	   		case Index :
-	   			return verif_Index(a);
+	   			Type tui;
+	   			a.setDecor(new Decor(tui = verif_Index(a)));
+	   			return tui;
 	   		default:
 	 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_EXP");
 	 		   
