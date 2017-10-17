@@ -263,6 +263,10 @@ public class Verif {
    }
    
    private void verif_Affect(Arbre a) throws ErreurVerif{
+=======
+   
+   private void verif_Affect(Arbre a) throws ErreurVerif{ 
+>>>>>>> 08a524456dbd59fe656ccfe8fe890c512ceddd11
 	   if(a.getArite() != Noeud.Affect.arite){
 		   ErreurContext e = ErreurContext.ErreurAriteAffect;
 		   e.leverErreurContext(null, a.getNumLigne());
