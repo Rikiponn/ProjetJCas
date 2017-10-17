@@ -16,7 +16,8 @@ public enum ErreurContext {
    ErreurNonRepertoriee,
    ErreurType,
    ErreurDefn,
-   ErreurAriteAffect;
+   ErreurAriteAffect,
+   ErreurIdentNonDeclaree;
 
 	   void leverErreurContext(String s, int numLigne) throws ErreurVerif {
 	      System.err.println("Erreur contextuelle : ");
@@ -30,7 +31,10 @@ public enum ErreurContext {
 	      case ErreurAriteAffect:
 	    	  System.err.print("Erreur d'arité");
 	          break; 
-	         default:
+	      case ErreurIdentNonDeclaree:
+	    	  System.err.print("Ident non déclarer : "+s);
+	    	  break;
+	      default:
 	            System.err.print("non repertoriee");
 	      }
 	      System.err.println(" ... ligne " + numLigne);

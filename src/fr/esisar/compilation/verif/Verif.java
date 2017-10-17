@@ -124,12 +124,11 @@ public class Verif {
 	   }
    }
    
-	private void verif_Ident(Arbre pere, Arbre a) throws ErreurVerif{
-		Defn def = Defn.creationVar(cherche_Type(pere.getFils2()));
-		a.setDecor(new Decor(def));
-		//TODO recuperer le nom de la variable pour enrichir l'environnement
-		//env.enrichir(a.getNoeud()., def);
-	}
+   private void verif_Ident(Arbre pere, Arbre a) throws ErreurVerif{
+	   Defn def = Defn.creationVar(cherche_Type(pere.getFils2()));
+	   a.setDecor(new Decor(def));
+	   env.enrichir(a.getChaine(), def);
+   }
    private Type cherche_Type(Arbre a){
 	   switch(a.getNoeud()){
 		   case Entier:
@@ -248,25 +247,37 @@ public class Verif {
    // ------------------------------------------------------------------------
 
 }
-   private void verif_Affect(Arbre a) throws ErreurVerif{
-       if(a.getArite() != Noeud.Affect.arite){
-           ErreurContext e = ErreurContext.ErreurAriteAffect;
-           e.leverErreurContext(null, a.getNumLigne());
+   private void decor_verif(Arbre a) throws ErreurVerif{
+	   
+   }
+   private void verif_Affect(Arbre a) throws ErreurVerif{ 
+	   if(a.getArite() != Noeud.Affect.arite){
+		   ErreurContext e = ErreurContext.ErreurAriteAffect;
+		   e.leverErreurContext(null, a.getNumLigne());
+	   }else{
+		   //Si l'ident utilisé n'existe pas dans l'environnement
+		   if(env.chercher(a.getFils1().toString()) != null){
+	   
+			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+			   e.leverErreurContext(a.getFils1().toString(), a.getNumLigne());
+		   }
+		   else{
+			   decor_verif(a.getFils2());
+			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),env.chercher(a.getFils2().getChaine()).getType());
+			   
+	          // ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
+	           if(affectOk.getOk() == false){
+	               ErreurContext e = ErreurContext.ErreurType;
+	               e.leverErreurContext(null, a.getNumLigne());
+	           }
+	           // TODO
+	           // Faut-il insérer les noeud.conversion dans ces fonctions ? exemple ci-dessous
+	           if(affectOk.getConv2()) {
+	        	   Arbre filsTamp = a.getFils2();
+	        	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+	           }
+		   }
        }
-       else{
-           ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(a.getFils1().getDecor().getType(), a.getFils2().getDecor().getType());
-           if(affectOk.getOk() == false){
-               ErreurContext e = ErreurContext.ErreurType;
-               e.leverErreurContext(null, a.getNumLigne());
-           }
-           // TODO
-           // Faut-il insérer les noeud.conversion dans ces fonctions ? exemple ci-dessous
-           if(affectOk.getConv2()) {
-        	   Arbre filsTamp = a.getFils2();
-        	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
-           }
-       }
-
    }
 	private void verif_Et(Arbre a) throws ErreurVerif {
 		if(a.getArite() != Noeud.Et.arite){
