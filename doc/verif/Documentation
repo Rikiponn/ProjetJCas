@@ -28,8 +28,14 @@ Liste des erreurs définies pour Verif.java:
    	ErreurChaineAttendu:
    		L'erreur chaine attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est une chaine.   
    	
+   	ErreurEntierAttendu:
+   		L'erreur entier attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est un entier. 
+   		
 Architecture de la passe 2:
 
-	void*
+	1 fonction récursive parcourant tout l'arbre est décorant en surface l'arbre (notamment les Affects et les noeuds dont on connait directement le type: Conversion, Entier, Reel, Chaine)
+	Un lot de fonction s'occupant de vérifier toutes les déclarations, et d'enrichir l'environnement
+	Un autre lot de fonction s'occupant de vérifier toutes les instructions et expressions, et également décorant l'arbre (notamment les Noeuds résultants d'un EXP)
+	Ces fonctions sont pour la plus part des fonctions récursive afin de parcourir l'arbre en profondeur.
 	
 Méthodologie de test:
