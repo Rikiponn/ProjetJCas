@@ -152,14 +152,19 @@ public class Verif {
 			   if(a.getChaine().toLowerCase().equals("float")){
 				   return Type.Real;
 			   }
+		   case Intervalle:
+			   return Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier());
 			   
+			
 		default:
-			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type "+ a.getChaine() +" "+ a.getNoeud().toString());
+			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type "+ a.getNoeud().toString());
 	   }
    }
    
    private Type cherche_Type(Arbre a) throws ErreurVerif{
 	   switch(a.getNoeud()){
+	   	   case Intervalle:
+	   		   return(Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier()));
 		   case Entier:
 			   return(Type.Integer);
 		   case Reel:
