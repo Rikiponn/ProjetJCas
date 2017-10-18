@@ -19,6 +19,8 @@ public enum ErreurContext {
    ErreurChaineAttendue,
    ErreurEntierAttendu,
    ErreurTableauAttendu,
+   ErreurIdentReserve,
+   ErreurIdentInexistant,
    ErreurIdentNonDeclaree;
 	
 	
@@ -27,16 +29,16 @@ public enum ErreurContext {
 	      System.err.println("Erreur contextuelle : ");
 	      switch (this) {
 	      case ErreurType : 
-	          System.err.print("Erreur de type" + s);
+	          System.err.print("Erreur de type");
 	          break;
 	      case ErreurArite:
-	    	  System.err.print("Erreur d'arité");
+	    	  System.err.print("Erreur d'arité"+s);
 	          break; 
 	      case ErreurIdentNonDeclaree:
 	    	  System.err.print("Ident non déclaré : "+s);
 	    	  break;
 	      case ErreurBooleenAttendu:
-	    	  System.err.print("Boolean attendu" + s);
+	    	  System.err.print("Boolean attendu");
 	    	  break;
 	      case ErreurChaineAttendue:
 	    	  System.err.print("Chaine attendue");
@@ -46,6 +48,9 @@ public enum ErreurContext {
 	    	  break;
 	      case ErreurTableauAttendu:
 	    	  System.err.print("Tableau attendue");
+	    	  break;
+	      case ErreurIdentReserve:
+	    	  System.err.print("Identifiant reserve");
 	    	  break;
 	      default:
 	            System.err.print("non repertoriee");

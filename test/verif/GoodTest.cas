@@ -14,7 +14,7 @@ program
     m : 1 .. 12;
     n : 1 .. 12;
     o, p: float;
-
+	z : string;
 begin
     a := 214748;
     b := -214748;
@@ -102,5 +102,6 @@ begin
     IF 1 = 2 THEN a := b; ELSE b := a; END;
     IF a=b THEN a := b; END;
 
+	z := "toto";
 
 end.
