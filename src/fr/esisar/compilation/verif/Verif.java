@@ -128,7 +128,13 @@ public class Verif {
    private void verif_Ident(Arbre pere, Arbre a) throws ErreurVerif{
 	   Defn def = Defn.creationVar(cherche_TypeDecl(pere.getFils2()));
 	   a.setDecor(new Decor(def));
-	   env.enrichir(a.getChaine(), def);
+	   if(env.chercher(a.getChaine()) == null){
+		   env.enrichir(a.getChaine(), def);
+	   }
+	   else{
+		   ErreurContext e = ErreurContext.ErreurIdentReserve;
+		   e.leverErreurContext(null, a.getNumLigne());
+	   }
    }
    
    private Type cherche_TypeDecl(Arbre a) throws ErreurVerif{
@@ -152,6 +158,8 @@ public class Verif {
 			   if(a.getChaine().toLowerCase().equals("float")){
 				   return Type.Real;
 			   }
+			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+  			   e.leverErreurContext(a.getChaine(), a.getNumLigne());
 		   case Intervalle:
 			   return Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier());
 			   
@@ -255,6 +263,8 @@ public class Verif {
     **************************************************************************/
    private void verif_INST(Arbre a) throws ErreurVerif {
 	   switch(a.getNoeud()){
+	   case Nop:
+		   break;
 	   case Affect:
 		   verif_Affect(a);
 		   break;
@@ -272,6 +282,8 @@ public class Verif {
 		   break;
 	   case TantQue:
 		   verif_TantQue(a);
+		   break;
+	   case Ligne:
 		   break;
 	   default:
 		   throw new ErreurInterneVerif("Arbre incorrect dans verifier_INST"); 
@@ -460,7 +472,7 @@ public class Verif {
 	   		   }
 	   		   resultB = ReglesTypage.binaireCompatible(a.getNoeud(), t1 =  verif_Exp(a.getFils1()), t2 = verif_Exp(a.getFils2()));
 	   		   if(resultB.getOk() == false) {
-	               ErreurContext e = ErreurContext.ErreurType;
+	               ErreurContext e = ErreurContext.ErreurBooleenAttendu;
 	               e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 	   		   else {
@@ -476,7 +488,7 @@ public class Verif {
 	   		   }
 	   		   resultU = ReglesTypage.unaireCompatible(a.getNoeud(), t1 = verif_Exp(a.getFils1()));
 	   		   if(resultU.getOk() == false) {
-	               ErreurContext e = ErreurContext.ErreurType;
+	               ErreurContext e = ErreurContext.ErreurBooleenAttendu;
 	               e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 	   		   a.setDecor(new Decor(Type.Boolean));
@@ -599,9 +611,15 @@ public class Verif {
     * @throws ErreurVerif
     */
 	private void verif_Lecture(Arbre a) throws ErreurVerif{
-		Type t1 = verif_Index(a);
+		ErreurContext e;
+		if(a.getArite() != Noeud.Lecture.arite){
+		   e = ErreurContext.ErreurArite;
+		   e.leverErreurContext(null, a.getNumLigne());
+		}
+		Type t1 = verif_Index(a.getFils1());
+		
 		if(t1 != Type.Integer && t1 != Type.Real) {
-			ErreurContext e = ErreurContext.ErreurType;
+			e = ErreurContext.ErreurType;
             e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 		}
 	}
@@ -654,10 +672,13 @@ public class Verif {
 				e = ErreurContext.ErreurType;
 				e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 			}
+			Arbre atamp = a;
+			a=a.getFils1();
 			if(verif_Exp(a.getFils2()) != Type.Integer || verif_Exp(a.getFils3()) != Type.Integer) {
 				e = ErreurContext.ErreurType;
 				e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 			}
+			a=atamp;
 		}
 		else {
 			throw new ErreurInterneVerif("Arbre incorrect dans Pour : increment ou decrement attendu : "+ a.getFils1().getNoeud().toString());
@@ -674,16 +695,18 @@ public class Verif {
 	 */
 	private void verif_Si(Arbre a) throws ErreurVerif{
 		ErreurContext e;
-		if(a.getArite() != Noeud.Si.arite){
-			   e = ErreurContext.ErreurArite;
-			   e.leverErreurContext(null, a.getNumLigne());
-	   }
-		if(a.getFils1().getDecor().getType() != Type.Boolean) {
+		if(verif_Exp(a.getFils1()) != Type.Boolean) {
 			e = ErreurContext.ErreurBooleenAttendu;
 			e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 		}
+		if(a.getArite() != Noeud.Si.arite){
+			   e = ErreurContext.ErreurArite;
+			   e.leverErreurContext(null, a.getNumLigne());
+		}
+		if(a.getFils3().getNoeud() != Noeud.Vide){
+			verif_ListeInst(a.getFils3());
+		}
 		verif_ListeInst(a.getFils2());
-		verif_ListeInst(a.getFils3());
 	}
 	
 	/**
