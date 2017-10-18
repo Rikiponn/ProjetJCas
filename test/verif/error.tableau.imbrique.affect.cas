@@ -1,0 +1,6 @@
+program
+	a : integer;
+	tab : array[1..5] of array[1..5];
+begin
+	a := tab[3];
+end.
