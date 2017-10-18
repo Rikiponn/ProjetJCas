@@ -20,7 +20,7 @@ public enum ErreurContext {
    ErreurEntierAttendu,
    ErreurTableauAttendu,
    ErreurIdentReserve,
-   ErreurIdentInexistant,
+   ErreurIndexNegatif,
    ErreurIdentNonDeclaree;
 	
 	
@@ -51,6 +51,9 @@ public enum ErreurContext {
 	    	  break;
 	      case ErreurIdentReserve:
 	    	  System.err.print("Identifiant reserve ");
+	    	  break;
+	      case ErreurIndexNegatif:
+	    	  System.err.print("Index negative ");
 	    	  break;
 	      default:
 	            System.err.print("non repertoriee ");

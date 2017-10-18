@@ -169,24 +169,27 @@ public class Verif {
 	   }
    }
    private Type cherche_Type(Arbre a) throws ErreurVerif{
+	   ErreurContext e;
 	   switch(a.getNoeud()){
 	   	   case Intervalle:
 	   		   return(Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier()));
 	   	   case Index:
 	   		   if(a.getFils1().getNoeud().equals(Noeud.Ident)){
+	   			   //Si l'identificateur n'existe pas
 	   			   if(env.chercher(a.getFils1().getChaine()) == null){
-	   				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+	   				   e = ErreurContext.ErreurIdentNonDeclaree;
 	   				   e.leverErreurContext(null, a.getNumLigne());
 	   			   }
+	   			   //Si le type des indices n'est pas Entier
 	   			   if(cherche_Type(a.getFils2()) != (Type.Integer)){
-	   				ErreurContext e = ErreurContext.ErreurEntierAttendu;
+	   				   e = ErreurContext.ErreurEntierAttendu;
 	   				   e.leverErreurContext("dans Index", a.getNumLigne());
 	   			   }
 	   			   if(env.chercher(a.getFils1().getChaine()).getType().getNature().equals(NatureType.Array)){
 	   				   return (env.chercher(a.getFils1().getChaine())).getType().getElement();
 	   			   }
 	   			   else{
-	   				   ErreurContext e = ErreurContext.ErreurTableauAttendu;
+	   				   e = ErreurContext.ErreurTableauAttendu;
 	   				   e.leverErreurContext(null, a.getNumLigne());
 	   			   }
 	   		   }
@@ -194,6 +197,9 @@ public class Verif {
 	   		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
 	   			   return cherche_Type(a.getFils1()).getElement();
 	   		   }
+	   	   case MoinsUnaire:
+	   		   e = ErreurContext.ErreurIndexNegatif;
+	   		   e.leverErreurContext(null, a.getNumLigne());
 		   case Entier:
 			   return(Type.Integer);
 		   case Reel:
@@ -202,13 +208,13 @@ public class Verif {
 			   return(Type.String);
 		   case Tableau:
 			   if(a.getArite() != 2){
-	   			   ErreurContext e = ErreurContext.ErreurArite;
+	   			   e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
 			   return(Type.creationArray(Type.creationInterval(a.getFils1().getFils1().getEntier(), a.getFils1().getFils2().getEntier()), cherche_Type(a.getFils2())));
 		   case Ident:
 			   if(env.chercher(a.getChaine()) == null){
-				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+				   e = ErreurContext.ErreurIdentNonDeclaree;
 	  			   e.leverErreurContext(a.getChaine(), a.getNumLigne());
 			   }
 			   return(a.getDecor().getType());
@@ -435,12 +441,11 @@ public class Verif {
 			   
 		   }
 		   Type type2 = verif_Exp(a.getFils2());
-		   Type type3 = cherche_Type(a.getFils2());
+		   System.out.println(type1+" "+type2);
 		   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(type1 , type2);
            if(affectOk.getOk() == false){
-        	   System.out.println(type1+" "+type2+" "+type3);
                ErreurContext e = ErreurContext.ErreurType;
-               e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
+               e.leverErreurContext("dans "+a.getNoeud().toString(), a.getNumLigne());
            }
            if(affectOk.getConv2()) {
         	   Arbre filsTamp = a.getFils2();
@@ -604,7 +609,7 @@ public class Verif {
 		   }
 		   else {
 			   verif_Index(a.getFils1());
-		   	   return verif_Exp(a.getFils2());
+			   return cherche_Type(a);
 		   }
 	   }
 	   // retour nécessaire pour ne pas avoir d'erreur, est théoriquement inutilisé
