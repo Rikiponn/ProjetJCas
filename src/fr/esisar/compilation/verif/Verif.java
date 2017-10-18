@@ -174,6 +174,10 @@ public class Verif {
 	   	   case Intervalle:
 	   		   return(Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier()));
 	   	   case Index:
+	   		   if(a.getFils2().getNoeud().equals(Noeud.MoinsUnaire)){
+	   			   e = ErreurContext.ErreurIndexNegatif;
+		   		   e.leverErreurContext(null, a.getNumLigne());
+	   		   }
 	   		   if(a.getFils1().getNoeud().equals(Noeud.Ident)){
 	   			   //Si l'identificateur n'existe pas
 	   			   if(env.chercher(a.getFils1().getChaine()) == null){
@@ -197,9 +201,9 @@ public class Verif {
 	   		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
 	   			   return cherche_Type(a.getFils1()).getElement();
 	   		   }
+	   	   case PlusUnaire:
 	   	   case MoinsUnaire:
-	   		   e = ErreurContext.ErreurIndexNegatif;
-	   		   e.leverErreurContext(null, a.getNumLigne());
+	   		   return cherche_Type(a.getFils1());
 		   case Entier:
 			   return(Type.Integer);
 		   case Reel:
@@ -441,7 +445,6 @@ public class Verif {
 			   
 		   }
 		   Type type2 = verif_Exp(a.getFils2());
-		   System.out.println(type1+" "+type2);
 		   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(type1 , type2);
            if(affectOk.getOk() == false){
                ErreurContext e = ErreurContext.ErreurType;

@@ -43,6 +43,15 @@ Liste des erreurs définies pour Verif.java:
    		boolean : integer
    		Ici, on essaye de créer une variable boolean de type integer, or boolean est un identifiant réservé dans l'environnement.
    		
+   	ErreurIndexNegatif
+   		Indique qu'un index d'un tableau est negatif, ce qui n'est pas autorisé
+   		Exemple
+   		program
+   			t : array[1..5] of integer;
+   		begin
+   			t[-1] := 2;
+   		end.
+   		
 Architecture de la passe 2:
 
 	1 fonction récursive parcourant tout l'arbre est décorant en surface l'arbre (notamment les Affects et les noeuds dont on connait directement le type: Conversion, Entier, Reel, Chaine)
