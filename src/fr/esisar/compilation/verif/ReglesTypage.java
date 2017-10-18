@@ -19,7 +19,7 @@ public class ReglesTypage {
 	   ResultatAffectCompatible result2 = new ResultatAffectCompatible();
 	   result.setOk(false);
 	   result.setConv2(false);
-	   if(t1.equals(t2) && (t1.equals(Type.Real) || t1.equals(Type.Boolean) || t1.getNature().equals(NatureType.Array))){
+	   if(t1.equals(t2) && ((t1.equals(Type.String)|| t1.equals(Type.Integer) || t1.equals(Type.Real) || t1.equals(Type.Boolean) || t1.getNature().equals(NatureType.Array)))){
 		   result.setOk(true);
 	   }
 	   if(t1.equals(Type.Real) && t2.equals(Type.Integer)){
@@ -27,10 +27,10 @@ public class ReglesTypage {
 		   result.setConv2(true);
 	   }
 	   if(t1.getNature().equals(NatureType.Array) && t2.getNature().equals(NatureType.Array)){
-		   if(t1.getIndice().equals(Type.Integer) && t2.getIndice().equals(Type.Integer)){
-			   if(t1.getBorneInf() == (t2.getBorneInf()) && (t1.getBorneSup() == t2.getBorneSup())){
+		   if(t1.getIndice().getNature().equals(NatureType.Interval) && t2.getIndice().getNature().equals(NatureType.Interval)){
+			   if(t1.getIndice().getBorneInf() == (t2.getIndice().getBorneInf()) && (t1.getIndice().getBorneSup() == t2.getIndice().getBorneSup())){
 				   result2 = affectCompatible(t1.getElement(),t2.getElement());
-				   result.setOk(result.getOk() && result2.getOk());
+				   result.setOk(result2.getOk());
 				   result.setConv2(result.getConv2() && result2.getConv2());
 			   }
 		   }
@@ -49,6 +49,7 @@ public class ReglesTypage {
 	   result.setOk(false);
 	   result.setConv1(false);
 	   result.setConv2(false);
+	   
 	   if (noeud.arite != 2){
 		   return result;
 	   }
@@ -117,7 +118,7 @@ public class ReglesTypage {
 		   }
 	   }
 	   */
-      return null;
+      return result;
    }
 
    /**

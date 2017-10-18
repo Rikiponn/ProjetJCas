@@ -21,6 +21,9 @@ Liste des erreurs définies pour Verif.java:
    			a = b + 2;
    		end.
    		Ici, b n'a jamais été déclarée, et est pourtant utilisée. Nous levons donc une ErreurIdentNonDeclaree
+   		Autre Exemple:
+   		Program
+   			a : truc;
    		
    	ErreurBooleenAttendu:
    		L'erreur booléen attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est un booléen.   
@@ -33,6 +36,12 @@ Liste des erreurs définies pour Verif.java:
    		
    	ErreurTableauAttendu:
    		L'erreur tableau attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est un tableau. 
+   	
+   	ErreurIdentReserve
+   		Indique que le programme utilise un identifiant réservé dans les déclarations
+   		Exemple:
+   		boolean : integer
+   		Ici, on essaye de créer une variable boolean de type integer, or boolean est un identifiant réservé dans l'environnement.
    		
 Architecture de la passe 2:
 
