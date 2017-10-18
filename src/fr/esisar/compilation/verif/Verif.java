@@ -160,11 +160,27 @@ public class Verif {
 			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type "+ a.getNoeud().toString());
 	   }
    }
-   
    private Type cherche_Type(Arbre a) throws ErreurVerif{
 	   switch(a.getNoeud()){
 	   	   case Intervalle:
 	   		   return(Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier()));
+	   	   case Index:
+	   		   if(a.getFils1().getNoeud().equals(Noeud.Ident)){
+	   			   if(env.chercher(a.getFils1().getChaine()) == null){
+	   				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+	   				   e.leverErreurContext(null, a.getNumLigne());
+	   			   }
+	   			   if(env.chercher(a.getFils1().getChaine()).getType().getNature().equals(NatureType.Array)){
+	   				   return (env.chercher(a.getFils1().getChaine())).getType().getElement();
+	   			   }
+	   			   else{
+	   				   ErreurContext e = ErreurContext.ErreurTableauAttendu;
+	   				   e.leverErreurContext(null, a.getNumLigne());
+	   			   }
+	   		   }
+	   		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
+	   			   return cherche_Type(a.getFils1()).getElement();
+	   		   }
 		   case Entier:
 			   return(Type.Integer);
 		   case Reel:
@@ -179,9 +195,9 @@ public class Verif {
 			   return(Type.creationArray(Type.creationInterval(a.getFils1().getFils1().getEntier(), a.getFils1().getFils2().getEntier()), cherche_Type(a.getFils2())));
 		   case Ident:
 			   if(env.chercher(a.getChaine()) == null){
-	  			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
 	  			   e.leverErreurContext(a.getChaine(), a.getNumLigne());
-	    		}
+			   }
 			   return(a.getDecor().getType());
 			   
 		default:
@@ -191,6 +207,8 @@ public class Verif {
    
    private void verif_Type(Arbre a) {
 	   switch(a.getNoeud()){
+	   case Intervalle:
+		   break;
 	   case Ident:
 		   if(a.getChaine().toLowerCase().equals("integer")){
 			   a.setDecor(new Decor(new Defn(NatureDefn.Type,Type.Integer)));
@@ -265,7 +283,9 @@ public class Verif {
 
 }
    private void decor(Arbre a) throws ErreurVerif{
-	   
+	   if(a == null){
+		   return;
+	   }
 	   switch(a.getNoeud()){
 	   case Entier:
 		   a.setDecor(new Decor(Type.Integer));
@@ -279,6 +299,17 @@ public class Verif {
 	   case Tableau:
 		   verif_Type(a.getFils2());
 		   break;
+	   case Index:
+		   // prérequis : fils1 est un array, fonctionne à tous les degrés d'un tableau si celui-ci est valide. Renvoie le type du fils pour décorer a, a étant un Noeud.Index
+		   decor(a.getFils1()); 
+		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
+			   a.setDecor(new Decor(a.getFils1().getDecor().getType().getElement()));
+		   }
+		   else{
+			   a.setDecor(new Decor(a.getFils1().getDecor().getType()));
+		   }
+		   break;
+		   
 	   case Ident:
 		   if(a.getChaine().toLowerCase().equals("integer")){
 			   break;
@@ -292,19 +323,26 @@ public class Verif {
 		   if(a.getChaine().toLowerCase().equals("float")){
 			   break;			  
 		   }
+		   if(env.chercher(a.getChaine()) == null){
+			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+  			   e.leverErreurContext(a.getChaine(), a.getNumLigne());
+		   }
 		   a.setDecor(new Decor(env.chercher(a.getChaine()), env.chercher(a.getChaine()).getType()));
 		   break;
-	   case Conversion:
-		   if(a.getFils1().getNoeud().equals(Noeud.Entier)){
-			   a.setDecor(new Decor(new Defn(NatureDefn.Type, Type.Real), Type.Real));
-			   break;
-		   }
-		   else if(a.getFils1().getNoeud().equals(Noeud.Reel)){
-			   a.setDecor(new Decor(new Defn(NatureDefn.Type, Type.Integer), Type.Integer));
-			   break;
-		   }
 	   case Affect:
-		   a.setDecor(new Decor(env.chercher(a.getFils1().getChaine()).getType()));
+		   //Si le fils est un index, on décor d'abord le fils, puis on décor le Noeud Affect
+		   decor(a.getFils1());
+		   
+		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
+			   
+			   a.setDecor(new Decor(a.getFils1().getDecor().getType()));
+		   }
+		   
+		   
+		   //Si le Noeud est un Ident, on récupère son type depuis l'environnement
+		   if(a.getFils1().getNoeud().equals(Noeud.Ident)){
+			   a.setDecor(new Decor(env.chercher(a.getFils1().getChaine()).getType()));
+		   }		   
 	   default:
 			   
 	   }
@@ -336,14 +374,19 @@ public class Verif {
     * @param checker : objet contenant le signalement sur les deux fils de a
     */
    private void add_Conversion(Arbre a, ResultatBinaireCompatible checker) {
+	   Arbre filsTamp = null;
 	   if(checker.getConv1()) {
-    	   Arbre filsTamp = a.getFils1();
+    	   filsTamp = a.getFils1();
     	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+    	   a.getFils1().setDecor(new Decor(Type.Integer));
 	   }
 	   if(checker.getConv2()) {
-    	   Arbre filsTamp = a.getFils2();
+    	   filsTamp = a.getFils2();
     	   a.setFils2(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+    	   a.getFils2().setDecor(new Decor(Type.Integer));
 	   }
+	   //Décoration du Noeud Conversion juste après son ajout
+	   
    } 
    
    /**
@@ -358,23 +401,32 @@ public class Verif {
 		   ErreurContext e = ErreurContext.ErreurArite;
 		   e.leverErreurContext(null, a.getNumLigne());
 	   }else{
-		   //Si l'ident utilisé n'existe pas dans l'environnement : erreur
-		   if(env.chercher(a.getFils1().getChaine()) == null){
-			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
-			   e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
+		   Type type1;
+		   //Si le fils n'est pas un ident mais un Index (contenant donc un ident)
+		   //TODO modifier cherche_type pour le noeud index
+		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
+			   type1 = cherche_Type(a.getFils1());
 		   }
 		   else{
-			   Type type2 = verif_Exp(a.getFils2());
-			   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(env.chercher(a.getFils1().getChaine()).getType(),type2);
-
-	           if(affectOk.getOk() == false){
-	               ErreurContext e = ErreurContext.ErreurType;
-	               e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
-	           }
-	           if(affectOk.getConv2()) {
-	        	   Arbre filsTamp = a.getFils2();
-	        	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
-	           }
+			   
+			   //Si l'ident utilisé n'existe pas dans l'environnement : erreur
+			   if(env.chercher(a.getFils1().getChaine()) == null){
+				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
+				   e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
+			   }
+			   type1 = env.chercher(a.getFils1().getChaine()).getType();
+			   
+		   }
+		   Type type2 = verif_Exp(a.getFils2());
+		   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(type1 , type2);
+           if(affectOk.getOk() == false){
+               ErreurContext e = ErreurContext.ErreurType;
+               e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
+           }
+           if(affectOk.getConv2()) {
+        	   Arbre filsTamp = a.getFils2();
+        	   a.setFils2(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
+        	   a.getFils2().setDecor(new Decor(Type.Integer));
 		   }
        }
    }
