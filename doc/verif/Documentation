@@ -39,3 +39,7 @@ Architecture de la passe 2:
 	Ces fonctions sont pour la plus part des fonctions récursive afin de parcourir l'arbre en profondeur.
 	
 Méthodologie de test:
+
+Sachant qu'il n'est possible de détecter qu'une seule erreur par fichier, deux politiques de tests ont été prise.
+Pour tester le bon fonctionnement des instructions contextuellement correct, un seul fichier complet ne comportant que des instructions valides a été créé. Si le programme retourne une erreur, alors le compilateur n'est pas fonctionnel.
+Pour les instructions contextuellement incorrect, nous avons créé un fichier pour chaque erreur possible, c'est à dire pour chaque erreur de typage de chaque opération ou encore d'initialisation.
