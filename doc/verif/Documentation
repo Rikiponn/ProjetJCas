@@ -31,6 +31,9 @@ Liste des erreurs définies pour Verif.java:
    	ErreurEntierAttendu:
    		L'erreur entier attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est un entier. 
    		
+   	ErreurTableauAttendu:
+   		L'erreur tableau attendu est le même type d'erreur que ErreurType, en précisant que le type attendu est un tableau. 
+   		
 Architecture de la passe 2:
 
 	1 fonction récursive parcourant tout l'arbre est décorant en surface l'arbre (notamment les Affects et les noeuds dont on connait directement le type: Conversion, Entier, Reel, Chaine)
