@@ -1,15 +1,15 @@
 progrmm
     a, b : integer;
-    c,d : bool;
+    c,d : boolean;
     e : array[1..10] of integer;
     f : Array[1..10] of integer;
     g : array[1..5] of array[1..10] of integer;
-    h : array[1..10] of array[1..5] of bool;
+    h : array[1..10] of array[1..5] of boolean;
     
     i : array[10..1] of integer;
     j : Array[10..1] of integer;
     k : array[10..1] of array[1..5] of integer;
-    l : array[1..10] of array[5..1] of bool;
+    l : array[1..10] of array[5..1] of boolean;
     
     m : [1..12];
     n : [1..12];

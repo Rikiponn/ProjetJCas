@@ -1,5 +1,5 @@
 program
-    a : bool;
+    a : boolean;
 begin
     a := 12563;
 end.

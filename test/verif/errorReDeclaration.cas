@@ -1,7 +1,7 @@
 program
     v1 : integer;
     v2 : integer;
-    v1 : bool;
+    v1 : boolean;
 begin
     v1 := v2;
 end.
