@@ -29,31 +29,34 @@ public enum ErreurContext {
 	      System.err.println("Erreur contextuelle : ");
 	      switch (this) {
 	      case ErreurType : 
-	          System.err.print("Erreur de type");
+	          System.err.print("Erreur de type ");
 	          break;
 	      case ErreurArite:
-	    	  System.err.print("Erreur d'arité"+s);
+	    	  System.err.print("Erreur d'arité ");
 	          break; 
 	      case ErreurIdentNonDeclaree:
-	    	  System.err.print("Ident non déclaré : "+s);
+	    	  System.err.print("Ident non déclaré : ");
 	    	  break;
 	      case ErreurBooleenAttendu:
-	    	  System.err.print("Boolean attendu");
+	    	  System.err.print("Boolean attendu ");
 	    	  break;
 	      case ErreurChaineAttendue:
-	    	  System.err.print("Chaine attendue");
+	    	  System.err.print("Chaine attendue ");
 	    	  break;
 	      case ErreurEntierAttendu:
-	    	  System.err.print("Entier attendue");
+	    	  System.err.print("Entier attendue ");
 	    	  break;
 	      case ErreurTableauAttendu:
-	    	  System.err.print("Tableau attendue");
+	    	  System.err.print("Tableau attendue ");
 	    	  break;
 	      case ErreurIdentReserve:
-	    	  System.err.print("Identifiant reserve");
+	    	  System.err.print("Identifiant reserve ");
 	    	  break;
 	      default:
-	            System.err.print("non repertoriee");
+	            System.err.print("non repertoriee ");
+	      }
+	      if(s!=null){
+	    	  System.err.print(s);
 	      }
 	      System.err.println(" ... ligne " + numLigne);
 	      throw new ErreurVerif();

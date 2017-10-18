@@ -165,7 +165,7 @@ public class Verif {
 			   
 			
 		default:
-			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type "+ a.getNoeud().toString());
+			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_TypeDecl "+ a.getNoeud().toString());
 	   }
    }
    private Type cherche_Type(Arbre a) throws ErreurVerif{
@@ -178,6 +178,10 @@ public class Verif {
 	   				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
 	   				   e.leverErreurContext(null, a.getNumLigne());
 	   			   }
+	   			   if(cherche_Type(a.getFils2()) != (Type.Integer)){
+	   				ErreurContext e = ErreurContext.ErreurEntierAttendu;
+	   				   e.leverErreurContext("dans Index", a.getNumLigne());
+	   			   }
 	   			   if(env.chercher(a.getFils1().getChaine()).getType().getNature().equals(NatureType.Array)){
 	   				   return (env.chercher(a.getFils1().getChaine())).getType().getElement();
 	   			   }
@@ -186,6 +190,7 @@ public class Verif {
 	   				   e.leverErreurContext(null, a.getNumLigne());
 	   			   }
 	   		   }
+	   		   
 	   		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
 	   			   return cherche_Type(a.getFils1()).getElement();
 	   		   }
@@ -209,7 +214,7 @@ public class Verif {
 			   return(a.getDecor().getType());
 			   
 		default:
-			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type");
+			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type "+a.getNoeud());
 	   }
    }
    
@@ -295,9 +300,9 @@ public class Verif {
 
 }
    private void decor(Arbre a) throws ErreurVerif{
-	   if(a == null){
+	   /*if(a == null){
 		   return;
-	   }
+	   }*/
 	   switch(a.getNoeud()){
 	   case Entier:
 		   a.setDecor(new Decor(Type.Integer));
@@ -430,8 +435,10 @@ public class Verif {
 			   
 		   }
 		   Type type2 = verif_Exp(a.getFils2());
+		   Type type3 = cherche_Type(a.getFils2());
 		   ResultatAffectCompatible affectOk = ReglesTypage.affectCompatible(type1 , type2);
            if(affectOk.getOk() == false){
+        	   System.out.println(type1+" "+type2+" "+type3);
                ErreurContext e = ErreurContext.ErreurType;
                e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
            }
