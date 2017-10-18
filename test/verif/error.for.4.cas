@@ -1,0 +1,9 @@
+program
+    a, b : integer;
+    c,d : boolean;
+    e : array[1..10] of integer;
+    f : Array[1..10] of integer;
+    o : float;
+begin
+    FOR o := 10.0 DOWNTO 1.0 DO b := b-1; END;
+end.
