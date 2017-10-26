@@ -1,0 +1,60 @@
+program
+    i, b : integer;
+begin
+    i := 0;
+    b := 10;
+
+	WHILE i < 10 DO i := i + 1; END;
+    write("i doit être égale à 10 : ");
+    write(i);
+    new_line;
+
+    WHILE i > 0 DO i := i - 1; END;
+    write("i doit être égale à 0 : ");
+    write(i);
+    new_line;
+
+    WHILE i <= 10 DO i := i + 1; END;
+    write("i doit être égale à 11 : ");
+    write(i);
+    new_line;
+
+    WHILE i >= 0 DO i := i - 1; END;
+    write("i doit être égale à -1 : ");
+    write(i);
+    new_line;
+
+    b := 10
+    WHILE i < b DO i := i + 1; END;
+    write("i doit être égale à ");
+    write(b);
+    write(" : ");
+    write(i);
+    new_line;
+
+    b := 0
+    WHILE i > b DO i := i - 1; END;
+    write("i doit être égale à ");
+    write(b);
+    write(" : ");
+    write(i);
+    new_line;
+
+    b := 10
+    WHILE i <= b DO i := i + 1; END;
+    write("i doit être égale à ");
+    write(b + 1);
+    write(" : ");
+    write(i);
+    new_line;
+
+    b := 0
+    WHILE i >= b DO i := i - 1; END;
+    write("i doit être égale à ");
+    write(b - 1);
+    write(" : ");
+    write(i);
+    new_line;
+
+end.
+
