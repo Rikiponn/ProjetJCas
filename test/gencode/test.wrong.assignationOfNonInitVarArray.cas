@@ -1,0 +1,11 @@
+program
+    a, b : integer;
+    c,d : boolean;
+    e : array[1..10] of integer;
+    f : Array[1..10] of integer;
+    g : array[1..5] of array[1..10] of integer;
+    h : array[1..10] of array[1..5] of boolean;
+begin
+    e[5] := a;
+end.
+
