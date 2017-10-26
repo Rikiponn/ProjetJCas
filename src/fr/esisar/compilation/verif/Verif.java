@@ -733,10 +733,11 @@ public class Verif {
 	 */
 	private void verif_TantQue(Arbre a) throws ErreurVerif{
 		ErreurContext e;
+		verif_Exp(a.getFils1());
 		if(a.getArite() != Noeud.TantQue.arite){
 			   e = ErreurContext.ErreurArite;
 			   e.leverErreurContext(null, a.getNumLigne());
-	   }
+		}
 		if(a.getFils1().getDecor().getType() != Type.Boolean) {
 			e = ErreurContext.ErreurBooleenAttendu;
 			e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
