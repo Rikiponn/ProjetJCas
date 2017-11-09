@@ -2,12 +2,16 @@ package fr.esisar.compilation.global.src3;
 
 public class GestionRegistre {
 	
-	private static int[] regTab = new int[18];
+	private int[] regTab = new int[18];
 	
 	/**Méthode initialisant tous les registres à l'état LIBRE.
 	 * Méthode à appeler en début de programme.
 	 */
-	public static void setRegTab(){
+	public GestionRegistre(){
+		this.initRegTab();
+	}
+	
+	public void initRegTab(){
 		for(int i = 0; i<regTab.length; i++){
 			regTab[i] = 0;
 		}
@@ -17,12 +21,16 @@ public class GestionRegistre {
 	 * @param reg Registre à tester
 	 * @return Etat du registre, TRUE s'il est libre, FALSE s'il est occupé.
 	 */
-	public static boolean estRegistreLibre(Registre reg){
+	public boolean estRegistreLibre(Registre reg){
 		if(regTab[getRegIndex(reg)] == 0){
 			return true;
 		}
-		else{
-			return false;
+		return false;
+	}
+	
+	public void getRegTab(){
+		for(int i = 0; i<regTab.length; i++){
+			regTab[i] = 0;
 		}
 	}
 	
@@ -30,7 +38,7 @@ public class GestionRegistre {
 	 * Méthode permettant de marquer un registre comme libéré.
 	 * @param reg Registre libéré.
 	 */
-	public static void libererRegistre(Registre reg){
+	public void libererRegistre(Registre reg){
 		regTab[getRegIndex(reg)] = 0;
 	}
 	
@@ -38,11 +46,11 @@ public class GestionRegistre {
 	 * Méthode permettant de marquer un registre comme occupé.
 	 * @param reg Registre occupé.
 	 */
-	public static void occuperRegistre(Registre reg){
+	public void occuperRegistre(Registre reg){
 		regTab[getRegIndex(reg)] = 1;
 	}
 	
-	private static int getRegIndex(Registre reg){
+	private int getRegIndex(Registre reg){
 		int index = 0;
 		switch(reg){
 		case R0: 

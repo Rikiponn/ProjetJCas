@@ -11,6 +11,7 @@ import fr.esisar.compilation.global.src3.*;
 
 class Generation {
 	public static ArrayList<String> decl;
+	public static GestionRegistre reg;
    /**
     * Méthode principale de génération de code.
     * Génère du code pour l'arbre décoré a.
@@ -19,6 +20,7 @@ class Generation {
    static Prog coder(Arbre a) {
       Prog.ajouterGrosComment("Programme généré par JCasc");
       decl = new ArrayList<String>();
+      reg = new GestionRegistre();
       Inst inst;
       // -----------
       // A COMPLETER
@@ -26,6 +28,8 @@ class Generation {
       
       coder_Decl(a.getFils1());
       //Réserve de la place pour les variables locales
+
+			//TODO il faut prendre en compte le fait qu'un tableau c'est plus gros, du coup, la bez
       inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(decl.size()));
       
       coder_Inst(a.getFils2());
@@ -163,6 +167,8 @@ class Generation {
 		   switch(a.getNoeud()){
 		   }
 	   }
+	   
+	   
 	   
 	   return Operande.R0;
    }
