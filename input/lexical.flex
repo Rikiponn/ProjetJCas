@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Fichier d'entrée JFLex pour l'analyseur lexical
+// Fichier d'entrï¿½e JFLex pour l'analyseur lexical
 // ---------------------------------------------------------------------------
 
 package fr.esisar.compilation.syntaxe;
@@ -14,17 +14,17 @@ import java.util.Hashtable;
 %%
 
 // -------------------------------------
-// Début de la partie "directives JFLex"
+// DÃ©but de la partie "directives JFLex"
 // -------------------------------------
 
 // Nom de la classe qui contient l'analyseur lexical.
 // En l'absence de cette directive, cette classe s'appelle Yylex.
 %class Lexical
 
-// Cette classe doit être publique.
+// Cette classe doit Ãªtre publique.
 %public
 
-// On crée un analyseur lexical compatible avec Cup.
+// On crÃ©e un analyseur lexical compatible avec Cup.
 %cup
 
 // Active le comptage des lignes 
@@ -37,7 +37,7 @@ import java.util.Hashtable;
 
 %{
    /**
-    * Le dictionnaire associe à chaque mot réservé le code du lexème 
+    * Le dictionnaire associe Ã  chaque mot rÃ©serve le code du lexÃ¨me 
     * correspondant.
     */
    private final Hashtable<String,Integer> 
@@ -74,7 +74,7 @@ import java.util.Hashtable;
    }
 
    /**
-    * Le numéro de la ligne courante.
+    * Le numÃ©ro de la ligne courante.
     */
    int numLigne() {
       return yyline + 1;
@@ -89,7 +89,7 @@ import java.util.Hashtable;
    }
 
    /**
-    * Convertit un code de lexème en String correspondante.
+    * Convertit un code de lexÃ¨me en String correspondante.
     */
    static String toString(int code_lexeme) {
       switch (code_lexeme) {
@@ -193,7 +193,7 @@ import java.util.Hashtable;
 
 
    /**
-    * Convertit un lexème ("Symbole") en String correspondante.
+    * Convertit un lexÃ¨me ("Symbole") en String correspondante.
     */
    static String toString(Symbol s) {
       String ts;
@@ -223,7 +223,7 @@ import java.util.Hashtable;
 %}
 
 // -------------------------------------
-// Définition des macros
+// DÃ©finition des macros
 // -------------------------------------
 
 CHIFFRE        = [0-9]
@@ -232,7 +232,7 @@ LETTRE         = [a-zA-Z]
 IDF = {LETTRE}({LETTRE}|{CHIFFRE}|"_")*
 
 
-// Macro Delètre
+// Macro DelÃ¨tre
 CHAINE_CAR = "\ "|"!"|[\043-\176]
 CHAINE = \"({CHAINE_CAR}|(\"\"))*\"
 
@@ -240,7 +240,7 @@ COMM_CAR = \t|[\040-\176]
 COMM = "--"{COMM_CAR}*
 
 // ------------
-// Macro Numérique
+// Macro NumÃ©rique
 // ------------
 
 NUM = {CHIFFRE}{CHIFFRE}*
@@ -263,6 +263,7 @@ REEL = {DEC}|{DEC}{EXP}
 // ---------------------------
 
 // Liste des mots connus
+
 [wW][rR][iI][tT][eE]			{ return symbol(sym.WRITE); }
 [wW][hH][iI][lL][eE]				{ return symbol(sym.WHILE); }
 [tT][oO]				{ return symbol(sym.TO); }
@@ -321,12 +322,12 @@ REEL = {DEC}|{DEC}{EXP}
                         }
 
 [ \t]+                 { }
-
+\r					   { }
 \n                     { }
 
 
 
-//Liste d'opérande
+//Liste d'opÃ©rande
 "<"                    { return symbol(sym.INF); }
 ">"                    { return symbol(sym.SUP); }
 "+"                    { return symbol(sym.PLUS); }
