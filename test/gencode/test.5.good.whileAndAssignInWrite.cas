@@ -5,52 +5,52 @@ begin
     b := 10;
 
 	WHILE i < 10 DO i := i + 1; END;
-    write("i doit être égale à 10 : ");
+    write("i doit etre egale a 10 : ");
     write(i);
     new_line;
 
     WHILE i > 0 DO i := i - 1; END;
-    write("i doit être égale à 0 : ");
+    write("i doit etre egale a 0 : ");
     write(i);
     new_line;
 
     WHILE i <= 10 DO i := i + 1; END;
-    write("i doit être égale à 11 : ");
+    write("i doit etre egale a 11 : ");
     write(i);
     new_line;
 
     WHILE i >= 0 DO i := i - 1; END;
-    write("i doit être égale à -1 : ");
+    write("i doit etre egale a -1 : ");
     write(i);
     new_line;
 
-    b := 10
+    b := 10;
     WHILE i < b DO i := i + 1; END;
-    write("i doit être égale à ");
+    write("i doit etre egale a ");
     write(b);
     write(" : ");
     write(i);
     new_line;
 
-    b := 0
+    b := 0;
     WHILE i > b DO i := i - 1; END;
-    write("i doit être égale à ");
+    write("i doit etre egale a ");
     write(b);
     write(" : ");
     write(i);
     new_line;
 
-    b := 10
+    b := 10;
     WHILE i <= b DO i := i + 1; END;
-    write("i doit être égale à ");
+    write("i doit etre egale a ");
     write(b + 1);
     write(" : ");
     write(i);
     new_line;
 
-    b := 0
+    b := 0;
     WHILE i >= b DO i := i - 1; END;
-    write("i doit être égale à ");
+    write("i doit etre egale a ");
     write(b - 1);
     write(" : ");
     write(i);

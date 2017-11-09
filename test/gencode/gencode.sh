@@ -7,7 +7,7 @@ do
     echo "---------------------------------------------------------------------"
     echo "Fichier : $fich"
     echo "---------------------------------------------------------------------"
-    cd ../../classes ; java -cp .:../lib/java-cup-11a-runtime.jar fr.esisar.compilation.gencode/JCasc ../test/gencode/$fich
+    cd ../../classes ; java -cp .;../lib/java-cup-11a-runtime.jar fr.esisar.compilation.gencode/JCasc ../test/gencode/$fich
     echo "---------------------------------------------------------------------"
     echo "Appuyer sur Return"
     read r

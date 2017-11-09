@@ -97,6 +97,7 @@ begin
     read(o);
 	FOR a := 1 TO 10 DO b:=b; END;
 	FOR a := 10 DOWNTO 1 DO b := b; END;
+    WHILE c DO b := b; END;
 	NEW_LINE;
     write("OKI");
     write(a);

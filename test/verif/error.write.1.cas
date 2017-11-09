@@ -4,5 +4,6 @@ program
     e : array[1..10] of integer;
     f : Array[1..10] of integer;
 begin
+    a := 5;
     write(a);
 end.

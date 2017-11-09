@@ -324,7 +324,7 @@ REEL = {DEC}|{DEC}{EXP}
 [ \t]+                 { }
 \r					   { }
 \n                     { }
-
+\r					   { }
 
 
 //Liste d'opérande
