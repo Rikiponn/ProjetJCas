@@ -2,16 +2,13 @@ package fr.esisar.compilation.global.src3;
 
 public class GestionRegistre {
 	
-	private int[] regTab = new int[18];
+	private static int[] regTab = new int[18];
 	
 	/**Méthode initialisant tous les registres à l'état LIBRE.
 	 * Méthode à appeler en début de programme.
 	 */
-	public GestionRegistre(){
-		this.initRegTab();
-	}
 	
-	public void initRegTab(){
+	public static void initRegTab(){
 		for(int i = 0; i<regTab.length; i++){
 			regTab[i] = 0;
 		}
@@ -21,36 +18,52 @@ public class GestionRegistre {
 	 * @param reg Registre à tester
 	 * @return Etat du registre, TRUE s'il est libre, FALSE s'il est occupé.
 	 */
-	public boolean estRegistreLibre(Registre reg){
+	public static boolean estRegistreLibre(Registre reg){
 		if(regTab[getRegIndex(reg)] == 0){
 			return true;
 		}
 		return false;
 	}
 	
-	public void getRegTab(){
+	/**
+	 * Retourne le premier Registre libre
+	 * Réserve ce registre
+	 * @return index Operande lié au registre libre
+	 */
+	public static Operande getFreeRegTab(){
 		for(int i = 0; i<regTab.length; i++){
-			regTab[i] = 0;
+			if(regTab[i] == 0){
+				Operande index=GestionRegistre.getRegOp(i);		
+				GestionRegistre.occuperRegistre(i);
+				return index;
+			}
 		}
+		return null;
 	}
 	
 	/**
 	 * Méthode permettant de marquer un registre comme libéré.
 	 * @param reg Registre libéré.
 	 */
-	public void libererRegistre(Registre reg){
+	public static void libererRegistre(Registre reg){
 		regTab[getRegIndex(reg)] = 0;
+	}
+	public static void libererRegistre(int i){
+		regTab[i] = 0;
 	}
 	
 	/**
 	 * Méthode permettant de marquer un registre comme occupé.
 	 * @param reg Registre occupé.
 	 */
-	public void occuperRegistre(Registre reg){
+	public static void occuperRegistre(Registre reg){
 		regTab[getRegIndex(reg)] = 1;
 	}
+	public static void occuperRegistre(int i){
+		regTab[i] = 1;
+	}
 	
-	private int getRegIndex(Registre reg){
+	private static int getRegIndex(Registre reg){
 		int index = 0;
 		switch(reg){
 		case R0: 
@@ -108,8 +121,66 @@ public class GestionRegistre {
 			index = 17;
 			break;
 		}
-		
 		return index;		
 	}
-
+	private static Operande getRegOp(int i){
+		Operande index=null;
+		switch(i){
+		case 0: 
+			index = Operande.R0;
+			break;		
+		case 1: 
+			index = Operande.R1;
+			break;	
+		case 2: 
+			index = Operande.R2;
+			break;	
+		case 3: 
+			index = Operande.R3;
+			break;	
+		case 4: 
+			index = Operande.R4;
+			break;	
+		case 5:
+			index = Operande.R5;
+			break;	
+		case 6:
+			index = Operande.R6;
+			break;	
+		case 7:
+			index = Operande.R7;
+			break;	
+		case 8:
+			index = Operande.R8;
+			break;	
+		case 9:
+			index = Operande.R9;
+			break;	
+		case 10:
+			index = Operande.R10;
+			break;	
+		case 11:
+			index = Operande.R11;
+			break;	
+		case 12: 
+			index = Operande.R12;
+			break;	
+		case 13: 
+			index = Operande.R13;
+			break;	
+		case 14: 
+			index = Operande.R14;
+			break;	
+		case 15:
+			index = Operande.R15;
+			break;	
+		case 16: 
+			index = Operande.GB;
+			break;	
+		case 17:
+			index = Operande.LB;
+			break;
+		}
+		return index;
+	}
 }
