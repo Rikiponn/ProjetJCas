@@ -7,5 +7,6 @@ program
     h : array[1..10] of array[1..5] of boolean;
 begin
     e[5] := a;
+    write(e[5]);
 end.
 
