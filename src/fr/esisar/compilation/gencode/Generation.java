@@ -78,7 +78,7 @@ class Generation {
    }
    
    private static void coder_Ecriture(Arbre a){
-
+	   Registre r = null;
 	   //Si l'arbre est vide, on arrete la fonction
 	   if(a.getNoeud().equals(Noeud.Vide)){
 		   return;
@@ -94,21 +94,65 @@ class Generation {
 	   }
 	   //Sinon, celà veut dire qu'on est le plus profond possible, et qu'on ne se servira pas du fils 1 (car il est Vide)
 	   else{
+		   //Si on veut écrire un integer
+		   if(f2.getDecor().getType().equals(Type.Integer)){
+			   //Si R1 est occupé
+			   Operande op = coder_EXP(f2);
+			   if(!GestionRegistre.estRegistreLibre(1)){		    
+				   r = GestionRegistre.deplaceRegistre(Registre.R1);
+			   }
+			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+			   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
+			   inst = Inst.creation0(Operation.WINT);
+			   Prog.ajouter(inst,"Ecriture de l'entier");
+			   
+			   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
+			   if(r.equals(Registre.R1)){
+				   inst = Inst.creation1(Operation.POP, Operande.R1);
+				   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
+			   }
+			   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
+			   else{
+				   if(r != null){
+					   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
+					   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
+				   }
+			   }
+
+		   }
+		   //Si on veut écrire un real
+		   if(f2.getDecor().getType().equals(Type.Real)){
+			   //Si R1 est occupé
+			   Operande op = coder_EXP(f2);
+			   if(!GestionRegistre.estRegistreLibre(1)){		    
+				   r = GestionRegistre.deplaceRegistre(Registre.R1);
+			   }
+			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+			   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
+			   inst = Inst.creation0(Operation.WFLOAT);
+			   Prog.ajouter(inst,"Ecriture d'un réel" );
+			   
+			   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
+			   if(r.equals(Registre.R1)){
+				   inst = Inst.creation1(Operation.POP, Operande.R1);
+				   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
+			   }
+			   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
+			   else{
+				   if(r != null){
+					   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
+					   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
+				   }
+			   }
+		   }
+		   
 		   //Si on veut écrire un string
 		   if(f2.getDecor().getType().equals(Type.String)){
 			   Inst inst = Inst.creation1(Operation.WSTR,Operande.creationOpChaine(f2.getChaine()));
 			   Prog.ajouter(inst,"Ecriture du string : "+f2.getChaine());
 		   }
-		   //Si on veut écrire un integer
-		   if(f2.getDecor().getType().equals(Type.Integer)){
-			   Inst inst = Inst.creation1(Operation.WINT,coder_EXP(f2));
-			   Prog.ajouter(inst,"Ecriture de l'integer : " );
-		   }
-		   //Si on veut écrire un real
-		   if(f2.getDecor().getType().equals(Type.Real)){
-			   Inst inst = Inst.creation1(Operation.WFLOAT,coder_EXP(f2));
-			   Prog.ajouter(inst,"Ecriture du reel : " );
-		   }
+		   
+		   
 	   }
    }
    

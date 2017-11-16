@@ -658,13 +658,16 @@ public class Verif {
 				e = ErreurContext.ErreurType;
 				e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 			}
-			
 			a = a.getFils1();
 			
 			if(a.getArite() != 2){
 	   			   e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 		   }
+		}
+		if(verif_Exp(a.getFils2()) == Type.Boolean) {
+			e = ErreurContext.ErreurType;
+			e.leverErreurContext(a.getFils2().getDecor().getType().toString(), a.getNumLigne());
 			
 		}
 	}

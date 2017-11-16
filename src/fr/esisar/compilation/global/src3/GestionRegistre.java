@@ -24,13 +24,19 @@ public class GestionRegistre {
 		}
 		return false;
 	}
+	public static boolean estRegistreLibre(int i){
+		if(regTab[i] == 0){
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * Retourne le premier Registre libre
 	 * Réserve ce registre
 	 * @return index Operande lié au registre libre
 	 */
-	public static Operande getFreeRegTab(){
+	public static Operande getFreeRegToOpTab(){
 		for(int i = 0; i<regTab.length; i++){
 			if(regTab[i] == 0){
 				Operande index=GestionRegistre.getRegOp(i);		
@@ -39,7 +45,27 @@ public class GestionRegistre {
 			}
 		}
 		return null;
+	}   
+	public static Registre getFreeRegTab(){
+		return getFreeRegToOpTab().getRegistre();
 	}
+	
+	 /**
+	    * Déplace le contenu du registre en param, vers un autre registre libre ou en pile si aucun autre registre n'est dispo si celui-ci est occupé
+	    * @param reg
+	    * @return indique si la fonction a mis le précédent registre en pile (aka si la valeur de retour est égale au param)
+	    */
+	public static Registre deplaceRegistre(Registre reg){
+	   	if(!estRegistreLibre(reg)){
+	   		Registre r1 = getFreeRegTab();
+	   		libererRegistre(reg);
+	   		return r1;
+	   	}
+	   	Inst inst = Inst.creation1(Operation.PUSH,Operande.opDirect(reg));
+	   	Prog.ajouter(inst,"Placement en pile de "+reg.toString());
+	   	return reg;
+   }
+	
 	
 	/**
 	 * Méthode permettant de marquer un registre comme libéré.
