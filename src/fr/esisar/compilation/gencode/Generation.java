@@ -56,12 +56,61 @@ class Generation {
    			coder_Decl(a.getFils1());
 			coder_Decl(a.getFils2());
    			break;
-   		case ListeIdent:
-   			decl.add(a.getFils2().getChaine());
-			coder_Decl(a.getFils1());
+   		case Decl :
+   			create_Variables(a.getFils2(),get_Idents(a.getFils1()));
+   			break;
+   		default :
+   			break;
 	   }
    }
    
+   /**
+    * L'arbre a étant un Tableau, un intervalle ou un Ident, créé autant de variables que d(éléments)*(les identifiants stockés dans idents) 
+    * @param a le sous-arbre
+    * @param idents un array d'idents qui doivent être déclarés avec le type de a
+    */
+   private static void create_Variables(Arbre a, ArrayList<String> idents) {
+	   switch(a.getNoeud()) {
+	   case Ident :
+	   case Intervalle :
+		   for(int i=0;i<idents.size();i++) {
+			   decl.add(idents.get(i));
+		   }
+		   break;
+	   case Tableau :
+		   ArrayList<String> identsPlus = new ArrayList<String>();
+		   for(int i=0;i<idents.size();i++) {
+			   for(int j=a.getFils1().getFils1().getEntier();j<=a.getFils1().getFils2().getEntier();j++) {
+				   identsPlus.add(idents.get(i)+"["+Integer.toString(j)+"]");
+				   create_Variables(a.getFils2(),identsPlus);
+			   }
+		   }
+		   break;
+	   default :
+		   break;
+	   }
+   }
+   
+   /**
+    * Etant donné une liste d'ident a, renvoie un arrayList contenant l'ensemble des ident de cette liste.
+    * @param a une Liste_Ident
+    * @return liste de String
+    */
+   private static ArrayList<String> get_Idents(Arbre a) {
+	   ArrayList<String> liste = new ArrayList<String>();
+	   switch(a.getNoeud()) {
+	   case ListeIdent :
+		   liste = get_Idents(a.getFils1());
+		   liste.add(a.getFils2().getChaine());
+		   break;
+	   case Ident :
+		   liste.add(a.getChaine());
+		   break;
+		default :
+			break;
+	   }
+	   return liste;
+   }
    
    private static void coder_Inst(Arbre a){
 	   switch(a.getNoeud()){
@@ -218,6 +267,5 @@ class Generation {
    }
    
 }
-
 
 
