@@ -126,82 +126,83 @@ class Generation {
 	   }   
    }
    
+   //TODO voir le cas où on passe dans le premier else, ça me semble ambiguë ma merde
    private static void coder_Ecriture(Arbre a){
 	   Registre r = null;
-	   //Si l'arbre est vide, on arrete la fonction
-	   if(a.getNoeud().equals(Noeud.Vide)){
-		   return;
-	   }
-	   //Sinon on descend dans l'arbre
+
+	   //On descend dans l'arbre
 	   Arbre f1 = a.getFils1();
 	   Arbre f2 = a.getFils2();
 	   
 	   //Si le fils 1 est un Liste exp, on fais un appel recursif pour descendre
 	   if(f1.equals(Noeud.ListeExp)){
-		   coder_Ecriture(f1.getFils1());
-		   coder_Ecriture(f1.getFils2());
+		   coder_Ecriture(f1);
 	   }
-	   //Sinon, celà veut dire qu'on est le plus profond possible, et qu'on ne se servira pas du fils 1 (car il est Vide)
-	   else{
-		   //Si on veut écrire un integer
-		   if(f2.getDecor().getType().equals(Type.Integer)){
-			   //Si R1 est occupé
-			   Operande op = coder_EXP(f2);
-			   if(!GestionRegistre.estRegistreLibre(1)){		    
-				   r = GestionRegistre.deplaceRegistre(Registre.R1);
-			   }
-			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
-			   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
-			   inst = Inst.creation0(Operation.WINT);
-			   Prog.ajouter(inst,"Ecriture de l'entier");
-			   
-			   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-			   if(r.equals(Registre.R1)){
-				   inst = Inst.creation1(Operation.POP, Operande.R1);
-				   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
-			   }
-			   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
-			   else{
-				   if(r != null){
-					   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
-					   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
-				   }
-			   }
-
+	   //Dans tout les cas, le fils 2 est une Expression, donc on l'écrit
+	   
+	   //Si on veut écrire un integer
+	   if(f2.getDecor().getType().equals(Type.Integer)){
+		   Operande op = coder_EXP(f2);
+		   //Si R1 est occupé
+		   if(!GestionRegistre.estRegistreLibre(1)){
+			   //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
+			   r = GestionRegistre.deplaceRegistre(Registre.R1);
 		   }
-		   //Si on veut écrire un real
-		   if(f2.getDecor().getType().equals(Type.Real)){
-			   //Si R1 est occupé
-			   Operande op = coder_EXP(f2);
-			   if(!GestionRegistre.estRegistreLibre(1)){		    
-				   r = GestionRegistre.deplaceRegistre(Registre.R1);
-			   }
-			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
-			   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
-			   inst = Inst.creation0(Operation.WFLOAT);
-			   Prog.ajouter(inst,"Ecriture d'un réel" );
-			   
-			   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-			   if(r.equals(Registre.R1)){
-				   inst = Inst.creation1(Operation.POP, Operande.R1);
-				   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
-			   }
-			   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
-			   else{
-				   if(r != null){
-					   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
-					   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
-				   }
+		   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+		   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
+		   inst = Inst.creation0(Operation.WINT);
+		   Prog.ajouter(inst,"Ecriture de l'entier");
+		   
+		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
+		   if(r.equals(Registre.R1)){
+			   inst = Inst.creation1(Operation.POP, Operande.R1);
+			   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
+		   }
+		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
+		   else{
+			   if(r != null){
+				   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
+				   GestionRegistre.libererRegistre(r);
+				   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
 			   }
 		   }
-		   
-		   //Si on veut écrire un string
-		   if(f2.getDecor().getType().equals(Type.String)){
-			   Inst inst = Inst.creation1(Operation.WSTR,Operande.creationOpChaine(f2.getChaine()));
-			   Prog.ajouter(inst,"Ecriture du string : "+f2.getChaine());
+		   //On libère R1
+		   GestionRegistre.libererRegistre(1);
+	   }
+	   
+	   //Si on veut écrire un real
+	   if(f2.getDecor().getType().equals(Type.Real)){
+		   //Si R1 est occupé
+		   Operande op = coder_EXP(f2);
+		   if(!GestionRegistre.estRegistreLibre(1)){		    
+			   r = GestionRegistre.deplaceRegistre(Registre.R1);
 		   }
+		   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+		   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
+		   inst = Inst.creation0(Operation.WFLOAT);
+		   Prog.ajouter(inst,"Ecriture d'un réel" );
 		   
-		   
+		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
+		   if(r.equals(Registre.R1)){
+			   inst = Inst.creation1(Operation.POP, Operande.R1);
+			   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
+		   }
+		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
+		   else{
+			   if(r != null){
+				   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
+				   GestionRegistre.libererRegistre(r);
+				   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
+			   }
+		   }
+		   //On libère R1
+		   GestionRegistre.libererRegistre(1);
+	   }
+	   
+	   //Si on veut écrire un string
+	   if(f2.getDecor().getType().equals(Type.String)){
+		   Inst inst = Inst.creation1(Operation.WSTR,Operande.creationOpChaine(f2.getChaine()));
+		   Prog.ajouter(inst,"Ecriture du string : "+f2.getChaine());
 	   }
    }
    

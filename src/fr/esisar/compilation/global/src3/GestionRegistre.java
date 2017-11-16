@@ -69,11 +69,15 @@ public class GestionRegistre {
 	
 	/**
 	 * Méthode permettant de marquer un registre comme libéré.
-	 * @param reg Registre libéré.
+	 * @param reg Registre a libéré.
 	 */
 	public static void libererRegistre(Registre reg){
 		regTab[getRegIndex(reg)] = 0;
 	}
+	/**
+	 * Méthode permettant de marquer un registre comme libéré.
+	 * @param i numéro du registre a libéré.
+	 */
 	public static void libererRegistre(int i){
 		regTab[i] = 0;
 	}
