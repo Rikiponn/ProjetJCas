@@ -1,0 +1,7 @@
+program
+begin
+    write("Pouet", "pouet");
+    write("m","o","u","l","t"," ","p","o","u","e","t"," "!");
+    write("Pouet", "pouet", "pouet", "pouet", "pouet", "pouet", "pouet");
+end.
+
