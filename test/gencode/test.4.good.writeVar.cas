@@ -9,6 +9,7 @@ begin
     a := 5;
     c := 6.0;
     e[5] := 2;
+    g[1][1] := -5;
 
     write(a);
     new_line;
@@ -16,5 +17,6 @@ begin
     new_line;
     write(e[5]);
     new_line;
+    write(g[1][1]);
 end.
 
