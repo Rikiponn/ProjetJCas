@@ -1,4 +1,8 @@
 @echo off
+
+set build=g
+set /p build=Pas a pas (p) ou global (g) ? (default to g) :
+
 for %%a IN (*.cas) do (
 echo --------------------------------------------------------------------
 echo Fichier : %%a
@@ -12,7 +16,10 @@ del *.ass
 cd ..\test\gencode
 echo ---------------------------------------------------------------------
 echo. 
-pause
+if %build% == p pause
+
 echo.
 )
 
+echo Fin de la compilation
+pause
