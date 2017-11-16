@@ -14,11 +14,5 @@ begin
     f[10] := 10;
     g[1][1] := -5;
     h[10][5] := true;
-
-    write(a);
-    write(b);
-    write(e[1]);
-    write(f[10]);
-    write(g[1][1]);
 end.
 
