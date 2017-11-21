@@ -23,7 +23,7 @@ public class Verif {
     * Les contraintes contextuelles sont décrites 
     * dans Context.txt.
     * En cas d'erreur contextuelle, un message d'erreur est affiché et 
-    * l'exception ErreurVerif est levée.
+    * l'exception ErreurVerif est levée. 
     */
    public void verifierDecorer(Arbre a) throws ErreurVerif {
       verif_PROGRAMME(a);
@@ -136,7 +136,12 @@ public class Verif {
 		   e.leverErreurContext(null, a.getNumLigne());
 	   }
    }
-   
+   /**
+    * Cette fonction renvoie l'entier pointé par a, a pouvant être un MoinsUnaire, PlusUnaire ou Entier
+    * @param a Arbre
+    * @return L'entier pointé par a
+    * @throws ErreurVerif S'il n'y a pas d'entier dans la branche de a.
+    */
    private int getIntArbre(Arbre a) throws ErreurVerif{
 	   switch(a.getNoeud()) {
 	   case Entier :
@@ -632,6 +637,9 @@ public class Verif {
 		   }
 		   else {
 			   verif_Index(a.getFils1());
+			   if(!(verif_Exp(a.getFils2()).equals(Type.Integer)));
+			   e = ErreurContext.ErreurEntierAttendu;
+			   e.leverErreurContext(null, a.getNumLigne());
 			   return cherche_Type(a);
 		   }
 	   }
