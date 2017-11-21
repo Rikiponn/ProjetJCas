@@ -212,29 +212,114 @@ class Generation {
 	   //Il faut donc utiliser la fonction getGrosRegistreLibre()
 	   //Il faut ensuite modifier le tableau regTab pour indiquer les registres qui ne sont plus disponible
 	   //
+	   
 	   if(a.getArite()==1){
+		   
+	   		String varName;
+  			int placeEnPile;
+  			Operande registreLibre;
+  			
 		   switch(a.getNoeud()){
 		   	case Non:
+	   			registreLibre = GestionRegistre.getFreeRegToOpTab();
+	   			if(a.getFils1().getNoeud()==Noeud.Ident){
+
+	   				varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
+		   			
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), registreLibre);
+		   				Prog.ajouter(loadInst, "Chargement de la variable booleenne false (0) dans le registre " + registreLibre.getRegistre().toString());
+		   				return registreLibre;
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), registreLibre);
+		   				Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + registreLibre.getRegistre().toString());
+		   				return registreLibre;
+		   			}
+		   			else{ //TODO il faut agir en fonction de la valeur dans le registre
+		   				if(a.getFils1().getDecor().getType() == Type.Boolean){
+				   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
+				   			Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + registreLibre.getRegistre().toString());		   				
+			   			}
+		   			}
+		   			
+		   			
+	   			}
+	   			
+		   		
 		   		break;
 		   	
 		   	case PlusUnaire:
-		   		break;
+	   			registreLibre = GestionRegistre.getFreeRegToOpTab();
+	   			
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			
+		   			varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
+		   			
+			   		if(a.getFils1().getDecor().getType()==Type.Integer || a.getFils1().getDecor().getType()==Type.Real){
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
+			   			Prog.ajouter(loadInst, "Chargement de la variable dans le registre " + registreLibre.getRegistre().toString());
+			   		}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), registreLibre);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur entiere dans le registre " + registreLibre.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getEntier()), registreLibre);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + registreLibre.getRegistre().toString());
+		   			}
+		   		}
+		   		return registreLibre;
 		   	
 		   	case MoinsUnaire:
-		  		break;
+	   			registreLibre = GestionRegistre.getFreeRegToOpTab();
+	   			
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			
+			   		varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
+		   			
+			   		if(a.getFils1().getDecor().getType()==Type.Integer || a.getFils1().getDecor().getType()==Type.Real){
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
+			   			Inst moinsUnaire = Inst.creation2(Operation.MUL, Operande.creationOpEntier(-1), registreLibre);
+			   			Prog.ajouter(loadInst, "Chargement de la variable dans le registre " + registreLibre.getRegistre().toString());
+			   			Prog.ajouter(moinsUnaire, "Operation moins unaire et resultat mis dans le registre " + registreLibre.getRegistre().toString() );
+			   		}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), registreLibre);
+		   				Inst moinsUnaire = Inst.creation2(Operation.MUL, Operande.creationOpEntier(-1), Operande.creationOpEntier(a.getFils1().getEntier()));
+			   			Prog.ajouter(loadInst, "Chargement de la valeur entiere dans le registre " + registreLibre.getRegistre().toString());
+			   			Prog.ajouter(moinsUnaire, "Operation moins unaire et resultat mis dans le registre " + registreLibre.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getEntier()), registreLibre);
+		   				Inst moinsUnaire = Inst.creation2(Operation.MUL, Operande.creationOpEntier(-1), Operande.creationOpReel(a.getFils1().getReel()));
+			   			Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + registreLibre.getRegistre().toString());
+			   			Prog.ajouter(moinsUnaire, "Operation moins unaire et resultat mis dans le registre " + registreLibre.getRegistre().toString());
+		   			}
+		   			
+		   		}
+	   			return registreLibre;
+		   
 		   }
 	   }
 	   if(a.getArite()==2){
 		   switch(a.getNoeud()){
 		   	case Et :
 		   	case Mult :
-		   		// Il faudrai faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre 
+		   		// Il faudrait faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre 
 		   		inst = Inst.creation2(Operation.MUL, coder_EXP(a.getFils1()), coder_EXP(a.getFils2()));
 		   		break;
 		   		
 	   		case Ou :
 	   		case Plus :
-	   			// Il faudrai faire en sorte que si la valeur de a.getFils1() est à vrai, ne pas évaluer le deuxième et juste mettre vrai (pour le OU) dans un registre 
+	   			// Il faudrait faire en sorte que si la valeur de a.getFils1() est à vrai, ne pas évaluer le deuxième et juste mettre vrai (pour le OU) dans un registre 
 	   			inst = Inst.creation2(Operation.ADD, coder_EXP(a.getFils1()), coder_EXP(a.getFils2()));
 		   		break;
 		   		
