@@ -31,18 +31,19 @@ class Generation {
 
 			//TODO il faut prendre en compte le fait qu'un tableau c'est plus gros, du coup, la bez
       inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(decl.size()));
-      Prog.ajouter(inst,"test");
+      Prog.ajouter(inst,"Réservation en pile des variables locales");
       
       coder_Inst(a.getFils2());
       // L'instruction "new_line"
       // L'instruction "write"
       
 
-      // Fin du programme
-      // L'instruction "HALT"
+
       inst = Inst.creation1(Operation.SUBSP, Operande.creationOpEntier(decl.size()));
       // On ajoute l'instruction à la fin du programme
       Prog.ajouter(inst,"test");
+      // Fin du programme
+      // L'instruction "HALT"
       inst = Inst.creation0(Operation.HALT);
       // On ajoute l'instruction à la fin du programme
       Prog.ajouter(inst,"On arrete le programme");
@@ -163,8 +164,7 @@ class Generation {
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
 		   if(r.equals(Registre.R1)){
-			   inst = Inst.creation1(Operation.POP, Operande.R1);
-			   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
+			   GestionRegistre.popPile(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
 		   else{
@@ -192,8 +192,7 @@ class Generation {
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
 		   if(r.equals(Registre.R1)){
-			   inst = Inst.creation1(Operation.POP, Operande.R1);
-			   Prog.ajouter(inst,"Registre retablis depuis la pile après écriture");
+			   GestionRegistre.popPile(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
 		   else{
@@ -322,7 +321,7 @@ class Generation {
 		   	case Et :
 		   	case Mult :
 		   		// Il faudrait faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre 
-		   		inst = Inst.creation2(Operation.MUL, coder_EXP(a.getFils1()), coder_EXP(a.getFils2()));
+		   		
 		   		break;
 		   		
 	   		case Ou :
@@ -360,6 +359,7 @@ class Generation {
 	   return Operande.R0;
    }
    
+
 }
 
 
