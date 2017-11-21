@@ -20,7 +20,7 @@ class Generation {
    static Prog coder(Arbre a) {
       Prog.ajouterGrosComment("Programme généré par JCasc");
       decl = new ArrayList<String>();
-      reg = new GestionRegistre();
+      GestionRegistre.initRegTab();
       Inst inst;
       // -----------
       // A COMPLETER
@@ -143,7 +143,7 @@ class Generation {
 	   Arbre f2 = a.getFils2();
 	   
 	   //Si le fils 1 est un Liste exp, on fais un appel recursif pour descendre
-	   if(f1.equals(Noeud.ListeExp)){
+	   if(f1.getNoeud().equals(Noeud.ListeExp)){
 		   coder_Ecriture(f1);
 	   }
 	   //Dans tout les cas, le fils 2 est une Expression, donc on l'écrit
