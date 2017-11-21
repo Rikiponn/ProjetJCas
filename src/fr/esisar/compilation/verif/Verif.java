@@ -637,9 +637,10 @@ public class Verif {
 		   }
 		   else {
 			   verif_Index(a.getFils1());
-			   if(!(verif_Exp(a.getFils2()).equals(Type.Integer)));
-			   e = ErreurContext.ErreurEntierAttendu;
-			   e.leverErreurContext(null, a.getNumLigne());
+			   if(!(verif_Exp(a.getFils2()).equals(Type.Integer)));{
+				   e = ErreurContext.ErreurEntierAttendu;
+				   e.leverErreurContext(null, a.getNumLigne());
+			   }
 			   return cherche_Type(a);
 		   }
 	   }

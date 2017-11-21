@@ -122,6 +122,7 @@ class Generation {
 		 //Attention, le fils d'un Noeud Ecriture est un Noeud.ListeExp qui contient lui même des Noeud.ListeExp
 		   coder_Ecriture(a.getFils1());
 		   break;
+	   case Lecture :
 		   
 	   case Ligne:
 		   inst = Inst.creation0(Operation.WNL);
@@ -211,6 +212,51 @@ class Generation {
 	   if(f2.getDecor().getType().equals(Type.String)){
 		   Inst inst = Inst.creation1(Operation.WSTR,Operande.creationOpChaine(f2.getChaine()));
 		   Prog.ajouter(inst,"Ecriture du string : "+f2.getChaine());
+	   }
+   }
+   
+   /**
+    * A étant un Noeud.Index, charge la zone mémoire pointée par a dans un registre et le renvoie
+    * @param a un Noeud.Index
+    * @return Un opérande contenant la valeur pointée par a
+    */
+   private static Operande load_Index(Arbre a) {
+	   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
+	   a.getDecor().getType().getBorneInf();
+	   a.getDecor().getType().getBorneSup();
+	   load_Index(a.getFils1());
+	   coder_EXP(a.getFils2());
+	   
+	   return registreLibre;
+   }
+   /* TODO A TERMINER TIMOTHEE
+   private static Operande getSubIndex(Arbre a) {
+	   if(a.getNoeud().equals(Noeud.Index)) {
+		   int len = getLength(a.getFils1());
+		   Operande subexp = getSubIndex(a.getFils1());
+		   Operande exp = coder_EXP(a.getFils2());
+		   Inst.creation2(Operation.MULTipl, Operande.creationOpEntier(0), registreLibre);
+	   }
+	   else {
+		   return GestionRegistre.getFreeRegToOpTab();
+	   }
+   }*/
+   
+   private static int getLength(Arbre a) {
+	   if(a.getNoeud().equals(Noeud.Index)) {
+		   return((a.getDecor().getType().getBorneSup() - a.getDecor().getType().getBorneInf() + 1)*getLength(a.getFils1()));
+	   }
+	   else {
+		   return 1;
+	   }
+   }
+   
+   private static String getIdent(Arbre a) {
+	   if(a.getNoeud().equals(Noeud.Ident)) {
+		   return a.getChaine();
+	   }
+	   else {
+		   return getIdent(a.getFils1());
 	   }
    }
    
