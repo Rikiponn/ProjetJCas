@@ -137,6 +137,21 @@ public class Verif {
 	   }
    }
    
+   private int getIntArbre(Arbre a) throws ErreurVerif{
+	   switch(a.getNoeud()) {
+	   case Entier :
+		   return a.getEntier();
+	   case MoinsUnaire :
+	   case PlusUnaire :
+		   return getIntArbre(a.getFils1());
+	   case Ident :
+	   default :
+		   ErreurContext e = ErreurContext.ErreurEntierAttendu;
+		   e.leverErreurContext(null, a.getNumLigne());
+	   }
+	   return 0;
+   }
+   
    private Type cherche_TypeDecl(Arbre a) throws ErreurVerif{
 	   switch(a.getNoeud()){
 		   case Tableau:
@@ -144,7 +159,7 @@ public class Verif {
 	   			   ErreurContext e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
-			   return(Type.creationArray(Type.creationInterval(a.getFils1().getFils1().getEntier(), a.getFils1().getFils2().getEntier()), cherche_TypeDecl(a.getFils2())));
+			   return(Type.creationArray(Type.creationInterval(getIntArbre(a.getFils1().getFils1()), getIntArbre(a.getFils1().getFils2())), cherche_TypeDecl(a.getFils2())));
 		   case Ident:
 			   if(a.getChaine().toLowerCase().equals("integer")){
 				   return Type.Integer;
@@ -161,7 +176,7 @@ public class Verif {
 			   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
   			   e.leverErreurContext(a.getChaine(), a.getNumLigne());
 		   case Intervalle:
-			   return Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier());
+			   return Type.creationInterval(getIntArbre(a.getFils1()), getIntArbre(a.getFils2()));
 			   
 			
 		default:
@@ -170,9 +185,9 @@ public class Verif {
    }
    private Type cherche_Type(Arbre a) throws ErreurVerif{
 	   ErreurContext e;
-	   switch(a.getNoeud()){
+	switch(a.getNoeud()){
 	   	   case Intervalle:
-	   		   return(Type.creationInterval(a.getFils1().getEntier(), a.getFils2().getEntier()));
+	   		   return(Type.creationInterval(getIntArbre(a.getFils1()),getIntArbre(a.getFils2())));
 	   	   case Index:
 	   		   if(a.getFils2().getNoeud().equals(Noeud.MoinsUnaire)){
 	   			   e = ErreurContext.ErreurIndexNegatif;
@@ -215,7 +230,7 @@ public class Verif {
 	   			   e = ErreurContext.ErreurArite;
 	   			   e.leverErreurContext(null, a.getNumLigne());
 	   		   }
-			   return(Type.creationArray(Type.creationInterval(a.getFils1().getFils1().getEntier(), a.getFils1().getFils2().getEntier()), cherche_Type(a.getFils2())));
+			   return(Type.creationArray(Type.creationInterval(getIntArbre(a.getFils1().getFils1()), getIntArbre(a.getFils1().getFils2())), cherche_Type(a.getFils2())));
 		   case Ident:
 			   if(env.chercher(a.getChaine()) == null){
 				   e = ErreurContext.ErreurIdentNonDeclaree;
@@ -435,8 +450,13 @@ public class Verif {
 			   type1 = cherche_Type(a.getFils1());
 		   }
 		   else{
-			   
-			   //Si l'ident utilisé n'existe pas dans l'environnement : erreur
+			   // Si l'ident est true, false ou max_int : erreur (interdit)
+			   String name = a.getFils1().getChaine();
+			   if(name.equals("true") || name.equals("false") || name.equals("max_int")) {
+				   ErreurContext e = ErreurContext.ErreurIdentReserve;
+				   e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
+			   }
+			 //Si l'ident utilisé n'existe pas dans l'environnement : erreur
 			   if(env.chercher(a.getFils1().getChaine()) == null){
 				   ErreurContext e = ErreurContext.ErreurIdentNonDeclaree;
 				   e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
