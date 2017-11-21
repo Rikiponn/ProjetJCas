@@ -25,12 +25,13 @@ class Generation {
       // -----------
       // A COMPLETER
       // -----------
-      /*
+      
       coder_Decl(a.getFils1());
       //Réserve de la place pour les variables locales
 
 			//TODO il faut prendre en compte le fait qu'un tableau c'est plus gros, du coup, la bez
       inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(decl.size()));
+      Prog.ajouter(inst,"test");
       
       coder_Inst(a.getFils2());
       // L'instruction "new_line"
@@ -40,15 +41,8 @@ class Generation {
       // Fin du programme
       // L'instruction "HALT"
       inst = Inst.creation1(Operation.SUBSP, Operande.creationOpEntier(decl.size()));
-      */
-      inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(4));
       // On ajoute l'instruction à la fin du programme
       Prog.ajouter(inst,"test");
-      
-      inst = Inst.creation1(Operation.SUBSP, Operande.creationOpEntier(4));
-      // On ajoute l'instruction à la fin du programme
-      Prog.ajouter(inst,"test2");
-      
       inst = Inst.creation0(Operation.HALT);
       // On ajoute l'instruction à la fin du programme
       Prog.ajouter(inst,"On arrete le programme");
@@ -122,6 +116,7 @@ class Generation {
    }
    
    private static void coder_Inst(Arbre a){
+	   Inst inst;
 	   switch(a.getNoeud()){
 	   case Ecriture:
 		 //Attention, le fils d'un Noeud Ecriture est un Noeud.ListeExp qui contient lui même des Noeud.ListeExp
@@ -129,10 +124,14 @@ class Generation {
 		   break;
 		   
 	   case Ligne:
-		   Inst inst = Inst.creation0(Operation.WNL);
+		   inst = Inst.creation0(Operation.WNL);
 		   Prog.ajouter(inst, "new line");
+		   break; 
+	   case ListeInst:
+		   coder_Inst(a.getFils1());
+		   coder_Inst(a.getFils2());
 		   break;
-	   }   
+	   }
    }
    
    //TODO voir le cas où on passe dans le premier else, ça me semble ambiguë ma merde
