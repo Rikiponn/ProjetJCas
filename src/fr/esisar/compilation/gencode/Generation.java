@@ -25,7 +25,7 @@ class Generation {
       // -----------
       // A COMPLETER
       // -----------
-      
+      /*
       coder_Decl(a.getFils1());
       //Réserve de la place pour les variables locales
 
@@ -40,9 +40,18 @@ class Generation {
       // Fin du programme
       // L'instruction "HALT"
       inst = Inst.creation1(Operation.SUBSP, Operande.creationOpEntier(decl.size()));
+      */
+      inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(4));
+      // On ajoute l'instruction à la fin du programme
+      Prog.ajouter(inst,"test");
+      
+      inst = Inst.creation1(Operation.SUBSP, Operande.creationOpEntier(4));
+      // On ajoute l'instruction à la fin du programme
+      Prog.ajouter(inst,"test2");
+      
       inst = Inst.creation0(Operation.HALT);
       // On ajoute l'instruction à la fin du programme
-      Prog.ajouter(inst);
+      Prog.ajouter(inst,"On arrete le programme");
 
       // On retourne le programme assembleur généré
       return Prog.instance(); 
