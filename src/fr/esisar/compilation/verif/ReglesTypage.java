@@ -25,7 +25,7 @@ public class ReglesTypage {
 	   if(t1.equals(t2) && ((t1.equals(Type.String)|| t1.equals(Type.Integer) || t1.equals(Type.Real) || t1.equals(Type.Boolean) || t1.getNature().equals(NatureType.Array)))){
 		   result.setOk(true);
 	   }
-	   if(t1.equals(Type.Real) && t2.equals(Type.Integer)){
+	   if(t1.equals(Type.Real) && t2.getNature().equals(NatureType.Interval)){
 		   result.setOk(true);
 		   result.setConv2(true);
 	   }
