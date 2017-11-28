@@ -214,8 +214,7 @@ class Generation {
 				 //On s'assure que R1 reste occupé car il y avait qqch dedans avant l'appel de cette fonction
 				   GestionRegistre.occuperRegistre(Registre.R1);
 			   }
-		   }
-		   
+		   }  
 	   }
 	   
 	   //Si on veut écrire un string
@@ -228,12 +227,37 @@ class Generation {
    /**Fonction s'occupant de  l'instruction read
     * Etat : en cours
     * @return void
-    * @param fils1
+    * @param a (Un Noeud.Ident)
     */
-   private static void coder_Lecture(Arbre fils1) {
-		
-		
+   //TODO finir SEB (verif libre + test + tablal + restore)
+   private static void coder_Lecture(Arbre a) {
+		//Le fils d'un Noeud Lecture est forcément un Noeud Ident de type Integer ou Reel
+		//On vérifie si R1 est libre
+	   
+	   
+	   	//On lit soit un entier, soit un réel
+	   	if(a.getDecor().getType().getNature().equals(NatureType.Interval)){
+			Inst inst = Inst.creation0(Operation.RINT);
+			Prog.ajouter(inst, "Lecture d'un entier");
+		}
+		else{
+			Inst inst = Inst.creation0(Operation.RFLOAT);
+			Prog.ajouter(inst, "Lecture d'un flotant");
+		}
+	    // On test si R1 possède une valeur correcte (pour les intervalles)
+	   
+	   	//On le replace en pile
+	   	if(!a.getFils1().getDecor().getType().equals(NatureType.Array)){
+		   String varName = a.getFils1().getChaine();
+			int placeEnPile = decl.indexOf(varName);
+			Inst inst = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
+	   	}else{
+	   		//TODO pour les tablals quand ce sera corrigé 
+	   	}
+	   	
+	   	//On restore les états des registres si besoin
    }
+  
    
    /**
     * A étant un Noeud.Index, charge la zone mémoire pointée par a dans un registre et le renvoie

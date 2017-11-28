@@ -349,11 +349,12 @@ public class Verif {
 	   case Index:
 		   // prérequis : fils1 est un array, fonctionne à tous les degrés d'un tableau si celui-ci est valide. Renvoie le type du fils pour décorer a, a étant un Noeud.Index
 		   decor(a.getFils1()); 
+		   Type t = a.getFils1().getDecor().getType();
 		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
-			   a.setDecor(new Decor(a.getFils1().getDecor().getType().getElement()));
+			   a.setDecor(new Decor(new Defn(NatureDefn.Var, t),t.getElement()));
 		   }
 		   else{
-			   a.setDecor(new Decor(a.getFils1().getDecor().getType()));
+			   a.setDecor(new Decor(new Defn(NatureDefn.Var,t),t));
 		   }
 		   break;
 		   
@@ -381,7 +382,6 @@ public class Verif {
 		   decor(a.getFils1());
 		   
 		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
-			   
 			   a.setDecor(new Decor(a.getFils1().getDecor().getType()));
 		   }
 		   
@@ -659,13 +659,17 @@ public class Verif {
 		   e = ErreurContext.ErreurArite;
 		   e.leverErreurContext(null, a.getNumLigne());
 		}
+	
 		if(!a.getFils1().getDecor().getDefn().getNature().equals(NatureDefn.Var)){
 			e = ErreurContext.ErreurIdentReserve;
 			e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
 		}
+		
 		Type t1 = verif_Index(a.getFils1());
 		
-		if(t1 != Type.Integer && t1 != Type.Real) {
+		// Si tu veux pas l'intervalle enlève ce commentaire et met l'autre en commentaire
+		//if(t1 != Type.Integer && t1 != Type.Real) { 
+		if(t1.getNature() != NatureType.Interval && t1.getNature() != NatureType.Real) {
 			e = ErreurContext.ErreurType;
             e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 		}
