@@ -61,8 +61,7 @@ public class GestionRegistre {
 	   		libererRegistre(reg);
 	   		return r1;
 	   	}
-	   	Inst inst = Inst.creation1(Operation.PUSH,Operande.opDirect(reg));
-	   	Prog.ajouter(inst,"Placement en pile de "+reg.toString());
+	   	pushPile(reg);
 	   	return reg;
    }
 	
@@ -91,6 +90,15 @@ public class GestionRegistre {
 	}
 	public static void occuperRegistre(int i){
 		regTab[i] = 1;
+	}
+	
+	public static void pushPile (Registre reg){
+		Inst inst = Inst.creation1(Operation.PUSH,Operande.opDirect(reg));
+	   	Prog.ajouter(inst,"Placement en pile de "+reg.toString());
+	}
+	public static void popPile (Registre reg){
+		Inst inst = Inst.creation1(Operation.POP, Operande.opDirect(reg));
+		Prog.ajouter(inst,"Registre"+reg.toString()+" retablis depuis la pile");
 	}
 	
 	private static int getRegIndex(Registre reg){

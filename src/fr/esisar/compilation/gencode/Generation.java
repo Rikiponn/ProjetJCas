@@ -317,7 +317,7 @@ class Generation {
 			   			Prog.ajouter(loadInst, "Chargement de la variable dans le registre " + registreLibre.getRegistre().toString());
 			   			Prog.ajouter(moinsUnaire, "Operation moins unaire et resultat mis dans le registre " + registreLibre.getRegistre().toString() );
 		   			}
-			   		
+			 
 		   		}
 		   		else{
 		   			Operande reg = coder_EXP(a.getFils1());
@@ -482,7 +482,34 @@ class Generation {
 		   		Prog.ajouter(divRInst, "Ajout de l'instruction division");
 		   		return reg2;
 
-		   	case Et :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre 
+            case Et :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre
+                varName = a.getFils1().getChaine();
+                placeEnPile = decl.indexOf(varName);
+                reg1 = GestionRegistre.getFreeRegToOpTab();
+                reg2 = GestionRegistre.getFreeRegToOpTab();
+                boolean forcementFaux = false;
+                if(a.getFils1().getNoeud() == Noeud.Ident){
+                    if(a.getFils1().getChaine()=="true"){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre().toString());
+                    }
+                    else if(a.getFils1().getChaine() == "false"){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre().toString());
+                        forcementFaux = true;
+                    }
+                    else{
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
+                    }
+                }
+                else{//TODO completer
+                    Operande reg = coder_EXP(a.getFils1());
+                    GestionRegistre.libererRegistre(reg.getRegistre());
+                    Inst loadInst = Inst.creation2(Operation.LOAD, reg, reg1);
+                    Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + reg1.getRegistre().toString());
+                }
+
 	   		case Ou :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à vrai, ne pas évaluer le deuxième et juste mettre vrai (pour le OU) dans un registre
 	   		case Egal :
 	   		case InfEgal :
