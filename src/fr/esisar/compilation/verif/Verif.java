@@ -455,9 +455,8 @@ public class Verif {
 			   type1 = cherche_Type(a.getFils1());
 		   }
 		   else{
-			   // Si l'ident est true, false ou max_int : erreur (interdit)
-			   String name = a.getFils1().getChaine();
-			   if(name.equals("true") || name.equals("false") || name.equals("max_int")) {
+			   // Si l'ident n'est pas une var (donc une constante) : erreur (interdit)
+			   if(!a.getFils1().getDecor().getDefn().equals(NatureDefn.Var)) {
 				   ErreurContext e = ErreurContext.ErreurIdentReserve;
 				   e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
 			   }
@@ -659,6 +658,10 @@ public class Verif {
 		if(a.getArite() != Noeud.Lecture.arite){
 		   e = ErreurContext.ErreurArite;
 		   e.leverErreurContext(null, a.getNumLigne());
+		}
+		if(!a.getFils1().getDecor().getDefn().equals(NatureDefn.Var)){
+			e = ErreurContext.ErreurIdentReserve;
+			e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
 		}
 		Type t1 = verif_Index(a.getFils1());
 		
