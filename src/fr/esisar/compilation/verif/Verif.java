@@ -456,7 +456,7 @@ public class Verif {
 		   }
 		   else{
 			   // Si l'ident n'est pas une var (donc une constante) : erreur (interdit)
-			   if(!a.getFils1().getDecor().getDefn().equals(NatureDefn.Var)) {
+			   if(!a.getFils1().getDecor().getDefn().getNature().equals(NatureDefn.Var)) {
 				   ErreurContext e = ErreurContext.ErreurIdentReserve;
 				   e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
 			   }
@@ -659,7 +659,7 @@ public class Verif {
 		   e = ErreurContext.ErreurArite;
 		   e.leverErreurContext(null, a.getNumLigne());
 		}
-		if(!a.getFils1().getDecor().getDefn().equals(NatureDefn.Var)){
+		if(!a.getFils1().getDecor().getDefn().getNature().equals(NatureDefn.Var)){
 			e = ErreurContext.ErreurIdentReserve;
 			e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
 		}
