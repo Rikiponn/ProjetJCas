@@ -19,6 +19,9 @@ public class ReglesTypage {
 	   ResultatAffectCompatible result2 = new ResultatAffectCompatible();
 	   result.setOk(false);
 	   result.setConv2(false);
+	   if(t1.getNature().equals(t2.getNature()) && (t1.getNature().equals(NatureType.Interval))){
+		   result.setOk(true);
+	   }
 	   if(t1.equals(t2) && ((t1.equals(Type.String)|| t1.equals(Type.Integer) || t1.equals(Type.Real) || t1.equals(Type.Boolean) || t1.getNature().equals(NatureType.Array)))){
 		   result.setOk(true);
 	   }

@@ -124,7 +124,8 @@ class Generation {
 		   coder_Ecriture(a.getFils1());
 		   break;
 	   case Lecture :
-		   
+		   coder_Lecture(a.getFils1());
+		   break;		   
 	   case Ligne:
 		   inst = Inst.creation0(Operation.WNL);
 		   Prog.ajouter(inst, "new line");
@@ -136,7 +137,11 @@ class Generation {
 	   }
    }
    
-   //TODO voir le cas où on passe dans le premier else, ça me semble ambiguë ma merde
+   /**Fonction s'occupant de l'instruction write
+    * Etat : terminé
+    * @param un arbre
+    * @return void
+    */
    private static void coder_Ecriture(Arbre a){
 	   Registre r = null;
 
@@ -148,7 +153,7 @@ class Generation {
 	   if(f1.getNoeud().equals(Noeud.ListeExp)){
 		   coder_Ecriture(f1);
 	   }
-	   //Dans tout les cas, le fils 2 est une Expression, donc on l'écrit
+	   //Dans tous les cas, le fils 2 est une Expression, donc on l'écrit
 	   
 	   //Si on veut écrire un integer
 	   if(f2.getDecor().getType().equals(Type.Integer)){
@@ -218,6 +223,16 @@ class Generation {
 		   Inst inst = Inst.creation1(Operation.WSTR,Operande.creationOpChaine(f2.getChaine()));
 		   Prog.ajouter(inst,"Ecriture du string : "+f2.getChaine());
 	   }
+   }
+   
+   /**Fonction s'occupant de  l'instruction read
+    * Etat : en cours
+    * @return void
+    * @param fils1
+    */
+   private static void coder_Lecture(Arbre fils1) {
+		
+		
    }
    
    /**
@@ -483,7 +498,9 @@ class Generation {
 		   		return reg2;
 
             case Et :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre
-                varName = a.getFils1().getChaine();
+                //Tu ne peux faire celà que quand tu es face à un ident, si le fils1 est un et, ou... tu ne peux pas faire un getchaine dessus
+            	varName = a.getFils1().getChaine();
+            	//De plus, si ton fils1 est un true ou un false (c'est donc bien un ident) tu ne peux pas aller le cherche en pile car il n'y sera pas
                 placeEnPile = decl.indexOf(varName);
                 reg1 = GestionRegistre.getFreeRegToOpTab();
                 reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -505,9 +522,10 @@ class Generation {
                 }
                 else{//TODO completer
                     Operande reg = coder_EXP(a.getFils1());
-                    GestionRegistre.libererRegistre(reg.getRegistre());
+                    /*Pas utile de juste déplacer un registre vers un autre
+                     * GestionRegistre.libererRegistre(reg.getRegistre());
                     Inst loadInst = Inst.creation2(Operation.LOAD, reg, reg1);
-                    Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + reg1.getRegistre().toString());
+                    Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + reg1.getRegistre().toString());*/
                 }
 
 	   		case Ou :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à vrai, ne pas évaluer le deuxième et juste mettre vrai (pour le OU) dans un registre
