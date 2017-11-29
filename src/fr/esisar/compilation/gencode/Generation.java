@@ -46,8 +46,9 @@ class Generation {
       // L'instruction "HALT"
       inst = Inst.creation0(Operation.HALT);
       // On ajoute l'instruction à la fin du programme
+      Prog.ajouter(Etiq.nouvelle(new String("Halt")));
       Prog.ajouter(inst,"On arrete le programme");
-
+      
       // On retourne le programme assembleur généré
       return Prog.instance(); 
    }
@@ -171,8 +172,6 @@ class Generation {
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
 		   if(r.equals(Registre.R1)){
 			   GestionRegistre.popPile(Registre.R1);
-			 //On s'assure que R1 reste occupé car il y avait qqch dedans avant l'appel de cette fonction
-			   GestionRegistre.occuperRegistre(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
 		   else{
@@ -180,8 +179,6 @@ class Generation {
 				   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
 				   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
 				   GestionRegistre.libererRegistre(r);
-				   //On s'assure que R1 reste occupé car il y avait qqch dedans avant l'appel de cette fonction
-				   GestionRegistre.occuperRegistre(Registre.R1);
 			   }
 		   }
 	   }
@@ -202,8 +199,6 @@ class Generation {
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
 		   if(r.equals(Registre.R1)){
 			   GestionRegistre.popPile(Registre.R1);
-			 //On s'assure que R1 reste occupé car il y avait qqch dedans avant l'appel de cette fonction
-			   GestionRegistre.occuperRegistre(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
 		   else{
@@ -211,8 +206,6 @@ class Generation {
 				   inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
 				   Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
 				   GestionRegistre.libererRegistre(r);
-				 //On s'assure que R1 reste occupé car il y avait qqch dedans avant l'appel de cette fonction
-				   GestionRegistre.occuperRegistre(Registre.R1);
 			   }
 		   }  
 	   }
@@ -229,11 +222,16 @@ class Generation {
     * @return void
     * @param a (Un Noeud.Ident)
     */
-   //TODO finir SEB (verif libre + test + tablal + restore)
+   //TODO finir SEB (tablal)
    private static void coder_Lecture(Arbre a) {
+	   Registre r = null;
 		//Le fils d'un Noeud Lecture est forcément un Noeud Ident de type Integer ou Reel
 		//On vérifie si R1 est libre
-	   
+	   //Si R1 est occupé
+	   if(!GestionRegistre.estRegistreLibre(1)){
+		   //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
+		   r = GestionRegistre.deplaceRegistre(Registre.R1);
+	   }
 	   
 	   	//On lit soit un entier, soit un réel
 	   	if(a.getDecor().getType().getNature().equals(NatureType.Interval)){
@@ -245,17 +243,45 @@ class Generation {
 			Prog.ajouter(inst, "Lecture d'un flotant");
 		}
 	    // On test si R1 possède une valeur correcte (pour les intervalles)
-	   
+	   	
+	   	//On test si R1 est supérieur à la borne inf du fils
+	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneInf()),Operande.R1);
+	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
+	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   	Prog.ajouter(inst, "Erreur BorneInf intervale");
+	   	
+	   	//On test si R1 est supérieur à la borne sup du fils
+	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneSup()),Operande.R1);
+	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
+	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   	Prog.ajouter(inst, "Erreur BorneSup intervale");
+	   	
 	   	//On le replace en pile
 	   	if(!a.getFils1().getDecor().getType().equals(NatureType.Array)){
-		   String varName = a.getFils1().getChaine();
+	   		String varName = a.getFils1().getChaine();
 			int placeEnPile = decl.indexOf(varName);
-			Inst inst = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
+			Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
+			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
+			
 	   	}else{
-	   		//TODO pour les tablals quand ce sera corrigé 
+	   		//TODO pour les tablals quand ce sera corrigé voir avec TIM pour le nom des var dans le tablal 
+	   		//Trouver le nom avec le décor puis trouver le décalage en parcours profondeur
 	   	}
 	   	
+	   	
 	   	//On restore les états des registres si besoin
+	   	//Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
+	   	if(r.equals(Registre.R1)){
+	   		GestionRegistre.popPile(Registre.R1);
+	   	}
+	   	//Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
+	   	else{
+	   		if(r != null){
+	   			inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
+	   			Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
+	   			GestionRegistre.libererRegistre(r);
+	   		}
+	   	}  
    }
   
    
