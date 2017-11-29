@@ -22,20 +22,13 @@ class Generation {
       decl = new ArrayList<String>();
       GestionRegistre.initRegTab();
       Inst inst;
-      // -----------
-      // A COMPLETER
-      // -----------
       
       coder_Decl(a.getFils1());
       //Réserve de la place pour les variables locales
-
-			//TODO il faut prendre en compte le fait qu'un tableau c'est plus gros, du coup, la bez
       inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(decl.size()));
       Prog.ajouter(inst,"Réservation en pile des variables locales");
       
       coder_Inst(a.getFils2());
-      // L'instruction "new_line"
-      // L'instruction "write"
       
 
 
@@ -121,7 +114,7 @@ class Generation {
 	   Inst inst;
 	   switch(a.getNoeud()){
 	   case Ecriture:
-		 //Attention, le fils d'un Noeud Ecriture est un Noeud.ListeExp qui contient lui même des Noeud.ListeExp
+		   //Attention, le fils d'un Noeud Ecriture est un Noeud.ListeExp qui contient lui même des Noeud.ListeExp
 		   coder_Ecriture(a.getFils1());
 		   break;
 	   case Lecture :
@@ -140,7 +133,7 @@ class Generation {
    
    /**Fonction s'occupant de l'instruction write
     * Etat : terminé
-    * @param un arbre
+    * @param un arbre (Premier appel, a est un Noeud.ListeExp)
     * @return void
     */
    private static void coder_Ecriture(Arbre a){
@@ -220,7 +213,7 @@ class Generation {
    /**Fonction s'occupant de  l'instruction read
     * Etat : en cours
     * @return void
-    * @param a (Un Noeud.Ident)
+    * @param a (Un Noeud.Ident ou un Noeud.Index)
     */
    //TODO finir SEB (tablal)
    private static void coder_Lecture(Arbre a) {
@@ -232,15 +225,20 @@ class Generation {
 		   //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
 		   r = GestionRegistre.deplaceRegistre(Registre.R1);
 	   }
-	   
-	   	//On lit soit un entier, soit un réel
+	   	//On lit soit un entier, soit un réel qui sera ensuite placer dans R1
 	   	if(a.getDecor().getType().getNature().equals(NatureType.Interval)){
 			Inst inst = Inst.creation0(Operation.RINT);
 			Prog.ajouter(inst, "Lecture d'un entier");
 		}
 		else{
-			Inst inst = Inst.creation0(Operation.RFLOAT);
-			Prog.ajouter(inst, "Lecture d'un flotant");
+			if(a.getDecor().getType().getNature().equals(NatureType.Real)){
+				Inst inst = Inst.creation0(Operation.RFLOAT);
+				Prog.ajouter(inst, "Lecture d'un flotant");
+			}
+			else{
+				Inst inst = Inst.creation1(Operation.BRA,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+			   	Prog.ajouter(inst, "On arrete le programme car on essaye de read autre chose qu'un int ou un reel");
+			}
 		}
 	    // On test si R1 possède une valeur correcte (pour les intervalles)
 	   	
@@ -248,24 +246,29 @@ class Generation {
 	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneInf()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
-	   	Prog.ajouter(inst, "Erreur BorneInf intervale");
+	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 	   	
 	   	//On test si R1 est supérieur à la borne sup du fils
 	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneSup()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
-	   	Prog.ajouter(inst, "Erreur BorneSup intervale");
+	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 	   	
 	   	//On le replace en pile
-	   	if(!a.getFils1().getDecor().getType().equals(NatureType.Array)){
+	   	if(!a.getFils1().getDecor().getType().getNature().equals(NatureType.Array)){
 	   		String varName = a.getFils1().getChaine();
 			int placeEnPile = decl.indexOf(varName);
 			Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
 			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
 			
 	   	}else{
-	   		//TODO pour les tablals quand ce sera corrigé voir avec TIM pour le nom des var dans le tablal 
+	   		//TODO pour les tablals quand ce sera corrigé
 	   		//Trouver le nom avec le décor puis trouver le décalage en parcours profondeur
+	   		String varName = new String("");
+	   		while(!(a.getFils1().getNoeud().equals(Noeud.Ident))){
+	   			//Stocker l'indexe absolue du tableau au fur et à mesure dans un putain de registre
+	   			//Puis faire un load indéxé sur la valeur d'un registre
+	   		}
 	   	}
 	   	
 	   	
