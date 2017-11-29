@@ -380,13 +380,13 @@ class Generation {
 		   Operande reg2;
 		   
 		   switch(a.getNoeud()){
-		   	case Mult :	
-		   		varName = a.getFils1().getChaine();
-	   			placeEnPile = decl.indexOf(varName);
+		   	case Mult :			   		
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
 		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -400,6 +400,8 @@ class Generation {
 		   		else reg1 = coder_EXP(a.getFils1());
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils2().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -416,12 +418,12 @@ class Generation {
 		   		return reg2;
  
 	   		case Plus :
-	   			varName = a.getFils1().getChaine();
-	   			placeEnPile = decl.indexOf(varName);
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
 		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -435,6 +437,8 @@ class Generation {
 		   		else reg1 = coder_EXP(a.getFils1());
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils2().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -451,12 +455,12 @@ class Generation {
 		   		return reg2;
 		   		
 	   		case Moins :
-	   			varName = a.getFils1().getChaine();
-	   			placeEnPile = decl.indexOf(varName);
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
 		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -470,6 +474,8 @@ class Generation {
 		   		else reg1 = coder_EXP(a.getFils1());
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils2().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -487,12 +493,12 @@ class Generation {
 
 	   		case Quotient :
 	   		case DivReel :
-	   			varName = a.getFils1().getChaine();
-	   			placeEnPile = decl.indexOf(varName);
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
 		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -506,6 +512,8 @@ class Generation {
 		   		else reg1 = coder_EXP(a.getFils1());
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils2().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
 		   		}
@@ -521,11 +529,8 @@ class Generation {
 		   		Prog.ajouter(divRInst, "Ajout de l'instruction division");
 		   		return reg2;
 
-            case Et :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à faux ou 0, ne pas évaluer le deuxième et juste mettre faux ou à 0 dans un registre
-                //Tu ne peux faire celà que quand tu es face à un ident, si le fils1 est un et, ou... tu ne peux pas faire un getchaine dessus
-            	varName = a.getFils1().getChaine();
-            	//De plus, si ton fils1 est un true ou un false (c'est donc bien un ident) tu ne peux pas aller le cherche en pile car il n'y sera pas
-                placeEnPile = decl.indexOf(varName);
+            case Et :
+                
                 reg1 = GestionRegistre.getFreeRegToOpTab();
                 reg2 = GestionRegistre.getFreeRegToOpTab();
                 boolean forcementFaux = false;
@@ -540,19 +545,51 @@ class Generation {
                         forcementFaux = true;
                     }
                     else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
                     }
+                    Etiq negEtiq = Etiq.lEtiq("negative");                    
+                    Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
+                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " à 0");
+                    Inst jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq("negative")));
+                    Prog.ajouter(jump, "On saute a la fin du et");
                 }
-                else{//TODO completer
-                    Operande reg = coder_EXP(a.getFils1());
-                    /*Pas utile de juste déplacer un registre vers un autre
-                     * GestionRegistre.libererRegistre(reg.getRegistre());
-                    Inst loadInst = Inst.creation2(Operation.LOAD, reg, reg1);
-                    Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + reg1.getRegistre().toString());*/
+                else{
+                    reg1 = coder_EXP(a.getFils1());             
+                    
                 }
+                
+                if(a.getFils2().getNoeud() == Noeud.Ident){
+                    if(a.getFils2().getChaine()=="true"){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg2.getRegistre().toString());
+                    }
+                    else if(a.getFils2().getChaine() == "false"){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg2.getRegistre().toString());
+                        forcementFaux = true;
+                    }
+                    else{
+                    	varName = a.getFils2().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg2.getRegistre().toString());                            
+                    }
+                }
+                else{
+                    reg2 = coder_EXP(a.getFils2());             
+                    
+                }
+                Inst etInst = Inst.creation2(Operation.MUL, reg1, reg2);
+                Prog.ajouter(etInst, "Ajout de l'instruction Et (avec une multiplication)");
+                return reg2;
+                
+                
 
-	   		case Ou :// Il faudrait faire en sorte que si la valeur de a.getFils1() est à vrai, ne pas évaluer le deuxième et juste mettre vrai (pour le OU) dans un registre
+	   		case Ou :
+	   			
 	   		case Egal :
 	   		case InfEgal :
 	   		case Inf :
