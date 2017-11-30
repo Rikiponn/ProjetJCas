@@ -433,7 +433,7 @@ class Generation {
 	   Operande fils1 = coder_EXP(a.getFils1());
 	   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), fils1);
 	   Prog.ajouter(inst);
-	   if(a.getFils3().getNoeud().equals(Noeud.Vide)){
+	   if(a.getFils3().getFils2().getNoeud().equals(Noeud.Nop) && a.getFils3().getFils1().getNoeud().equals(Noeud.Vide)){
 		   String str = new String("FinSi"+nbEtiq);
 		   Etiq eti = Etiq.lEtiq(str);
 		   nbEtiq++;
