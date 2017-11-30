@@ -586,7 +586,7 @@ class Generation {
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
                     }
                     else if(a.getFils2().getDecor().getType() == Type.Integer){
-                        Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getFils1().getEntier()), reg2);
+                        Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getEntier()), reg2);
                         Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
                     } else if(a.getFils2().getDecor().getType() == Type.Real){
                         Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
