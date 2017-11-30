@@ -1,0 +1,23 @@
+program
+    a, b : integer;
+    x, y : float;
+begin
+    a := 42;
+    a := a / b;
+    b := -42;
+    x := 40.5;
+    y := -40.5;
+    a := a AND b;
+    b := a OR b;
+    b := 69 = 4;
+    a := a <= b;
+    a := a >= b;
+    a := ((a /= b) < b) > a;
+    a := a + b - a * b / x;
+    a := a MOD b;
+    a := +b;
+    a := -b;
+    a := NOT b;
+    write(a);
+    write("OUI");
+end.

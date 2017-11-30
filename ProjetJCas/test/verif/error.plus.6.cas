@@ -1,0 +1,9 @@
+program
+    a, b : integer;
+    c,d : boolean;
+    e : array[1..10] of integer;
+    f : Array[1..10] of integer;
+    o,p : float;
+begin
+    c := o+a;
+end.
