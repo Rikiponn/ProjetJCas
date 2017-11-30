@@ -128,7 +128,7 @@ class Generation {
            switch(a.getFils1().getNoeud()) {
            case Ident:
                int placeEnPile = -1;
-               if((placeEnPile = decl.indexOf(a.getFils1().getChaine())) == -1) {
+               if((placeEnPile = decl.indexOf(a.getFils1().getChaine()) + 1) == -1) {
             	   System.exit(0);;
                }/*
                if(!(opdroite.getNature().equals(NatureOperande.OpDirect))) {
@@ -218,7 +218,7 @@ class Generation {
        nbEtiq++;
        
        String varName = a.getFils1().getChaine();
-       int placeEnPile = decl.indexOf(varName);
+       int placeEnPile = decl.indexOf(varName) + 1;
        reg1 = GestionRegistre.getFreeRegToOpTab();
        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
        Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());       
@@ -395,7 +395,7 @@ class Generation {
 	   	//On le replace en pile
 	   	if(!a.getDecor().getType().getNature().equals(NatureType.Array)){
 	   		String varName = a.getChaine();
-			int placeEnPile = decl.indexOf(varName);
+			int placeEnPile = decl.indexOf(varName) + 1;
 			Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
 			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
 			
@@ -470,7 +470,7 @@ class Generation {
    private static Indice load_Index(Arbre a) {
 	   String ident = getIdent(a);
 	   Operande offset = getSubIndex(a);
-	   int placeEnPile = decl.indexOf(ident);
+	   int placeEnPile = decl.indexOf(ident) + 1;
 	   Indice indice = new Indice(offset,placeEnPile);
 	   return indice;
    }
@@ -536,7 +536,7 @@ class Generation {
 		   
 		   case Ident:
 			   String varName = a.getChaine();
-			   int placeEnPile = decl.indexOf(varName);
+			   int placeEnPile = decl.indexOf(varName) + 1;
 			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
   			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
   			   Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + registreLibre.getRegistre());
@@ -569,7 +569,7 @@ class Generation {
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			
 			   		varName = a.getFils1().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
+		   			placeEnPile = decl.indexOf(varName) + 1;
 		   			
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), registreLibre);
@@ -622,7 +622,7 @@ class Generation {
 		   		if(a.getFils1().getNoeud()==Noeud.Conversion) {
 		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -641,7 +641,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -661,7 +661,7 @@ class Generation {
 		   		if(a.getFils2().getNoeud()==Noeud.Conversion) {
 		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -680,7 +680,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils2().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -710,7 +710,7 @@ class Generation {
 		   		if(a.getFils1().getNoeud()==Noeud.Conversion) {
 		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -729,7 +729,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			varName = a.getFils1().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
+		   			placeEnPile = decl.indexOf(varName) + 1;
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -749,7 +749,7 @@ class Generation {
 		   		if(a.getFils2().getNoeud()==Noeud.Conversion) {
 		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -768,7 +768,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils2().getNoeud()==Noeud.Ident){
 		   			varName = a.getFils2().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
+		   			placeEnPile = decl.indexOf(varName) + 1;
 		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -798,7 +798,7 @@ class Generation {
 		   		if(a.getFils1().getNoeud()==Noeud.Conversion) {
 		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -817,7 +817,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -837,7 +837,7 @@ class Generation {
 		   		if(a.getFils2().getNoeud()==Noeud.Conversion) {
 		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -856,7 +856,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils2().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -887,7 +887,7 @@ class Generation {
 		   		if(a.getFils1().getNoeud() == Noeud.Conversion) {
 		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -906,7 +906,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -926,7 +926,7 @@ class Generation {
 		   		if(a.getFils2().getNoeud() == Noeud.Conversion) {
 		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getFils1().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -945,7 +945,7 @@ class Generation {
 		   		else {
 		   			if(a.getFils2().getNoeud()==Noeud.Ident){
 			   			varName = a.getFils2().getChaine();
-			   			placeEnPile = decl.indexOf(varName);
+			   			placeEnPile = decl.indexOf(varName) + 1;
 			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
 			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   		}
@@ -988,7 +988,7 @@ class Generation {
                     }
                     else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
                     }                    
@@ -1017,7 +1017,7 @@ class Generation {
                         }
                         else{
                         	varName = a.getFils2().getChaine();
-                            placeEnPile = decl.indexOf(varName);
+                            placeEnPile = decl.indexOf(varName) + 1;
                             Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                             Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
                         }
@@ -1048,7 +1048,7 @@ class Generation {
                     }
                     else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
                     }                    
@@ -1076,7 +1076,7 @@ class Generation {
                         }
                         else{
                         	varName = a.getFils2().getChaine();
-                            placeEnPile = decl.indexOf(varName);
+                            placeEnPile = decl.indexOf(varName) + 1;
                             Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                             Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
                         }
@@ -1105,7 +1105,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 		   				
@@ -1142,7 +1142,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils2().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 		   				
@@ -1201,7 +1201,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 		   				
@@ -1238,7 +1238,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils2().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 		   				
@@ -1296,7 +1296,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 		   				
@@ -1333,7 +1333,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils2().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 		   				
@@ -1391,7 +1391,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 		   				
@@ -1428,7 +1428,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils2().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 		   				
@@ -1486,7 +1486,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 		   				
@@ -1523,7 +1523,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils2().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 		   				
@@ -1580,7 +1580,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 		   				
@@ -1617,7 +1617,7 @@ class Generation {
 		   			}
 		   			else{
                     	varName = a.getFils2().getChaine();
-                        placeEnPile = decl.indexOf(varName);
+                        placeEnPile = decl.indexOf(varName) + 1;
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
                         Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 		   				
