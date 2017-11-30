@@ -193,7 +193,7 @@ class Generation {
        nbEtiq++;
        
        Inst compareInst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
-       Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre().toString() + " par rapport a 0");
+       Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre() + " par rapport a 0");
        Inst jumpIfFalse = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(finWhile)));
        Prog.ajouter(jumpIfFalse, "Ajout de l'instruction de saut vers la fin du Tant Que");
        
