@@ -12,6 +12,8 @@ import fr.esisar.compilation.global.src3.*;
 class Generation {
 	public static ArrayList<String> decl;
 	public static GestionRegistre reg;
+	
+	static int nbEtiq = 0;
    /**
     * Méthode principale de génération de code.
     * Génère du code pour l'arbre décoré a.
@@ -360,6 +362,13 @@ class Generation {
 			   return Operande.creationOpEntier(a.getEntier());
 		   case Reel:
 			   return Operande.creationOpReel(a.getReel());
+		   
+		   case Ident:
+			   String varName = a.getChaine();
+			   int placeEnPile = decl.indexOf(varName);
+			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
+  			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
+  			   Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + registreLibre.getRegistre().toString());
 		   }
 	   }
 	   
@@ -440,7 +449,10 @@ class Generation {
 		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg1);
 		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 		   		}
-		   		else reg1 = coder_EXP(a.getFils1());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   			reg1 = coder_EXP(a.getFils1());
+		   		}
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
 		   			varName = a.getFils2().getChaine();
@@ -455,9 +467,13 @@ class Generation {
 		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg2);
 		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 		   		}
-		   		else reg2 = coder_EXP(a.getFils2());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   			reg2 = coder_EXP(a.getFils2());
+		   		}
 		   		Inst multInst = Inst.creation2(Operation.MUL, reg1, reg2);
 		   		Prog.ajouter(multInst, "Ajout de l'instruction multiplication");
+		   		GestionRegistre.libererRegistre(reg1.getRegistre());
 		   		return reg2;
  
 	   		case Plus :
@@ -477,7 +493,10 @@ class Generation {
 		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg1);
 		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 		   		}
-		   		else reg1 = coder_EXP(a.getFils1());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   			reg1 = coder_EXP(a.getFils1());
+		   		}
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
 		   			varName = a.getFils2().getChaine();
@@ -492,9 +511,14 @@ class Generation {
 		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg2);
 		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 		   		}
-		   		else reg2 = coder_EXP(a.getFils2());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   			reg2 = coder_EXP(a.getFils2());
+		   		}
 		   		Inst addInst = Inst.creation2(Operation.ADD, reg1, reg2);
 		   		Prog.ajouter(addInst, "Ajout de l'instruction addition");
+
+	   			GestionRegistre.libererRegistre(reg1.getRegistre());
 		   		return reg2;
 		   		
 	   		case Moins :
@@ -514,7 +538,10 @@ class Generation {
 		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg1);
 		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 		   		}
-		   		else reg1 = coder_EXP(a.getFils1());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   			reg1 = coder_EXP(a.getFils1());
+		   		}
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
 		   			varName = a.getFils2().getChaine();
@@ -529,9 +556,14 @@ class Generation {
 		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg2);
 		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 		   		}
-		   		else reg2 = coder_EXP(a.getFils2());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   			reg2 = coder_EXP(a.getFils2());
+		   		}
 		   		Inst subInst = Inst.creation2(Operation.SUB, reg1, reg2);
 		   		Prog.ajouter(subInst, "Ajout de l'instruction soustraction");
+
+	   			GestionRegistre.libererRegistre(reg1.getRegistre());
 		   		return reg2;
 
 	   		case Quotient :
@@ -552,7 +584,10 @@ class Generation {
 		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg1);
 		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 		   		}
-		   		else reg1 = coder_EXP(a.getFils1());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   			reg1 = coder_EXP(a.getFils1());
+		   		}
 		   		
 		   		if(a.getFils2().getNoeud()==Noeud.Ident){
 		   			varName = a.getFils2().getChaine();
@@ -567,15 +602,22 @@ class Generation {
 		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), reg2);
 		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 		   		}
-		   		else reg2 = coder_EXP(a.getFils2());
+		   		else {
+		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   			reg2 = coder_EXP(a.getFils2());
+		   		}
 		   		Inst divRInst = Inst.creation2(Operation.DIV, reg1, reg2);
 		   		Prog.ajouter(divRInst, "Ajout de l'instruction division");
+
+	   			GestionRegistre.libererRegistre(reg1.getRegistre());
 		   		return reg2;
 
             case Et :
-                
+
+            	String nomEtiqNegative = "negative"+nbEtiq;
+                Etiq negEtiq = Etiq.lEtiq(nomEtiqNegative);
+                nbEtiq++;
                 reg1 = GestionRegistre.getFreeRegToOpTab();
-                reg2 = GestionRegistre.getFreeRegToOpTab();
                 boolean forcementFaux = false;
                 if(a.getFils1().getNoeud() == Noeud.Ident){
                     if(a.getFils1().getChaine()=="true"){
@@ -592,63 +634,661 @@ class Generation {
                         placeEnPile = decl.indexOf(varName);
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
-                    }
-                    Etiq negEtiq = Etiq.lEtiq("negative");                    
+                    }                    
                     Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
                     Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " à 0");
-                    Inst jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq("negative")));
+                    Inst jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNegative)));
                     Prog.ajouter(jump, "On saute a la fin du et");
                 }
                 else{
-                    reg1 = coder_EXP(a.getFils1());             
+		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+                    reg1 = coder_EXP(a.getFils1());            
                     
                 }
-                
-                if(a.getFils2().getNoeud() == Noeud.Ident){
-                    if(a.getFils2().getChaine()=="true"){
-                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
-                        Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg2.getRegistre().toString());
-                    }
-                    else if(a.getFils2().getChaine() == "false"){
-                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
-                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg2.getRegistre().toString());
-                        forcementFaux = true;
+                                
+                if(forcementFaux){
+                }
+                else{
+                	if(a.getFils2().getNoeud() == Noeud.Ident){
+                        if(a.getFils2().getChaine()=="true"){
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre().toString());
+                        }
+                        else if(a.getFils2().getChaine() == "false"){
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre().toString());
+                        }
+                        else{
+                        	varName = a.getFils2().getChaine();
+                            placeEnPile = decl.indexOf(varName);
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
+                        }
                     }
                     else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+                        reg1 = coder_EXP(a.getFils2());
+                    }   
+                }
+            	Prog.ajouter(Etiq.lEtiq(nomEtiqNegative));
+                return reg1;
+
+	   		case Ou :
+	   			String nomEtiqPositive = "positive" + nbEtiq;
+	   			Etiq posEtiq = Etiq.lEtiq(nomEtiqPositive);
+	   			nbEtiq++;
+                reg1 = GestionRegistre.getFreeRegToOpTab();
+                boolean forcementVrai = false;
+                if(a.getFils1().getNoeud() == Noeud.Ident){
+                    if(a.getFils1().getChaine()=="true"){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre().toString());
+                        forcementVrai = true;
+                    }
+                    else if(a.getFils1().getChaine() == "false"){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre().toString());
+                    }
+                    else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
+                    }                    
+                    Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
+                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " à 0");
+                    Inst jump = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqPositive)));
+                    Prog.ajouter(jump, "On saute a la fin du ou");
+                }
+                else{
+		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+                    reg1 = coder_EXP(a.getFils1());    
+                }
+                                
+                if(forcementVrai){
+                }
+                else{
+                	if(a.getFils2().getNoeud() == Noeud.Ident){
+                        if(a.getFils2().getChaine()=="true"){
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre().toString());
+                        }
+                        else if(a.getFils2().getChaine() == "false"){
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre().toString());
+                        }
+                        else{
+                        	varName = a.getFils2().getChaine();
+                            placeEnPile = decl.indexOf(varName);
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
+                        }
+                    }
+                    else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+                        reg1 = coder_EXP(a.getFils2());
+                    }
+                	
+                }
+            	Prog.ajouter(Etiq.lEtiq(nomEtiqPositive));
+                return reg1;
+                
+	   		case Egal :
+		   		reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   				reg1 = coder_EXP(a.getFils1());
+		   			}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			if(a.getFils2().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
                     	varName = a.getFils2().getChaine();
                         placeEnPile = decl.indexOf(varName);
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-                        Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg2.getRegistre().toString());                            
-                    }
-                }
-                else{
-                    reg2 = coder_EXP(a.getFils2());             
-                    
-                }
-                Inst etInst = Inst.creation2(Operation.MUL, reg1, reg2);
-                Prog.ajouter(etInst, "Ajout de l'instruction Et (avec une multiplication)");
-                return reg2;
-                
-                
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils2().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   				reg2 = coder_EXP(a.getFils2());
+		   			}
+		   		}
+		   		String nomEtiqInegalite = "inegalite" + nbEtiq;
+		   		Etiq equalEtiq = Etiq.lEtiq(nomEtiqInegalite);
+		   		nbEtiq++;
+		   		Inst compareInst = Inst.creation2(Operation.CMP, reg1, reg2);
+		   		Inst setFalseInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BNE, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqInegalite)));
+		   		Inst setTrueInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+		   		
+		   		Prog.ajouter(compareInst, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
+		   		Prog.ajouter(setFalseInst, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il n'y a pas égalité");
+		   		Prog.ajouter(setTrueInst, "Mise a true (1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(Etiq.lEtiq(nomEtiqInegalite));
 
-	   		case Ou :
-	   			
-	   		case Egal :
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
+		   		
 	   		case InfEgal :
+	   			reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   				reg1 = coder_EXP(a.getFils1());
+		   			}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			if(a.getFils2().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils2().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils2().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   				reg2 = coder_EXP(a.getFils2());
+		   			}
+		   		}
+		   		String nomEtiqNonInferieurOuEgal = "nonInferieurOuEgal" + nbEtiq;
+		   		Etiq equalEtiq2 = Etiq.lEtiq(nomEtiqNonInferieurOuEgal);
+		   		nbEtiq++;
+		   		Inst compareInst2 = Inst.creation2(Operation.CMP, reg1, reg2);
+		   		Inst setFalseInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNonInferieurOuEgal)));
+		   		Inst setTrueInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+		   		
+		   		Prog.ajouter(compareInst2, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
+		   		Prog.ajouter(setFalseInst2, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il n'y a pas inferiorité ou égalité");
+		   		Prog.ajouter(setTrueInst2, "Mise a true (1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonInferieurOuEgal));
+
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
 	   		case Inf :
+	   			reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   				reg1 = coder_EXP(a.getFils1());
+		   			}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			if(a.getFils2().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils2().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils2().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   				reg2 = coder_EXP(a.getFils2());
+		   			}
+		   		}
+		   		String nomEtiqNonInferieurStrict = "nonInferieurStrict" + nbEtiq;
+		   		Etiq equalEtiq3 = Etiq.lEtiq(nomEtiqNonInferieurStrict);
+		   		nbEtiq++;
+		   		Inst compareInst3 = Inst.creation2(Operation.CMP, reg1, reg2);
+		   		Inst setFalseInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BGE, Operande.creationOpEtiq(Etiq.lEtiq("nomEtiqNonInferieurStrict")));
+		   		Inst setTrueInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+		   		
+		   		Prog.ajouter(compareInst3, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
+		   		Prog.ajouter(setFalseInst3, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il n'y a pas inferiorité stricte");
+		   		Prog.ajouter(setTrueInst3, "Mise a true (1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(Etiq.lEtiq("nomEtiqNonInferieurStrict"));
+
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
 	   		case SupEgal :
+	   			reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   				reg1 = coder_EXP(a.getFils1());
+		   			}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			if(a.getFils2().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils2().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils2().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   				reg2 = coder_EXP(a.getFils2());
+		   			}
+		   		}
+		   		String nomEtiqNonSuperieurOuEgal = "nonSuperieurOuEgal" + nbEtiq;
+		   		Etiq equalEtiq4 = Etiq.lEtiq(nomEtiqNonSuperieurOuEgal);
+		   		nbEtiq++;
+		   		Inst compareInst4 = Inst.creation2(Operation.CMP, reg1, reg2);
+		   		Inst setFalseInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Inst jumpIfNonEqualInst4 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNonSuperieurOuEgal)));
+		   		Inst setTrueInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+		   		
+		   		Prog.ajouter(compareInst4, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
+		   		Prog.ajouter(setFalseInst4, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(jumpIfNonEqualInst4, "Ajout de l'instruction de saut s'il n'y a pas supériorité ou égalité");
+		   		Prog.ajouter(setTrueInst4, "Mise a true (1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonSuperieurOuEgal));
+
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
 	   		case Sup :
+	   			reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   				reg1 = coder_EXP(a.getFils1());
+		   			}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			if(a.getFils2().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils2().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils2().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   				reg2 = coder_EXP(a.getFils2());
+		   			}
+		   		}
+		   		String nomEtiqNonSuperieurStrict = "nonSuperieurStrict" + nbEtiq;
+		   		Etiq equalEtiq5 = Etiq.lEtiq(nomEtiqNonSuperieurStrict);
+		   		nbEtiq++;
+		   		Inst compareInst5 = Inst.creation2(Operation.CMP, reg1, reg2);
+		   		Inst setFalseInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNonSuperieurStrict)));
+		   		Inst setTrueInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+		   		
+		   		Prog.ajouter(compareInst5, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
+		   		Prog.ajouter(setFalseInst5, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il n'y a pas supériorité stricte");
+		   		Prog.ajouter(setTrueInst5, "Mise a true (1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonSuperieurStrict));
+
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
 	   		case NonEgal :
-	   			inst = Inst.creation2(Operation.CMP, coder_EXP(a.getFils1()), coder_EXP(a.getFils2()));
-		   		break;
+	   			reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			if(a.getFils1().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils1().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils1().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else if(a.getFils1().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   				reg1 = coder_EXP(a.getFils1());
+		   			}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			if(a.getFils2().getChaine()=="true"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getChaine()=="false"){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+                    	varName = a.getFils2().getChaine();
+                        placeEnPile = decl.indexOf(varName);
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   				
+		   			}
+		   		}
+		   		else{
+		   			if(a.getFils2().getDecor().getType()==Type.Integer){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   						   				
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.Real){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else if(a.getFils2().getDecor().getType()==Type.String){
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
+                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre().toString());
+		   			}
+		   			else{
+    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   				reg2 = coder_EXP(a.getFils2());
+		   			}
+		   		}
+		   		String nomEtiqEgalite = "egalite" + nbEtiq;
+		   		Etiq equalEtiq6 = Etiq.lEtiq(nomEtiqEgalite);
+		   		nbEtiq++;
+		   		Inst compareInst6 = Inst.creation2(Operation.CMP, reg1, reg2);
+		   		Inst setFalseInst6 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Inst jumpIfNonEqualInst6 = Inst.creation1(Operation.BEQ, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqEgalite)));
+		   		Inst setTrueInst6 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+		   		
+		   		Prog.ajouter(compareInst6, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
+		   		Prog.ajouter(setFalseInst6, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(jumpIfNonEqualInst6, "Ajout de l'instruction de saut s'il y a égalité");
+		   		Prog.ajouter(setTrueInst6, "Mise a true (1) du registre " + reg1.getRegistre().toString());
+		   		Prog.ajouter(Etiq.lEtiq(nomEtiqEgalite));
+
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
+
 		   }
 	   }
-	   if(a.getArite()==3){
-		   switch(a.getNoeud()){
-		   }
-	   }
-	   return Operande.R0;
+	   return null;
    }
 }
-
-
