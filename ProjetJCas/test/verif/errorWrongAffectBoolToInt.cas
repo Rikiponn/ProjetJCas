@@ -1,0 +1,6 @@
+program
+    a : integer;
+begin
+    a := false;
+end.
+
