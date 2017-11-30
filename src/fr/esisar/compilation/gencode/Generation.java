@@ -163,7 +163,7 @@ class Generation {
 		   Prog.ajouter(inst,"Ecriture de l'entier");
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-		   if(r.equals(Registre.R1)){
+		   if(r != null && r.equals(Registre.R1)){
 			   GestionRegistre.popPile(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
@@ -211,7 +211,7 @@ class Generation {
    }
    
    /**Fonction s'occupant de  l'instruction read
-    * Etat : en cours
+    * Etat : Fini
     * @return void
     * @param a (Un Noeud.Ident ou un Noeud.Index)
     */
@@ -262,28 +262,17 @@ class Generation {
 			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
 			
 	   	}else{
-	   		//TODO pour les tablals quand ce sera corrigé
 	   		//Trouver le nom puis trouver le décalage en parcours profondeur
 	   		int length = getLength(a);
-	   		while(a.getFils1().getNoeud().equals(Noeud.Index)){
-	   			//Trouver dynamiquement l'endroit où l'on veut écrire
-	   			/*Operande reg = GestionRegistre.getFreeRegToOpTab();
-	   			String varName = getIdent(a);
-	   			while(a.getNoeud().equals(Noeud.Index)) {
-	   				varName = varName+"["+a.getDecor().getType().getBorneInf()+"]";
-	   				a = a.getFils1();
-	   			}
-	   			Operande offset = getSubIndex(a);
-	   			int placeEnPile = -1;
-	   			if((placeEnPile = decl.indexOf(varName)) != -1) {
-	   				// contenu de (arg2(reg) + arg3(reg) + arg1(int)) TODO A vérifier c'est la merde
-	   				Inst machin = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(placeEnPile, Operande.GB.getRegistre(), offset.getRegistre()), reg);
-	   				Prog.ajouter(machin,"Chargement de la valeur de l'indice du tableau en mémoire");
-	   			}*/
-	   		}
-	   	}
-	   	
-	   	
+	   		//Trouver dynamiquement l'endroit où l'on veut écrire
+	   		Indice indice = load_Index(a);
+	   		Inst inst2 = Inst.creation2(Operation.CMP, indice.offset, Operande.creationOpEntier(length));
+	   		Prog.ajouter(inst2,"comparaison de la taille du tableau avec l'offset (pour les overflow)");
+	   		inst2 = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   		Prog.ajouter(inst2,"On arrete le programme car on essaye d'écrire à un endroit interdit");
+	   		inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(indice.placeEnPileOrigine, Registre.GB));
+	   		GestionRegistre.libererRegistre(indice.offset.getRegistre());
+	   	}	   	
 	   	//On restore les états des registres si besoin
 	   	//Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
 	   	if(r.equals(Registre.R1)){
