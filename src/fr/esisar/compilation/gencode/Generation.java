@@ -128,7 +128,7 @@ class Generation {
            case Ident:
                int placeEnPile;
                if((placeEnPile = decl.indexOf(a.getFils1().getChaine())) == -1)
-            	   break;
+            	   System.exit(0);;
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                break;
