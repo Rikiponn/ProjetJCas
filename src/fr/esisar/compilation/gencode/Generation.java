@@ -124,16 +124,6 @@ class Generation {
 		   break;
 	   case Affect:
            Operande opdroite = coder_EXP(a.getFils2());
-           switch(a.getFils2().getNoeud()){
-                   case Entier:
-                       opdroite = Operande.creationOpEntier(opdroite.getEntier());
-                       break;
-                   case Reel:
-                       opdroite = Operande.creationOpReel(opdroite.getReel());
-                       break;
-                   default:
-                       break;
-           }
            switch(a.getFils1().getNoeud()) {
            case Ident:
                int placeEnPile = decl.indexOf(a.getFils1().getDecor().getType().toString());
@@ -147,7 +137,8 @@ class Generation {
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
                break;           
            }
-           GestionRegistre.libererRegistre(opdroite.getRegistre());
+           if(opdroite.getNature().equals(NatureOperande.OpDirect))
+                   GestionRegistre.libererRegistre(opdroite.getRegistre());
            break;
 	   case Si:
 		   coder_Si(a);
@@ -325,7 +316,7 @@ class Generation {
 	   Operande fils1 = coder_EXP(a.getFils1());
 	   Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), fils1);
 	   Prog.ajouter(inst);
-	   
+	   if(a.getFils2().getNoeud().equals())
 	   
    }
    
