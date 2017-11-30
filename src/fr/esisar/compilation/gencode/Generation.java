@@ -316,7 +316,11 @@ class Generation {
 	   Operande fils1 = coder_EXP(a.getFils1());
 	   Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), fils1);
 	   Prog.ajouter(inst);
-	   //if(a.getFils2().getNoeud().equals())
+	   if(a.getFils2().getNoeud().equals(Noeud.Vide)){
+		   
+	   }else{
+		   
+	   }
 	   
    }
    
