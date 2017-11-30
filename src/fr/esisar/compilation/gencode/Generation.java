@@ -121,7 +121,28 @@ class Generation {
 		   break;
 	   case Lecture :
 		   coder_Lecture(a.getFils1());
-		   break;		   
+		   break;
+	   case Affect:
+           Operande opdroite = coder_EXP(a.getFils2());
+           switch(a.getFils1().getNoeud()) {
+           case Ident:
+               Operande opgauche = GestionRegistre.getFreeRegToOpTab();
+               int placeEnPile = decl.indexOf(a.getFils1().getDecor().getType().toString());
+               inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
+               Prog.ajouter(inst, "écriture en mémoire (pile)");
+               GestionRegistre.libererRegistre(opgauche.getRegistre());
+               break;
+           case Index:
+               Indice indice = load_Index(a.getFils1());
+               inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
+               Prog.ajouter(inst, "écriture en mémoire (pile)");
+               GestionRegistre.libererRegistre(indice.offset.getRegistre());
+               break;
+           }
+           GestionRegistre.libererRegistre(opdroite.getRegistre());
+           break;
+	   case Si:
+		   coder_Si(a);
 	   case Ligne:
 		   inst = Inst.creation0(Operation.WNL);
 		   Prog.ajouter(inst, "new line");
@@ -133,7 +154,7 @@ class Generation {
 	   }
    }
    
-   /**Fonction s'occupant de l'instruction write
+/**Fonction s'occupant de l'instruction write
     * Etat : terminé
     * @param un arbre (Premier appel, a est un Noeud.ListeExp)
     * @return void
@@ -287,6 +308,14 @@ class Generation {
 	   			GestionRegistre.libererRegistre(r);
 	   		}
 	   	}  
+   }
+   /**Code l'instruction Si
+    * 
+    * @param a
+    */
+   private static void coder_Si(Arbre a) {
+	   
+	
    }
    
    
