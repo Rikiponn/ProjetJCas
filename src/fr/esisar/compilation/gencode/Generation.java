@@ -126,18 +126,16 @@ class Generation {
            Operande opdroite = coder_EXP(a.getFils2());
            switch(a.getFils1().getNoeud()) {
            case Ident:
-               Operande opgauche = GestionRegistre.getFreeRegToOpTab();
                int placeEnPile = decl.indexOf(a.getFils1().getDecor().getType().toString());
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
-               GestionRegistre.libererRegistre(opgauche.getRegistre());
                break;
            case Index:
                Indice indice = load_Index(a.getFils1());
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
-               break;
+               break;           
            }
            GestionRegistre.libererRegistre(opdroite.getRegistre());
            break;
