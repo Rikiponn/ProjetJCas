@@ -319,7 +319,7 @@ class Generation {
 	   if(a.getFils2().getNoeud().equals(Noeud.Vide)){
 		   
 	   }else{
-		   
+		   inst = Inst.creation1(Operation.B, op1)
 	   }
 	   
    }
