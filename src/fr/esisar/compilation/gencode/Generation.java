@@ -981,18 +981,19 @@ class Generation {
                     if(a.getFils1().getChaine().equals("true")){
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
+                    }else { 
+                    	if(a.getFils1().getChaine().equals("false")){
+                    		Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        	Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
+                        	forcementFaux = true;
+                    	}
+                    	else{
+                    		varName = a.getFils1().getChaine();
+                    		placeEnPile = decl.indexOf(varName) + 1;
+                    		Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                    		Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
+                    	}
                     }
-                    else if(a.getFils1().getChaine().equals("false")){
-                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
-                        forcementFaux = true;
-                    }
-                    else{
-                    	varName = a.getFils1().getChaine();
-                        placeEnPile = decl.indexOf(varName) + 1;
-                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-                        Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
-                    }                    
                     Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
                     Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre() + "à 0");
                     Inst jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNegative)));
@@ -1012,15 +1013,17 @@ class Generation {
                             Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
                             Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
                         }
-                        else if(a.getFils2().getChaine().equals("false")){
-                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-                            Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
-                        }
-                        else{
-                        	varName = a.getFils2().getChaine();
-                            placeEnPile = decl.indexOf(varName) + 1;
-                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-                            Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
+                        else {
+                        	if(a.getFils2().getChaine().equals("false")){
+                        		Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+                        		Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
+                        	}
+                        	else{
+                        		varName = a.getFils2().getChaine();
+                        		placeEnPile = decl.indexOf(varName) + 1;
+                        		Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+                        		Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
+                        	}
                         }
                     }
                     else{
