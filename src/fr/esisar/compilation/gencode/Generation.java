@@ -12,31 +12,25 @@ import fr.esisar.compilation.global.src3.*;
 class Generation {
 	public static ArrayList<String> decl;
 	public static GestionRegistre reg;
+	
+	static int nbEtiq = 0;
    /**
     * Méthode principale de génération de code.
     * Génère du code pour l'arbre décoré a.
     */
-	static int nbEtiq = 0;
 	
    static Prog coder(Arbre a) {
       Prog.ajouterGrosComment("Programme généré par JCasc");
       decl = new ArrayList<String>();
       GestionRegistre.initRegTab();
       Inst inst;
-      // -----------
-      // A COMPLETER
-      // -----------
       
       coder_Decl(a.getFils1());
       //Réserve de la place pour les variables locales
-
-			//TODO il faut prendre en compte le fait qu'un tableau c'est plus gros, du coup, la bez
       inst = Inst.creation1(Operation.ADDSP, Operande.creationOpEntier(decl.size()));
       Prog.ajouter(inst,"Réservation en pile des variables locales");
       
       coder_Inst(a.getFils2());
-      // L'instruction "new_line"
-      // L'instruction "write"
       
 
 
@@ -122,15 +116,12 @@ class Generation {
 	   Inst inst;
 	   switch(a.getNoeud()){
 	   case Ecriture:
-		 //Attention, le fils d'un Noeud Ecriture est un Noeud.ListeExp qui contient lui même des Noeud.ListeExp
+		   //Attention, le fils d'un Noeud Ecriture est un Noeud.ListeExp qui contient lui même des Noeud.ListeExp
 		   coder_Ecriture(a.getFils1());
 		   break;
 	   case Lecture :
 		   coder_Lecture(a.getFils1());
-		   break;
-	   case Affect :
-		   coder_Affect(a);
-		   break;
+		   break;		   
 	   case Ligne:
 		   inst = Inst.creation0(Operation.WNL);
 		   Prog.ajouter(inst, "new line");
@@ -142,13 +133,9 @@ class Generation {
 	   }
    }
    
-   private static void coder_Affect(Arbre a) {
-	
-	
-}
-/**Fonction s'occupant de l'instruction write
+   /**Fonction s'occupant de l'instruction write
     * Etat : terminé
-    * @param un arbre
+    * @param un arbre (Premier appel, a est un Noeud.ListeExp)
     * @return void
     */
    private static void coder_Ecriture(Arbre a){
@@ -178,7 +165,7 @@ class Generation {
 		   Prog.ajouter(inst,"Ecriture de l'entier");
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-		   if(r.equals(Registre.R1)){
+		   if(r != null && r.equals(Registre.R1)){
 			   GestionRegistre.popPile(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
@@ -205,7 +192,7 @@ class Generation {
 		   Prog.ajouter(inst,"Ecriture d'un réel" );
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-		   if(r.equals(Registre.R1)){
+		   if(r != null && r.equals(Registre.R1)){
 			   GestionRegistre.popPile(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
@@ -226,11 +213,10 @@ class Generation {
    }
    
    /**Fonction s'occupant de  l'instruction read
-    * Etat : en cours
+    * Etat : Fini
     * @return void
-    * @param a (Un Noeud.Ident)
+    * @param a (Un Noeud.Ident ou un Noeud.Index)
     */
-   //TODO finir SEB (tablal)
    private static void coder_Lecture(Arbre a) {
 	   Registre r = null;
 		//Le fils d'un Noeud Lecture est forcément un Noeud Ident de type Integer ou Reel
@@ -240,15 +226,20 @@ class Generation {
 		   //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
 		   r = GestionRegistre.deplaceRegistre(Registre.R1);
 	   }
-	   
-	   	//On lit soit un entier, soit un réel
+	   	//On lit soit un entier, soit un réel qui sera ensuite placer dans R1
 	   	if(a.getDecor().getType().getNature().equals(NatureType.Interval)){
 			Inst inst = Inst.creation0(Operation.RINT);
 			Prog.ajouter(inst, "Lecture d'un entier");
 		}
 		else{
-			Inst inst = Inst.creation0(Operation.RFLOAT);
-			Prog.ajouter(inst, "Lecture d'un flotant");
+			if(a.getDecor().getType().getNature().equals(NatureType.Real)){
+				Inst inst = Inst.creation0(Operation.RFLOAT);
+				Prog.ajouter(inst, "Lecture d'un flotant");
+			}
+			else{
+				Inst inst = Inst.creation1(Operation.BRA,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+			   	Prog.ajouter(inst, "On arrete le programme car on essaye de read autre chose qu'un int ou un reel");
+			}
 		}
 	    // On test si R1 possède une valeur correcte (pour les intervalles)
 	   	
@@ -256,27 +247,33 @@ class Generation {
 	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneInf()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
-	   	Prog.ajouter(inst, "Erreur BorneInf intervale");
+	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 	   	
 	   	//On test si R1 est supérieur à la borne sup du fils
 	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneSup()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
-	   	Prog.ajouter(inst, "Erreur BorneSup intervale");
+	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 	   	
 	   	//On le replace en pile
-	   	if(!a.getFils1().getDecor().getType().equals(NatureType.Array)){
-	   		String varName = a.getFils1().getChaine();
+	   	if(!a.getDecor().getType().getNature().equals(NatureType.Array)){
+	   		String varName = a.getChaine();
 			int placeEnPile = decl.indexOf(varName);
 			Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
 			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
 			
 	   	}else{
-	   		//TODO pour les tablals quand ce sera corrigé voir avec TIM pour le nom des var dans le tablal 
-	   		//Trouver le nom avec le décor puis trouver le décalage en parcours profondeur
-	   	}
-	   	
-	   	
+	   		//Trouver le nom puis trouver le décalage en parcours profondeur
+	   		int length = getLength(a);
+	   		//Trouver dynamiquement l'endroit où l'on veut écrire
+	   		Indice indice = load_Index(a);
+	   		Inst inst2 = Inst.creation2(Operation.CMP, indice.offset, Operande.creationOpEntier(length));
+	   		Prog.ajouter(inst2,"comparaison de la taille du tableau avec l'offset (pour les overflow)");
+	   		inst2 = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   		Prog.ajouter(inst2,"On arrete le programme car on essaye d'écrire à un endroit interdit");
+	   		inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(indice.placeEnPileOrigine, Registre.GB));
+	   		GestionRegistre.libererRegistre(indice.offset.getRegistre());
+	   	}	   	
 	   	//On restore les états des registres si besoin
 	   	//Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
 	   	if(r.equals(Registre.R1)){
@@ -291,35 +288,46 @@ class Generation {
 	   		}
 	   	}  
    }
-  
+   
    
    /**
     * A étant un Noeud.Index, charge la zone mémoire pointée par a dans un registre et le renvoie
     * @param a un Noeud.Index
     * @return Un opérande contenant la valeur pointée par a
     */
-   private static Operande load_Index(Arbre a) {
-	   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
-	   a.getDecor().getType().getBorneInf();
-	   a.getDecor().getType().getBorneSup();
-	   load_Index(a.getFils1());
-	   coder_EXP(a.getFils2());
-	   
-	   return registreLibre;
+   private static Indice load_Index(Arbre a) {
+	   String ident = getIdent(a);
+	   Operande offset = getSubIndex(a);
+	   int placeEnPile = decl.indexOf(ident);
+	   Indice indice = new Indice(offset,placeEnPile);
+	   return indice;
    }
-   /* TODO A TERMINER TIMOTHEE
+   /**
+    * Etant donné a un index, code la récupération de l'indice du tableau voulu, de façon récursive.
+    * De la forme (Expression de Fils2 * dimension du tableau pointé par le Fils1) + expression retournée par le Fils1
+    * @param a un arbre index
+    * @return un registre contenant l'offset de l'indice du tableau.
+    */
    private static Operande getSubIndex(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   int len = getLength(a.getFils1());
-		   Operande subexp = getSubIndex(a.getFils1());
-		   Operande exp = coder_EXP(a.getFils2());
-		   Inst.creation2(Operation.MULTipl, Operande.creationOpEntier(0), registreLibre);
+		   int len = getLength(a.getFils1()); // Dimension du tableau pointé par le Fils1
+		   Operande subexp = getSubIndex(a.getFils1()); // expression retournée par Fils1
+		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
+		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
+		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
+		   machin = Inst.creation2(Operation.ADD, exp,subexp);
+		   Prog.ajouter(machin,"calcul de la dimension du tableau : (exp*dimf)+expf");
+		   GestionRegistre.libererRegistre(exp.getRegistre());
+		   return subexp;
 	   }
 	   else {
 		   return GestionRegistre.getFreeRegToOpTab();
 	   }
-   }*/
+   }
    
+   /*
+    * Donne la longueur du tableau pointé par a, en incluant les éventuels sous-tableaux.
+    */
    private static int getLength(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   return((a.getDecor().getType().getBorneSup() - a.getDecor().getType().getBorneInf() + 1)*getLength(a.getFils1()));
@@ -329,12 +337,15 @@ class Generation {
 	   }
    }
    
+   /*
+    * Utilisé par load_index, va récupérer l'identifiant associé au premier élément du tableau de façon récursive.
+    */
    private static String getIdent(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Ident)) {
-		   return a.getChaine();
+		   return(a.getChaine());
 	   }
 	   else {
-		   return getIdent(a.getFils1());
+		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
 	   }
    }
    
