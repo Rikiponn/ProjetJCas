@@ -314,19 +314,34 @@ class Generation {
     */
    private static void coder_Si(Arbre a) {
 	   Operande fils1 = coder_EXP(a.getFils1());
-	   Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), fils1);
+	   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), fils1);
 	   Prog.ajouter(inst);
 	   if(a.getFils3().getNoeud().equals(Noeud.Vide)){
-		   
-	   }else{
-		   coder_Inst(a.getFils2());
 		   String str = new String("FinSi"+nbEtiq);
 		   Etiq eti = Etiq.lEtiq(str);
 		   nbEtiq++;
-		   Inst inst2 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq.lEtiq(str)));
 		   
+		   inst = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(eti));
+		   Prog.ajouter(inst,"Branch vers le FinSi");
+		   coder_Inst(a.getFils2());	// Instruction alors
+		   Prog.ajouter(eti);// etiquette du FinSi
+	   }else{
+		   String str = new String("Sinon"+nbEtiq);
+		   Etiq eti = Etiq.lEtiq(str);
+		   nbEtiq++;
+		   
+		   String str2 = new String("FinSi"+nbEtiq);
+		   Etiq eti2 = Etiq.lEtiq(str);
+		   nbEtiq++;
+		   
+		   inst = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(eti));
+		   Prog.ajouter(inst,"Branch vers le sinon");
+		   coder_Inst(a.getFils2());	// Instruction alors
+		   inst = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(eti2));
+		   Prog.ajouter(eti);	// etiquette du sinon
+		   coder_Inst(a.getFils3());	// Instruction sinon
+		   Prog.ajouter(eti2);	// etiquette du fin si
 	   }
-	   
    }
    
    
