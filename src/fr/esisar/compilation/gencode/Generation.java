@@ -130,17 +130,7 @@ class Generation {
                int placeEnPile = -1;
                if((placeEnPile = decl.indexOf(a.getFils1().getChaine()) + 1) == -1) {
             	   System.exit(0);;
-               }/*
-               if(!(opdroite.getNature().equals(NatureOperande.OpDirect))) {
-            	   if(opdroite.getNature().equals(NatureOperande.OpEntier)) {
-            		   inst = Inst.creation2(Operation.LOAD, opdroite, op2);
-                       Prog.ajouter(inst, "écriture en mémoire (pile)");
-            	   }
-            	   if(opdroite.getNature().equals(NatureOperande.OpReel)) {
-            		   inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
-                       Prog.ajouter(inst, "écriture en mémoire (pile)");
-            	   }
-               }*/
+               }
                inst = Inst.creation2(Operation.LOAD, opdroite, newreg);
                Prog.ajouter(inst, "chargement en registre de la valeur à assigner");
                inst = Inst.creation2(Operation.STORE,newreg,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
@@ -156,6 +146,7 @@ class Generation {
                break;
            }
            if(opdroite.getNature().equals(NatureOperande.OpDirect))
+        	   if(!(opdroite.getNature().equals(NatureOperande.OpEntier)) || !(opdroite.getNature().equals(NatureOperande.OpReel)))
                    GestionRegistre.libererRegistre(opdroite.getRegistre());
            GestionRegistre.libererRegistre(newreg.getRegistre());
            break;
@@ -523,6 +514,7 @@ class Generation {
 		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
 	   }
    }
+   
    private static Operande coder_EXP(Arbre a){
 	   Inst inst;
 	   //chercher en fonction du nom de la variable, sa position en pile,PUIS la charger dans un registre libre
