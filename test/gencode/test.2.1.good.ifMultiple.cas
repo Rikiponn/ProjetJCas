@@ -1,9 +1,10 @@
-program 
+program
 begin 
     if true and true then 
         write("1er if work"); 
         new_line; 
     end; 
+    
     new_line; 
     if true and false then 
         new_line; 
@@ -19,5 +20,15 @@ begin
     end; 
  
  
+    if false or false then 
+        write("if"); 
+    else  
+        write("Else1");
+        if true or true then
+            write("else"); 
+        end; 
+    end;
+
+
 end. 
  
