@@ -636,7 +636,7 @@ public class Verif {
 		   }
 		   else {
 			   verif_Index(a.getFils1());
-			   if(!(verif_Exp(a.getFils2()).equals(Type.Integer)));{
+			   if(!(verif_Exp(a.getFils2()).equals(Type.Integer))){
 				   e = ErreurContext.ErreurEntierAttendu;
 				   e.leverErreurContext(null, a.getNumLigne());
 			   }
@@ -664,7 +664,6 @@ public class Verif {
 			e = ErreurContext.ErreurIdentReserve;
 			e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
 		}
-		
 		Type t1 = verif_Index(a.getFils1());
 		
 		// Si tu veux pas l'intervalle enlève ce commentaire et met l'autre en commentaire
