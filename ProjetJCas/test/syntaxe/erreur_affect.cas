@@ -1,5 +1,0 @@
-program
-	i:int;
-begin
-	i=5;
-end.

@@ -1,5 +1,0 @@
-program
-	int i;
-begin
-	i:=5;
-end.

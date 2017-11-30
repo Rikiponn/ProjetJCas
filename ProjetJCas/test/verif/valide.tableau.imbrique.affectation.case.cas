@@ -1,5 +1,0 @@
-program
-	tab : array[1..5] of array[1..10] of integer;
-begin
-	tab[1][1] = 5;
-end.

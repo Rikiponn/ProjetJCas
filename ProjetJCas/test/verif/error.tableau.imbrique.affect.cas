@@ -1,6 +1,0 @@
-program
-	a : integer;
-	tab : array[1..5] of array[1..5] of array[1..5] of array[1..5] of integer;
-begin
-	a := tab[3][3][2];
-end.

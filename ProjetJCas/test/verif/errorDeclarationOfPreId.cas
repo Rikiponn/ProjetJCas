@@ -1,8 +1,0 @@
-program
-    v1 : integer;
-    v2 : integer;
-    boolean : integer;
-begin
-    v1 := v2;
-end.
-

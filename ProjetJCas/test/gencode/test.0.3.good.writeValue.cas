@@ -1,6 +1,0 @@
-program
-begin
-    write(5);
-    write(5.0);
-end.
-

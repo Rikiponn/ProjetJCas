@@ -1,6 +1,0 @@
-program
-	a : string;
-	tab : array[1..5] of integer;
-begin
-	tab[1] := a;
-end.

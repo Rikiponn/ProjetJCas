@@ -1,7 +1,0 @@
-program
-	a : integer;
-	tab : array[1..5] of integer;
-begin
-	a := 1;
-	tab[a] := 2;
-end.
