@@ -127,8 +127,20 @@ class Generation {
            switch(a.getFils1().getNoeud()) {
            case Ident:
                int placeEnPile = decl.indexOf(a.getFils1().getDecor().getType().toString());
-               inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
-               Prog.ajouter(inst, "écriture en mémoire (pile)");
+               switch(a.getFils1().getNoeud()) {
+               case Entier:
+            	   inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpEntier(opdroite.getEntier()));
+            	   Prog.ajouter(inst, "écriture en mémoire (pile) d'un entier");
+            	   break;
+               case Reel:
+            	   inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpReel(opdroite.getReel()));
+            	   Prog.ajouter(inst, "écriture en mémoire (pile) d'un réel");
+            	   break;
+               default:
+            	   inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
+                   Prog.ajouter(inst, "écriture en mémoire (pile)");
+                   break;
+               }
                break;
            case Index:
                Indice indice = load_Index(a.getFils1());
