@@ -1,12 +1,12 @@
 program
 begin
-    if (true = true) then
+    if true and true then
         write("1er if work");
         new_line;
     end;
+    new_line;
 
-    if (true = false) then
-        new_line;
-    else 
+
+
 end.
 

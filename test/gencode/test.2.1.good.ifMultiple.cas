@@ -1,0 +1,23 @@
+program
+begin
+    if true and true then
+        write("1er if work");
+        new_line;
+    end;
+    new_line;
+    if true and false then
+        new_line;
+    else 
+        write("else");
+    end;
+
+    new_line;
+    if true or false then
+        write("if");
+    else 
+        write("else");
+    end;
+
+
+end.
+
