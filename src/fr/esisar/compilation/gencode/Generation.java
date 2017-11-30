@@ -144,6 +144,13 @@ class Generation {
            break;
 	   case Si:
 		   coder_Si(a);
+		   break;
+	   case Pour:
+		   coder_Pour(a);
+		   break;
+	   case TantQue:
+		   coder_TantQue(a);
+		   break;
 	   case Ligne:
 		   inst = Inst.creation0(Operation.WNL);
 		   Prog.ajouter(inst, "new line");
@@ -154,6 +161,97 @@ class Generation {
 		   break;
 	   }
    }
+   
+   private static void coder_TantQue(Arbre a) {
+       Operande reg1;
+       String debutWhile = "debutWhile" + nbEtiq;
+       Etiq etiqDebutWhile = Etiq.lEtiq(debutWhile);
+       nbEtiq++;
+       Prog.ajouter(etiqDebutWhile, "Ajout de l etiquette au debut du Tant Que");
+
+       reg1 = coder_EXP(a.getFils1());
+       
+       String finWhile = "finWhile" + nbEtiq;
+       Etiq etiqFinWhile = Etiq.lEtiq(finWhile);
+       nbEtiq++;
+       
+       Inst compareInst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
+       Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre().toString() + " par rapport a 0");
+       Inst jumpIfFalse = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(finWhile)));
+       Prog.ajouter(jumpIfFalse, "Ajout de l'instruction de saut vers la fin du Tant Que");
+       
+       coder_Inst(a.getFils2());
+       
+       Inst jumpWhileBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq.lEtiq(debutWhile)));
+       Prog.ajouter(jumpWhileBegin, "Ajout de l'instruction de saut vers le debut du Tant Que");
+       
+       Prog.ajouter(etiqFinWhile, "Ajout de l etiquette a la fin du Tant Que");
+       
+   }
+   
+   private static void coder_Pour(Arbre a) {
+       Operande reg1, borneInf, borneSup;
+       
+       String debutFor = "debutFor" + nbEtiq;
+       Etiq etiqDebutFor = Etiq.lEtiq(debutFor);
+       nbEtiq++;
+       Prog.ajouter(etiqDebutFor, "Ajout de l etiquette au debut du For");       
+       String finFor = "finPour" + nbEtiq;
+       Etiq etiqFinFor = Etiq.lEtiq(finFor);
+       nbEtiq++;
+       
+       String varName = a.getFils1().getChaine();
+       int placeEnPile = decl.indexOf(varName);
+       reg1 = GestionRegistre.getFreeRegToOpTab();
+       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+       Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());       
+       
+       if(a.getFils1().getNoeud()==Noeud.Increment) {
+           borneInf = coder_EXP(a.getFils1().getFils2());
+           borneSup = coder_EXP(a.getFils1().getFils3());
+           
+           Inst compareInst = Inst.creation2(Operation.CMP, borneInf, reg1);
+           Prog.ajouter(compareInst, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
+           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+           Prog.ajouter(jumpIfInf, "On saute a la fin du for si l identificateur est inferieur a la borne inferieure");
+           Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
+           Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
+           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+           Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
+
+           coder_Inst(a.getFils2());
+           
+           Inst incrementInst = Inst.creation2(Operation.ADD, Operande.creationOpEntier(1), reg1);
+           Prog.ajouter(incrementInst, "On incremente la valeur du registre " + reg1.getRegistre());
+       
+       }
+       else if(a.getFils1().getNoeud()==Noeud.Decrement) {
+           borneSup = coder_EXP(a.getFils1().getFils2());
+           borneInf = coder_EXP(a.getFils1().getFils3());
+           Inst compareInst = Inst.creation2(Operation.CMP, borneInf, reg1);
+           Prog.ajouter(compareInst, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
+           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+           Prog.ajouter(jumpIfInf, "On saute a la fin du for si l identificateur est inferieur a la borne inferieure");
+           Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
+           Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
+           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+           Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
+
+           coder_Inst(a.getFils2());
+           
+           Inst incrementInst = Inst.creation2(Operation.SUB, Operande.creationOpEntier(1), reg1);
+           Prog.ajouter(incrementInst, "On decremente la valeur du registre " + reg1.getRegistre());
+       }
+       
+       Inst storeInst = Inst.creation2(Operation.STORE, reg1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
+       Prog.ajouter(storeInst, "Remise de la valeur de l identificateur dans la pile");
+       
+       Inst jumpForBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq.lEtiq(debutFor)));
+       Prog.ajouter(jumpForBegin, "Ajout de l'instruction de saut vers le debut du For");
+       
+       Prog.ajouter(etiqFinFor, "Ajout de l etiquette a la fin du For");
+   }
+   
    
 /**Fonction s'occupant de l'instruction write
     * Etat : terminé
