@@ -305,22 +305,12 @@ class Generation {
     * @param a un Noeud.Index
     * @return Un opérande contenant la valeur pointée par a
     */
-   private static Operande load_Index(Arbre a) {
-	   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
+   private static Indice load_Index(Arbre a) {
 	   String ident = getIdent(a);
-	   while(a.getNoeud().equals(Noeud.Index)) {
-		   ident = ident+"["+a.getDecor().getType().getBorneInf()+"]";
-		   a = a.getFils1();
-	   }
 	   Operande offset = getSubIndex(a);
-	   int placeEnPile = -1;
-	   if((placeEnPile = decl.indexOf(ident)) != -1) {
-		   // contenu de (arg2(reg) + arg3(reg) + arg1(int)) TODO A vérifier c'est la merde
-	   		Inst machin = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(placeEnPile, Operande.GB.getRegistre(), offset.getRegistre()), registreLibre);
-	   		Prog.ajouter(machin,"Chargement de la valeur de l'indice du tableau en mémoire");
-	   }
-	   GestionRegistre.libererRegistre(offset.getRegistre());
-	   return registreLibre;
+	   int placeEnPile = decl.indexOf(ident);
+	   Indice indice = new Indice(offset,placeEnPile);
+	   return indice;
    }
    /**
     * Etant donné a un index, code la récupération de l'indice du tableau voulu, de façon récursive.
@@ -365,7 +355,7 @@ class Generation {
 		   return(a.getChaine());
 	   }
 	   else {
-		   return getIdent(a.getFils1());
+		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
 	   }
    }
    
