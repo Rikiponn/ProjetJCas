@@ -298,10 +298,6 @@ class Generation {
     */
    private static Indice load_Index(Arbre a) {
 	   String ident = getIdent(a);
-	   while(a.getNoeud().equals(Noeud.Index)) {
-		   ident = ident+"["+a.getDecor().getType().getBorneInf()+"]";
-		   a = a.getFils1();
-	   }
 	   Operande offset = getSubIndex(a);
 	   int placeEnPile = decl.indexOf(ident);
 	   Indice indice = new Indice(offset,placeEnPile);
@@ -350,7 +346,7 @@ class Generation {
 		   return(a.getChaine());
 	   }
 	   else {
-		   return getIdent(a.getFils1());
+		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
 	   }
    }
    
