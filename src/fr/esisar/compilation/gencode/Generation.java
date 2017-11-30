@@ -286,6 +286,9 @@ class Generation {
 	   }
    }*/
    
+   /*
+    * Donne la longueur du tableau pointé par a, en incluant les éventuels sous-tableaux.
+    */
    private static int getLength(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   return((a.getDecor().getType().getBorneSup() - a.getDecor().getType().getBorneInf() + 1)*getLength(a.getFils1()));
