@@ -323,6 +323,9 @@ class Generation {
     */
    private static void coder_Si(Arbre a) {
 	   Operande fils1 = coder_EXP(a.getFils1());
+	   Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), fils1);
+	   Prog.ajouter(inst);
+	   
 	   
    }
    
@@ -385,7 +388,6 @@ class Generation {
 		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
 	   }
    }
-   
    private static Operande coder_EXP(Arbre a){
 	   Inst inst;
 	   //chercher en fonction du nom de la variable, sa position en pile,PUIS la charger dans un registre libre
@@ -479,225 +481,266 @@ class Generation {
 		   int placeEnPile;
 		   Operande reg1;
 		   Operande reg2;
-		   boolean needPop = false;
-		   boolean needPop2 = false;
 		   
 		   switch(a.getNoeud()){
-		   case Mult :                       
-               reg1 = GestionRegistre.getFreeRegToOpTab();
-               reg2 = GestionRegistre.getFreeRegToOpTab();
-               
-               if(a.getFils1().getNoeud()==Noeud.Conversion) {
-                   if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
-                       varName = a.getFils1().getFils1().getChaine();
-                       placeEnPile = decl.indexOf(varName);
-                       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-                       Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils1().getFils1().getDecor().getType() == Type.Integer){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getEntier()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   } else if(a.getFils1().getFils1().getDecor().getType() == Type.Real){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getReel()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg1.getRegistre());
-                       reg1 = coder_EXP(a.getFils1().getFils1());
-                   }
-               }
-               else {
-                   if(a.getFils1().getNoeud()==Noeud.Ident){
-                       varName = a.getFils1().getChaine();
-                       placeEnPile = decl.indexOf(varName);
-                       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-                       Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils1().getDecor().getType() == Type.Integer){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   } else if(a.getFils1().getDecor().getType() == Type.Real){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg1.getRegistre());
-                       reg1 = coder_EXP(a.getFils1());
-                   }
-               }
-               
-               if(a.getFils2().getNoeud()==Noeud.Conversion) {
-                   if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
-                       varName = a.getFils2().getFils1().getChaine();
-                       placeEnPile = decl.indexOf(varName);
-                       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-                       Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils2().getFils1().getDecor().getType() == Type.Integer){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getEntier()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   } else if(a.getFils2().getFils1().getDecor().getType() == Type.Real){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg2.getRegistre());
-                       reg2 = coder_EXP(a.getFils2().getFils1());
-                   }
-               }
-               else {
-                   if(a.getFils2().getNoeud()==Noeud.Ident){
-                       varName = a.getFils2().getChaine();
-                       placeEnPile = decl.indexOf(varName);
-                       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-                       Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils2().getDecor().getType() == Type.Integer){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   } else if(a.getFils2().getDecor().getType() == Type.Real){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg2.getRegistre());
-                       reg2 = coder_EXP(a.getFils2());
-                   }
-               }
-               
-               Inst multInst = Inst.creation2(Operation.MUL, reg1, reg2);
-               Prog.ajouter(multInst, "Ajout de l'instruction multiplication");
-               
-               GestionRegistre.libererRegistre(reg1.getRegistre());
-               return reg2;
+		   	case Mult :			   		
+		   		reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		if(a.getFils1().getNoeud()==Noeud.Conversion) {
+		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1().getFils1());
+			   		}
+		   		}
+		   		else {
+		   			if(a.getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1());
+			   		}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Conversion) {
+		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2().getFils1());
+			   		}
+		   		}
+		   		else {
+		   			if(a.getFils2().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2());
+			   		}
+		   		}
+		   		
+		   		Inst multInst = Inst.creation2(Operation.MUL, reg1, reg2);
+		   		Prog.ajouter(multInst, "Ajout de l'instruction multiplication");
+		   		
+		   		GestionRegistre.libererRegistre(reg1.getRegistre());
+		   		return reg2;
+ 
+	   		case Plus :
+		   		reg1 = GestionRegistre.getFreeRegToOpTab();
+		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		if(a.getFils1().getNoeud()==Noeud.Conversion) {
+		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1().getFils1());
+			   		}
+		   		}
+		   		else {
+		   			if(a.getFils1().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils1().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
+		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1());
+			   		}
+		   		}
+		   		
+		   		if(a.getFils2().getNoeud()==Noeud.Conversion) {
+		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2().getFils1());
+			   		}
+		   		}
+		   		else {
+		   			if(a.getFils2().getNoeud()==Noeud.Ident){
+		   			varName = a.getFils2().getChaine();
+		   			placeEnPile = decl.indexOf(varName);
+		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2());
+			   		}
+		   		}
+		   		
+		   		Inst addInst = Inst.creation2(Operation.ADD, reg1, reg2);
+		   		Prog.ajouter(addInst, "Ajout de l'instruction addition");
 
-           case Plus :
-               reg1 = GestionRegistre.getFreeRegToOpTab();
-               reg2 = GestionRegistre.getFreeRegToOpTab();
-               
-               if(a.getFils1().getNoeud()==Noeud.Conversion) {
-                   if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
-                       varName = a.getFils1().getFils1().getChaine();
-                       placeEnPile = decl.indexOf(varName);
-                       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-                       Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils1().getFils1().getDecor().getType() == Type.Integer){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getEntier()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   } else if(a.getFils1().getFils1().getDecor().getType() == Type.Real){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getReel()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg1.getRegistre());
-                       reg1 = coder_EXP(a.getFils1().getFils1());
-                   }
-               }
-               else {
-                   if(a.getFils1().getNoeud()==Noeud.Ident){
-                   varName = a.getFils1().getChaine();
-                   placeEnPile = decl.indexOf(varName);
-                   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-                   Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils1().getDecor().getType() == Type.Integer){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   } else if(a.getFils1().getDecor().getType() == Type.Real){
-                       Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
-                       Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg1.getRegistre());
-                       reg1 = coder_EXP(a.getFils1());
-                   }
-               }
-               
-               if(a.getFils2().getNoeud()==Noeud.Conversion) {
-                   if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
-                       varName = a.getFils2().getFils1().getChaine();
-                       placeEnPile = decl.indexOf(varName);
-                       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-                       Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils2().getFils1().getDecor().getType() == Type.Integer){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getFils1().getEntier()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   } else if(a.getFils2().getFils1().getDecor().getType() == Type.Real){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg2.getRegistre());
-                       reg2 = coder_EXP(a.getFils2().getFils1());
-                   }
-               }
-               else {
-                   if(a.getFils2().getNoeud()==Noeud.Ident){
-                   varName = a.getFils2().getChaine();
-                   placeEnPile = decl.indexOf(varName);
-                   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-                   Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-                   }
-                   else if(a.getFils2().getDecor().getType() == Type.Integer){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   } else if(a.getFils2().getDecor().getType() == Type.Real){
-                       Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
-                       Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-                   }
-                   else {
-                       GestionRegistre.libererRegistre(reg2.getRegistre());
-                       reg2 = coder_EXP(a.getFils2());
-                   }
-               }
-               
-               Inst addInst = Inst.creation2(Operation.ADD, reg1, reg2);
-               Prog.ajouter(addInst, "Ajout de l'instruction addition");
-
-               GestionRegistre.libererRegistre(reg1.getRegistre());
-               return reg2;
+	   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   		return reg2;
 		   		
 	   		case Moins :
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
 		   		
-		   		if(a.getFils1().getNoeud()==Noeud.Ident){
-		   			varName = a.getFils1().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
-		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-		   		}
-		   		else if(a.getFils1().getDecor().getType() == Type.Integer){
-		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
-		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-		   		} else if(a.getFils1().getDecor().getType() == Type.Real){
-		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
-		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+		   		if(a.getFils1().getNoeud()==Noeud.Conversion) {
+		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1().getFils1());
+			   		}
 		   		}
 		   		else {
-		   			GestionRegistre.libererRegistre(reg1.getRegistre());
-		   			reg1 = coder_EXP(a.getFils1());
+		   			if(a.getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1());
+			   		}
 		   		}
 		   		
-		   		if(a.getFils2().getNoeud()==Noeud.Ident){
-		   			varName = a.getFils2().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
-		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-		   		}
-		   		else if(a.getFils2().getDecor().getType() == Type.Integer){
-		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
-		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-		   		} else if(a.getFils2().getDecor().getType() == Type.Real){
-		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
-		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+		   		if(a.getFils2().getNoeud()==Noeud.Conversion) {
+		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2().getFils1());
+			   		}
 		   		}
 		   		else {
-		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-		   			reg2 = coder_EXP(a.getFils2());
+		   			if(a.getFils2().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2());
+			   		}
 		   		}
+		   		
 		   		Inst subInst = Inst.creation2(Operation.SUB, reg1, reg2);
 		   		Prog.ajouter(subInst, "Ajout de l'instruction soustraction");
 
@@ -709,44 +752,88 @@ class Generation {
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
 		   		
-		   		if(a.getFils1().getNoeud()==Noeud.Ident){
-		   			varName = a.getFils1().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
-		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-		   		}
-		   		else if(a.getFils1().getDecor().getType() == Type.Integer){
-		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
-		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
-		   		} else if(a.getFils1().getDecor().getType() == Type.Real){
-		   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
-		   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+		   		if(a.getFils1().getNoeud() == Noeud.Conversion) {
+		   			if(a.getFils1().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1().getFils1());
+			   		}
 		   		}
 		   		else {
-		   			GestionRegistre.libererRegistre(reg1.getRegistre());
-		   			reg1 = coder_EXP(a.getFils1());
+		   			if(a.getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils1().getEntier()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		} else if(a.getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils1Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils1().getReel()), reg1);
+			   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   			reg1 = coder_EXP(a.getFils1());
+			   		}
 		   		}
 		   		
-		   		if(a.getFils2().getNoeud()==Noeud.Ident){
-		   			varName = a.getFils2().getChaine();
-		   			placeEnPile = decl.indexOf(varName);
-		   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
-		   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
-		   		}
-		   		else if(a.getFils2().getDecor().getType() == Type.Integer){
-		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
-		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
-		   		} else if(a.getFils2().getDecor().getType() == Type.Real){
-		   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
-		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+		   		if(a.getFils2().getNoeud() == Noeud.Conversion) {
+		   			if(a.getFils2().getFils1().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getFils1().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getFils1().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getFils1().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getFils1().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2().getFils1());
+			   		}
 		   		}
 		   		else {
-		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-		   			reg2 = coder_EXP(a.getFils2());
+		   			if(a.getFils2().getNoeud()==Noeud.Ident){
+			   			varName = a.getFils2().getChaine();
+			   			placeEnPile = decl.indexOf(varName);
+			   			Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg2);
+			   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre().toString());
+			   		}
+			   		else if(a.getFils2().getDecor().getType() == Type.Integer){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getFils2().getEntier()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		} else if(a.getFils2().getDecor().getType() == Type.Real){
+			   			Inst loadFils2Inst = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getFils2().getReel()), reg2);
+			   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
+			   		}
+			   		else {
+			   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   			reg2 = coder_EXP(a.getFils2());
+			   		}
 		   		}
+		   		
 		   		Inst divRInst = Inst.creation2(Operation.DIV, reg1, reg2);
 		   		Prog.ajouter(divRInst, "Ajout de l'instruction division");
 
+		   		
 	   			GestionRegistre.libererRegistre(reg1.getRegistre());
 		   		return reg2;
 
@@ -774,7 +861,7 @@ class Generation {
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
                     }                    
                     Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
-                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " à 0");
+                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " Ã  0");
                     Inst jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNegative)));
                     Prog.ajouter(jump, "On saute a la fin du et");
                 }
@@ -834,7 +921,7 @@ class Generation {
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre().toString());                            
                     }                    
                     Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
-                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " à 0");
+                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre().toString() + " Ã  0");
                     Inst jump = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqPositive)));
                     Prog.ajouter(jump, "On saute a la fin du ou");
                 }
@@ -874,6 +961,7 @@ class Generation {
 	   		case Egal :
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -957,16 +1045,19 @@ class Generation {
 		   		
 		   		Prog.ajouter(compareInst, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
 		   		Prog.ajouter(setFalseInst, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
-		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il n'y a pas égalité");
+		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il n'y a pas Ã©galitÃ©");
 		   		Prog.ajouter(setTrueInst, "Mise a true (1) du registre " + reg1.getRegistre().toString());
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqInegalite));
 
+		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
 		   		
 	   		case InfEgal :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1050,15 +1141,18 @@ class Generation {
 		   		
 		   		Prog.ajouter(compareInst2, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
 		   		Prog.ajouter(setFalseInst2, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
-		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il n'y a pas inferiorité ou égalité");
+		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il n'y a pas inferioritÃ© ou Ã©galitÃ©");
 		   		Prog.ajouter(setTrueInst2, "Mise a true (1) du registre " + reg1.getRegistre().toString());
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonInferieurOuEgal));
 
+		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
 	   		case Inf :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1142,15 +1236,18 @@ class Generation {
 		   		
 		   		Prog.ajouter(compareInst3, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
 		   		Prog.ajouter(setFalseInst3, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
-		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il n'y a pas inferiorité stricte");
+		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il n'y a pas inferioritÃ© stricte");
 		   		Prog.ajouter(setTrueInst3, "Mise a true (1) du registre " + reg1.getRegistre().toString());
 		   		Prog.ajouter(Etiq.lEtiq("nomEtiqNonInferieurStrict"));
 
+		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
 	   		case SupEgal :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1234,15 +1331,18 @@ class Generation {
 		   		
 		   		Prog.ajouter(compareInst4, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
 		   		Prog.ajouter(setFalseInst4, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
-		   		Prog.ajouter(jumpIfNonEqualInst4, "Ajout de l'instruction de saut s'il n'y a pas supériorité ou égalité");
+		   		Prog.ajouter(jumpIfNonEqualInst4, "Ajout de l'instruction de saut s'il n'y a pas supÃ©rioritÃ© ou Ã©galitÃ©");
 		   		Prog.ajouter(setTrueInst4, "Mise a true (1) du registre " + reg1.getRegistre().toString());
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonSuperieurOuEgal));
 
+		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
 	   		case Sup :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1326,7 +1426,7 @@ class Generation {
 		   		
 		   		Prog.ajouter(compareInst5, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
 		   		Prog.ajouter(setFalseInst5, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
-		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il n'y a pas supériorité stricte");
+		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il n'y a pas supÃ©rioritÃ© stricte");
 		   		Prog.ajouter(setTrueInst5, "Mise a true (1) du registre " + reg1.getRegistre().toString());
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonSuperieurStrict));
 
@@ -1335,6 +1435,8 @@ class Generation {
 	   		case NonEgal :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
+		   		
+		   		
 		   		if(a.getFils1().getNoeud()==Noeud.Ident){
 		   			if(a.getFils1().getChaine()=="true"){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1418,10 +1520,11 @@ class Generation {
 		   		
 		   		Prog.ajouter(compareInst6, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre().toString() + " et " + reg2.getRegistre().toString());
 		   		Prog.ajouter(setFalseInst6, "Mise a false (-1) du registre " + reg1.getRegistre().toString());
-		   		Prog.ajouter(jumpIfNonEqualInst6, "Ajout de l'instruction de saut s'il y a égalité");
+		   		Prog.ajouter(jumpIfNonEqualInst6, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		Prog.ajouter(setTrueInst6, "Mise a true (1) du registre " + reg1.getRegistre().toString());
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqEgalite));
 
+		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
 
@@ -1430,5 +1533,4 @@ class Generation {
 	   return null;
    }
 }
-
 
