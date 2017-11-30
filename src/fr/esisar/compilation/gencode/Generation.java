@@ -1008,11 +1008,11 @@ class Generation {
                 }
                 else{
                 	if(a.getFils2().getNoeud() == Noeud.Ident){
-                        if(a.getFils2().getChaine()=="true"){
+                        if(a.getFils2().getChaine().equals("true")){
                             Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
                             Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
                         }
-                        else if(a.getFils2().getChaine() == "false"){
+                        else if(a.getFils2().getChaine().equals("false")){
                             Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
                             Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
                         }
