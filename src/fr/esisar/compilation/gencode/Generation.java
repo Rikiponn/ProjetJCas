@@ -255,19 +255,20 @@ class Generation {
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 	   	
 	   	//On le replace en pile
-	   	if(!a.getFils1().getDecor().getType().getNature().equals(NatureType.Array)){
-	   		String varName = a.getFils1().getChaine();
+	   	if(!a.getDecor().getType().getNature().equals(NatureType.Array)){
+	   		String varName = a.getChaine();
 			int placeEnPile = decl.indexOf(varName);
 			Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
 			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
 			
 	   	}else{
 	   		//TODO pour les tablals quand ce sera corrigé
-	   		//Trouver le nom avec le décor puis trouver le décalage en parcours profondeur
-	   		String varName = new String("");
-	   		while(!(a.getFils1().getNoeud().equals(Noeud.Ident))){
-	   			//Stocker l'indexe absolue du tableau au fur et à mesure dans un putain de registre
-	   			//Puis faire un load indéxé sur la valeur d'un registre
+	   		//Trouver le nom puis trouver le décalage en parcours profondeur
+	   		String varName = getIdent(a);
+	   		int length = getLength(a);
+	   		while(a.getFils1().getNoeud().equals(Noeud.Index)){
+	   			//Trouver dynamiquement l'endroit où l'on veut écrire
+	   			
 	   		}
 	   	}
 	   	
