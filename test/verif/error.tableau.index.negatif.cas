@@ -1,0 +1,5 @@
+program
+	tab : array[1..5] of integer;
+begin
+	tab[-2] := 3;
+end.
