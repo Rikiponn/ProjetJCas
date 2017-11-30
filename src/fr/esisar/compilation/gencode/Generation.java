@@ -192,7 +192,7 @@ class Generation {
 		   Prog.ajouter(inst,"Ecriture d'un réel" );
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-		   if(r.equals(Registre.R1)){
+		   if(r != null && r.equals(Registre.R1)){
 			   GestionRegistre.popPile(Registre.R1);
 		   }
 		   //Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
