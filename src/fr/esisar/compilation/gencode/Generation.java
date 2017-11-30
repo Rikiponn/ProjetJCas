@@ -126,7 +126,7 @@ class Generation {
            Operande opdroite = coder_EXP(a.getFils2());
            switch(a.getFils1().getNoeud()) {
            case Ident:
-               int placeEnPile = decl.indexOf(a.getFils1().getDecor().getType());
+               int placeEnPile = decl.indexOf(a.getFils1().getChaine());
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                break;
