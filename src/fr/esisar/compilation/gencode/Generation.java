@@ -397,7 +397,7 @@ class Generation {
 	   		String varName = a.getChaine();
 			int placeEnPile = decl.indexOf(varName) + 1;
 			Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
-			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile");
+			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile à l'emplacement "+placeEnPile);
 			
 	   	}else{
 	   		//Trouver le nom puis trouver le décalage en parcours profondeur
@@ -409,11 +409,12 @@ class Generation {
 	   		inst2 = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
 	   		Prog.ajouter(inst2,"On arrete le programme car on essaye d'écrire à un endroit interdit");
 	   		inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(indice.placeEnPileOrigine, Registre.GB));
-	   		GestionRegistre.libererRegistre(indice.offset.getRegistre());
+	   		if(indice.offset.getNature().equals(NatureOperande.OpDirect))
+	   			GestionRegistre.libererRegistre(indice.offset.getRegistre());
 	   	}	   	
 	   	//On restore les états des registres si besoin
 	   	//Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
-	   	if(r.equals(Registre.R1)){
+	   	if(r != null && r.equals(Registre.R1)){
 	   		GestionRegistre.popPile(Registre.R1);
 	   	}
 	   	//Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
