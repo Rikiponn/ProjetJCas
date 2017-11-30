@@ -266,6 +266,8 @@ class Generation {
 	   		//Trouver le nom puis trouver le décalage en parcours profondeur
 	   		String varName = getIdent(a);
 	   		int length = getLength(a);
+	   		Operation reg = GestionRegistre.getFreeRegToOpTab();
+	   		Inst inst = Inst.creation2(Operation.LOAD, op1, op2)
 	   		while(a.getFils1().getNoeud().equals(Noeud.Index)){
 	   			//Trouver dynamiquement l'endroit où l'on veut écrire
 	   			
