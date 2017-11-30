@@ -215,7 +215,6 @@ class Generation {
     * @return void
     * @param a (Un Noeud.Ident ou un Noeud.Index)
     */
-   //TODO finir SEB (tablal)
    private static void coder_Lecture(Arbre a) {
 	   Registre r = null;
 		//Le fils d'un Noeud Lecture est forcément un Noeud Ident de type Integer ou Reel
