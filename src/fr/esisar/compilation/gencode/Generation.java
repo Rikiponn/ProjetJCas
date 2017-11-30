@@ -144,10 +144,10 @@ class Generation {
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
                break;
-           }
+           }/*
            if(opdroite.getNature().equals(NatureOperande.OpDirect))
         	   if(!(opdroite.getNature().equals(NatureOperande.OpEntier)) || !(opdroite.getNature().equals(NatureOperande.OpReel)))
-                   GestionRegistre.libererRegistre(opdroite.getRegistre());
+                   GestionRegistre.libererRegistre(opdroite.getRegistre());*/
            GestionRegistre.libererRegistre(newreg.getRegistre());
            break;
 	   case Si:
