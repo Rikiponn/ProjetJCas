@@ -121,7 +121,10 @@ class Generation {
 		   break;
 	   case Lecture :
 		   coder_Lecture(a.getFils1());
-		   break;		   
+		   break;
+	   case Affect :
+		   coder_Affect(a);
+		   break;
 	   case Ligne:
 		   inst = Inst.creation0(Operation.WNL);
 		   Prog.ajouter(inst, "new line");
@@ -133,7 +136,11 @@ class Generation {
 	   }
    }
    
-   /**Fonction s'occupant de l'instruction write
+   private static void coder_Affect(Arbre a) {
+	
+	
+}
+/**Fonction s'occupant de l'instruction write
     * Etat : terminé
     * @param un arbre (Premier appel, a est un Noeud.ListeExp)
     * @return void
