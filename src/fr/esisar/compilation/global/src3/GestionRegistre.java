@@ -94,11 +94,11 @@ public class GestionRegistre {
 	
 	public static void pushPile (Registre reg){
 		Inst inst = Inst.creation1(Operation.PUSH,Operande.opDirect(reg));
-	   	Prog.ajouter(inst,"Placement en pile de "+reg.toString());
+	   	Prog.ajouter(inst,"Placement en pile de "+reg);
 	}
 	public static void popPile (Registre reg){
 		Inst inst = Inst.creation1(Operation.POP, Operande.opDirect(reg));
-		Prog.ajouter(inst,"Registre"+reg.toString()+" retablis depuis la pile");
+		Prog.ajouter(inst,"Registre"+reg+" retablis depuis la pile");
 	}
 	
 	private static int getRegIndex(Registre reg){
