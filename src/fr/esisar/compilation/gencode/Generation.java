@@ -316,7 +316,7 @@ class Generation {
 	   Operande fils1 = coder_EXP(a.getFils1());
 	   Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), fils1);
 	   Prog.ajouter(inst);
-	   if(a.getFils2().getNoeud().equals())
+	   //if(a.getFils2().getNoeud().equals())
 	   
    }
    
@@ -732,11 +732,11 @@ class Generation {
 			   		}
 		   		}
 		   		
-		   		Inst subInst = Inst.creation2(Operation.SUB, reg1, reg2);
+		   		Inst subInst = Inst.creation2(Operation.SUB, reg2, reg1);
 		   		Prog.ajouter(subInst, "Ajout de l'instruction soustraction");
 
-	   			GestionRegistre.libererRegistre(reg1.getRegistre());
-		   		return reg2;
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
 
 	   		case Quotient :
 	   		case DivReel :
@@ -821,12 +821,12 @@ class Generation {
 			   		}
 		   		}
 		   		
-		   		Inst divRInst = Inst.creation2(Operation.DIV, reg1, reg2);
+		   		Inst divRInst = Inst.creation2(Operation.DIV, reg2, reg1);
 		   		Prog.ajouter(divRInst, "Ajout de l'instruction division");
 
 		   		
-	   			GestionRegistre.libererRegistre(reg1.getRegistre());
-		   		return reg2;
+	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   		return reg1;
 
             case Et :
 
