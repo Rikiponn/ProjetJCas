@@ -6,6 +6,9 @@ begin
     new_line;
     write(5.0);
     new_line;
+
+    new_line;
+    write("Block +");
     new_line;
     write(8 + 5);
     new_line;
@@ -17,6 +20,8 @@ begin
     new_line;
 
     new_line;
+    write("Block *");
+    new_line;
     write(2 * 5);
     new_line;
     write(2.0 * 5);
@@ -27,6 +32,8 @@ begin
     new_line;
 
     new_line;
+    write("Block 2 - 5");
+    new_line;
     write(2 - 5);
     new_line;
     write(2.0 - 5);
@@ -36,6 +43,9 @@ begin
     write(2 - 5.0);
     new_line;
 
+
+    new_line;
+    write("Block 5 - 2");
     new_line;
     write(5 - 2);
     new_line;
@@ -46,16 +56,9 @@ begin
     write(5 - 2.0);
     new_line;
 
-    new_line;
-    write(5 - 2);
-    new_line;
-    write(5.0 - 2);
-    new_line;
-    write(5.0 - 2.0);
-    new_line;
-    write(5 - 2.0);
-    new_line;
 
+    new_line;
+    write("Block /");
     new_line;
     write(2 / 5);
     new_line;
