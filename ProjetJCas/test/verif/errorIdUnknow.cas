@@ -1,7 +1,0 @@
-program
-    v1 : integer;
-    v2 : truc;
-begin
-    v1 := 5;
-end.
-

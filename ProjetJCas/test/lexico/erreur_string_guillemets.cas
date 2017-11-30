@@ -1,5 +1,0 @@
-program
-	i:float;
-begin
-	write("asdasf"v");
-end.
