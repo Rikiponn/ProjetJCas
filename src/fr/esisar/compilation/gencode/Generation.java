@@ -295,25 +295,43 @@ class Generation {
     */
    private static Operande load_Index(Arbre a) {
 	   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
-	   a.getDecor().getType().getBorneInf();
-	   a.getDecor().getType().getBorneSup();
-	   load_Index(a.getFils1());
-	   coder_EXP(a.getFils2());
-	   
+	   String ident = getIdent(a);
+	   while(a.getNoeud().equals(Noeud.Index)) {
+		   ident = ident+"["+a.getDecor().getType().getBorneInf()+"]";
+		   a = a.getFils1();
+	   }
+	   Operande offset = getSubIndex(a);
+	   int placeEnPile = -1;
+	   if((placeEnPile = decl.indexOf(ident)) != -1) {
+		   // contenu de (arg2(reg) + arg3(reg) + arg1(int)) TODO A vérifier c'est la merde
+	   		Inst machin = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(placeEnPile, Operande.GB.getRegistre(), offset.getRegistre()), registreLibre);
+	   		Prog.ajouter(machin,"Chargement de la valeur de l'indice du tableau en mémoire");
+	   }
+	   GestionRegistre.libererRegistre(offset.getRegistre());
 	   return registreLibre;
    }
-   /* TODO A TERMINER TIMOTHEE
+   /**
+    * Etant donné a un index, code la récupération de l'indice du tableau voulu, de façon récursive.
+    * De la forme (Expression de Fils2 * dimension du tableau pointé par le Fils1) + expression retournée par le Fils1
+    * @param a un arbre index
+    * @return un registre contenant l'offset de l'indice du tableau.
+    */
    private static Operande getSubIndex(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   int len = getLength(a.getFils1());
-		   Operande subexp = getSubIndex(a.getFils1());
-		   Operande exp = coder_EXP(a.getFils2());
-		   Inst.creation2(Operation.MULTipl, Operande.creationOpEntier(0), registreLibre);
+		   int len = getLength(a.getFils1()); // Dimension du tableau pointé par le Fils1
+		   Operande subexp = getSubIndex(a.getFils1()); // expression retournée par Fils1
+		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
+		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
+		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
+		   machin = Inst.creation2(Operation.ADD, exp,subexp);
+		   Prog.ajouter(machin,"calcul de la dimension du tableau : (exp*dimf)+expf");
+		   GestionRegistre.libererRegistre(exp.getRegistre());
+		   return subexp;
 	   }
 	   else {
 		   return GestionRegistre.getFreeRegToOpTab();
 	   }
-   }*/
+   }
    
    /*
     * Donne la longueur du tableau pointé par a, en incluant les éventuels sous-tableaux.
@@ -327,9 +345,12 @@ class Generation {
 	   }
    }
    
+   /*
+    * Utilisé par load_index, va récupérer l'identifiant associé au premier élément du tableau de façon récursive.
+    */
    private static String getIdent(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Ident)) {
-		   return a.getChaine();
+		   return(a.getChaine());
 	   }
 	   else {
 		   return getIdent(a.getFils1());
