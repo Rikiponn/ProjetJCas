@@ -568,8 +568,12 @@ public class Verif {
 	   			   add_Conversion(a,resultB);
 	   			
 	   		   }
-	   		   if(a.getNoeud() == Noeud.DivReel) {
+	   		   if(a.getNoeud() == Noeud.Quotient) {
 	   			   a.setDecor(new Decor(Type.Integer));
+	   			   return Type.Integer;
+	   		   }
+	   		   if(a.getNoeud() == Noeud.DivReel) {
+	   			   a.setDecor(new Decor(Type.Real));
 	   			   return Type.Integer;
 	   		   }
 	   		   if(t1 == Type.Integer && t2 == Type.Integer) {
