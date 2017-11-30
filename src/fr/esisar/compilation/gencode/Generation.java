@@ -264,13 +264,22 @@ class Generation {
 	   	}else{
 	   		//TODO pour les tablals quand ce sera corrigé
 	   		//Trouver le nom puis trouver le décalage en parcours profondeur
-	   		String varName = getIdent(a);
 	   		int length = getLength(a);
-	   		Operation reg = GestionRegistre.getFreeRegToOpTab();
-	   		Inst inst = Inst.creation2(Operation.LOAD, op1, op2)
 	   		while(a.getFils1().getNoeud().equals(Noeud.Index)){
 	   			//Trouver dynamiquement l'endroit où l'on veut écrire
-	   			
+	   			/*Operande reg = GestionRegistre.getFreeRegToOpTab();
+	   			String varName = getIdent(a);
+	   			while(a.getNoeud().equals(Noeud.Index)) {
+	   				varName = varName+"["+a.getDecor().getType().getBorneInf()+"]";
+	   				a = a.getFils1();
+	   			}
+	   			Operande offset = getSubIndex(a);
+	   			int placeEnPile = -1;
+	   			if((placeEnPile = decl.indexOf(varName)) != -1) {
+	   				// contenu de (arg2(reg) + arg3(reg) + arg1(int)) TODO A vérifier c'est la merde
+	   				Inst machin = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(placeEnPile, Operande.GB.getRegistre(), offset.getRegistre()), reg);
+	   				Prog.ajouter(machin,"Chargement de la valeur de l'indice du tableau en mémoire");
+	   			}*/
 	   		}
 	   	}
 	   	
@@ -289,7 +298,7 @@ class Generation {
 	   		}
 	   	}  
    }
-  
+   
    
    /**
     * A étant un Noeud.Index, charge la zone mémoire pointée par a dans un registre et le renvoie
