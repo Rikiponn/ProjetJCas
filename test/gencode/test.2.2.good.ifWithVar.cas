@@ -1,0 +1,36 @@
+program 
+    c,d : boolean;
+begin 
+    c := true;
+    d := false;
+
+    if c and c then 
+        write("1er if work"); 
+        new_line; 
+    end; 
+    
+    new_line; 
+    if c and d then 
+        new_line; 
+    else  
+        write("else"); 
+    end; 
+ 
+    new_line; 
+    if c or d then 
+        write("if"); 
+    else  
+        write("else"); 
+    end; 
+ 
+ 
+    if d or d then 
+        write("if"); 
+    else  
+        write("Else1");
+        if c or c then
+            write("else"); 
+        end; 
+    end;
+end. 
+ 
