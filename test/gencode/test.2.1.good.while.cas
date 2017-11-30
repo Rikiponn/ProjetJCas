@@ -1,0 +1,12 @@
+program
+    i : integer;
+begin
+    i := 0;
+	WHILE i < 5 DO 
+        i := i + 1;
+        write("boucle");
+        new_line;
+    END;
+
+end.
+
