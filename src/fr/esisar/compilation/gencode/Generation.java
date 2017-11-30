@@ -451,7 +451,7 @@ class Generation {
 		   nbEtiq++;
 		   
 		   String str2 = new String("FinSi"+nbEtiq);
-		   Etiq eti2 = Etiq.lEtiq(str);
+		   Etiq eti2 = Etiq.lEtiq(str2);
 		   nbEtiq++;
 		   
 		   inst = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(eti));
