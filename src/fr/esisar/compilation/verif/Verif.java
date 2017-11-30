@@ -725,6 +725,10 @@ public class Verif {
 				e = ErreurContext.ErreurType;
 				e.leverErreurContext(a.getNoeud().toString(), a.getNumLigne());
 			}
+			if(a.getFils1().getFils1().getChaine().toLowerCase().equals("max_int")){
+				e = ErreurContext.ErreurIdentReserve;
+				e.leverErreurContext(a.getFils1().getChaine(), a.getNumLigne());
+			}
 			Arbre atamp = a;
 			a=a.getFils1();
 			if(verif_Exp(a.getFils2()) != Type.Integer || verif_Exp(a.getFils3()) != Type.Integer) {
