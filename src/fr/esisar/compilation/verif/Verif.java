@@ -425,12 +425,12 @@ public class Verif {
 	   if(checker.getConv1()) {
     	   filsTamp = a.getFils1();
     	   a.setFils1(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
-    	   a.getFils1().setDecor(new Decor(Type.Integer));
+    	   a.getFils1().setDecor(new Decor(Type.Real));
 	   }
 	   if(checker.getConv2()) {
     	   filsTamp = a.getFils2();
     	   a.setFils2(Arbre.creation1(Noeud.Conversion, filsTamp, filsTamp.getNumLigne()));
-    	   a.getFils2().setDecor(new Decor(Type.Integer));
+    	   a.getFils2().setDecor(new Decor(Type.Real));
 	   }
 	   //Décoration du Noeud Conversion juste après son ajout
 	   
@@ -572,7 +572,7 @@ public class Verif {
 	   			   a.setDecor(new Decor(Type.Integer));
 	   			   return Type.Integer;
 	   		   }
-	   		   if(t1 == Type.Integer || t2 == Type.Integer) {
+	   		   if(t1 == Type.Integer && t2 == Type.Integer) {
 	   			a.setDecor(new Decor(Type.Integer));
 	   			   return Type.Integer;
 	   		   }
