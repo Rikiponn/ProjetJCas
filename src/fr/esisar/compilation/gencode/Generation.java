@@ -147,7 +147,8 @@ class Generation {
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
                break;           
            }
-           GestionRegistre.libererRegistre(opdroite.getRegistre());
+           if(opdroite.getNature().equals(NatureOperande.OpDirect))
+        	   GestionRegistre.libererRegistre(opdroite.getRegistre());
            break;
 	   case Si:
 		   coder_Si(a);
