@@ -127,7 +127,7 @@ class Generation {
            switch(a.getFils1().getNoeud()) {
            case Ident:
                int placeEnPile = decl.indexOf(a.getFils1().getDecor().getType().toString());
-               switch(a.getFils1().getNoeud()) {
+               switch(a.getFils1().getFils1().getNoeud()) {
                case Entier:
             	   inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpEntier(opdroite.getEntier()));
             	   Prog.ajouter(inst, "écriture en mémoire (pile) d'un entier");
