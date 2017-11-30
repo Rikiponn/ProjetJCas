@@ -127,7 +127,7 @@ class Generation {
            Operande opdroite = coder_EXP(a.getFils2());
            switch(a.getFils1().getNoeud()) {
            case Ident:
-               int placeEnPile;
+               int placeEnPile = -1;
                if((placeEnPile = decl.indexOf(a.getFils1().getChaine())) == -1) {
             	   System.exit(0);;
                }/*
