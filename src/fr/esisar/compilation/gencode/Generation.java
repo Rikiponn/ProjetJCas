@@ -530,10 +530,23 @@ class Generation {
 			   return registreLibre2;
 		   
 		   case Ident:
+			   Operande registreLibre3 = GestionRegistre.getFreeRegToOpTab();
+			   Inst loadInst3;
 			   String varName = a.getChaine();
 			   int placeEnPile = decl.indexOf(varName) + 1;
-			   Operande registreLibre3 = GestionRegistre.getFreeRegToOpTab();
-  			   Inst loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
+			   if(placeEnPile == 0) {
+				   if(varName.toLowerCase().equals("true")){
+					   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), registreLibre3);
+					   Prog.ajouter(loadInst3);
+					   return registreLibre3;
+				   }
+				   if(varName.toLowerCase().equals("false")){
+					   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), registreLibre3);
+					   Prog.ajouter(loadInst3);
+					   return registreLibre3;
+				   }
+			   }
+  			   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
   			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
   			   return registreLibre3;
 		   }
