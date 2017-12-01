@@ -123,7 +123,6 @@ class Generation {
 		   coder_Lecture(a.getFils1());
 		   break;
 	   case Affect:
-		   Operande newreg = GestionRegistre.getFreeRegToOpTab();
            Operande opdroite = coder_EXP(a.getFils2());
            switch(a.getFils1().getNoeud()) {
            case Ident:
@@ -131,24 +130,17 @@ class Generation {
                if((placeEnPile = decl.indexOf(a.getFils1().getChaine()) + 1) == -1) {
             	   System.exit(0);;
                }
-               inst = Inst.creation2(Operation.LOAD, opdroite, newreg);
-               Prog.ajouter(inst, "chargement en registre de la valeur à assigner");
-               inst = Inst.creation2(Operation.STORE,newreg,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
+               inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndirect(placeEnPile,Operande.GB.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                break;
            case Index:
                Indice indice = load_Index(a.getFils1());
-               inst = Inst.creation2(Operation.LOAD, opdroite, newreg);
-               Prog.ajouter(inst, "chargement en registre de la valeur à assigner");
-               inst = Inst.creation2(Operation.STORE,newreg,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
+               inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
                break;
-           }/*
-           if(opdroite.getNature().equals(NatureOperande.OpDirect))
-        	   if(!(opdroite.getNature().equals(NatureOperande.OpEntier)) || !(opdroite.getNature().equals(NatureOperande.OpReel)))
-                   GestionRegistre.libererRegistre(opdroite.getRegistre());*/
-           GestionRegistre.libererRegistre(newreg.getRegistre());
+           }
+           GestionRegistre.libererRegistre(opdroite.getRegistre());
            break;
 	   case Si:
 		   coder_Si(a);
@@ -526,17 +518,24 @@ class Generation {
 	   if(a.getArite() == 0){
 		   switch(a.getNoeud()){
 		   case Entier:
-			   return Operande.creationOpEntier(a.getEntier());
+			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
+			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getEntier()), registreLibre);
+			   Prog.ajouter(loadInst);
+			   return registreLibre;
 		   case Reel:
-			   return Operande.creationOpReel(a.getReel());
+
+			   Operande registreLibre2 = GestionRegistre.getFreeRegToOpTab();
+			   Inst loadInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), registreLibre2);
+			   Prog.ajouter(loadInst2);
+			   return registreLibre2;
 		   
 		   case Ident:
 			   String varName = a.getChaine();
 			   int placeEnPile = decl.indexOf(varName) + 1;
-			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
-  			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
-  			   Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + registreLibre.getRegistre());
-  			   return registreLibre;
+			   Operande registreLibre3 = GestionRegistre.getFreeRegToOpTab();
+  			   Inst loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
+  			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
+  			   return registreLibre3;
 		   }
 	   }
 	   
