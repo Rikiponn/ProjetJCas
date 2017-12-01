@@ -500,11 +500,11 @@ class Generation {
     * Utilisé par load_index, va récupérer l'identifiant associé au premier élément du tableau de façon récursive.
     */
    private static String getIdent(Arbre a) {
-	   if(a.getNoeud().equals(Noeud.Ident)) {
-		   return(a.getChaine());
+	   if(a.getNoeud().equals(Noeud.Index)) {
+		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
 	   }
 	   else {
-		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
+		   return(a.getChaine());
 	   }
    }
    
