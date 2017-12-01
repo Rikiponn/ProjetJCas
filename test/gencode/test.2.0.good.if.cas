@@ -6,7 +6,11 @@ begin
     end;
     new_line;
 
-
+    if true or true then
+        write("2e if work");
+        new_line;
+    end;
+    new_line;
 
 end.
 
