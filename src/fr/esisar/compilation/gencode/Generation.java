@@ -290,9 +290,13 @@ class Generation {
 			   //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
 			   r = GestionRegistre.deplaceRegistre(Registre.R1);
 		   }
-		   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
-		   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
-		   inst = Inst.creation0(Operation.WINT);
+		   if(op.equals(Operande.R1)){
+			   Prog.ajouter("L'entier est déjà dans R1");
+		   }else{
+			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+			   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
+		   }
+		   Inst inst = Inst.creation0(Operation.WINT);
 		   Prog.ajouter(inst,"Ecriture de l'entier");
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
@@ -317,9 +321,13 @@ class Generation {
 			 //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
 			   r = GestionRegistre.deplaceRegistre(Registre.R1);
 		   }
-		   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
-		   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
-		   inst = Inst.creation0(Operation.WFLOAT);
+		   if(op.equals(Operande.R1)){
+			   Prog.ajouter("Le réel est déjà dans R1");
+		   }else{
+			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+			   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
+		   }
+		   Inst inst = Inst.creation0(Operation.WFLOAT);
 		   Prog.ajouter(inst,"Ecriture d'un réel" );
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
@@ -536,7 +544,7 @@ class Generation {
 			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
   			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
   			   Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + registreLibre.getRegistre());
-  			   return registreLibre;
+  			   return registreLibre;	
 		   }
 	   }
 	   
