@@ -367,13 +367,13 @@ class Generation {
 	    // On test si R1 possède une valeur correcte (pour les intervalles)
 	   	
 	   	//On test si R1 est supérieur à la borne inf du fils
-	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneInf()),Operande.R1);
+	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneInf()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 	   	
 	   	//On test si R1 est supérieur à la borne sup du fils
-	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getBorneSup()),Operande.R1);
+	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneSup()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
@@ -489,7 +489,7 @@ class Generation {
     */
    private static int getLength(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   return((a.getDecor().getType().getBorneSup() - a.getDecor().getType().getBorneInf() + 1)*getLength(a.getFils1()));
+		   return((a.getDecor().getType().getIndice().getBorneSup() - a.getDecor().getType().getIndice().getBorneInf() + 1)*getLength(a.getFils1()));
 	   }
 	   else {
 		   return 1;
@@ -500,11 +500,11 @@ class Generation {
     * Utilisé par load_index, va récupérer l'identifiant associé au premier élément du tableau de façon récursive.
     */
    private static String getIdent(Arbre a) {
-	   if(a.getNoeud().equals(Noeud.Ident)) {
-		   return(a.getChaine());
+	   if(a.getNoeud().equals(Noeud.Index)) {
+		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getIndice().getBorneInf()+"]");
 	   }
 	   else {
-		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getBorneInf()+"]");
+		   return(a.getChaine());
 	   }
    }
    
@@ -530,10 +530,24 @@ class Generation {
 			   return registreLibre2;
 		   
 		   case Ident:
+			   Operande registreLibre3 = GestionRegistre.getFreeRegToOpTab();
+			   Inst loadInst3;
 			   String varName = a.getChaine();
 			   int placeEnPile = decl.indexOf(varName) + 1;
-			   Operande registreLibre3 = GestionRegistre.getFreeRegToOpTab();
-  			   Inst loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
+			   if(placeEnPile == 0) {
+				   if(varName.toLowerCase().equals("true")){
+					   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), registreLibre3);
+					   Prog.ajouter(loadInst3);
+					   return registreLibre3;
+				   }
+				   if(varName.toLowerCase().equals("false")){
+					   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), registreLibre3);
+					   Prog.ajouter(loadInst3);
+					   return registreLibre3;
+				   }
+				   System.exit(0);
+			   }
+  			   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
   			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
   			   return registreLibre3;
 		   }
