@@ -134,7 +134,7 @@ class Generation {
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                break;
            case Index:
-               Indice indice = load_Index(a);
+               Indice indice = load_Index(a.getFils1());
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
