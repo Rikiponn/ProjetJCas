@@ -290,11 +290,9 @@ class Generation {
 			   //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
 			   r = GestionRegistre.deplaceRegistre(Registre.R1);
 		   }
-		   if(op.getNature().equals(Operande.R1.getNature())){
-			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
-			   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
-		   }
-		   Inst inst = Inst.creation0(Operation.WINT);
+		   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+		   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
+		   inst = Inst.creation0(Operation.WINT);
 		   Prog.ajouter(inst,"Ecriture de l'entier");
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
@@ -319,11 +317,9 @@ class Generation {
 			 //On le déplace dans un registre libre (et on le met comme occupé) ou on le met en pile 
 			   r = GestionRegistre.deplaceRegistre(Registre.R1);
 		   }
-		   if(op.getNature().equals(Operande.R1.getNature())){
-			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
-			   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
-		   }
-		   Inst inst = Inst.creation0(Operation.WFLOAT);
+		   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
+		   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
+		   inst = Inst.creation0(Operation.WFLOAT);
 		   Prog.ajouter(inst,"Ecriture d'un réel" );
 		   
 		   //Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
