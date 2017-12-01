@@ -360,7 +360,7 @@ class Generation {
 				Prog.ajouter(inst, "Lecture d'un flotant");
 			}
 			else{
-				Inst inst = Inst.creation1(Operation.BRA,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+				Inst inst = Inst.creation1(Operation.BRA,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 			   	Prog.ajouter(inst, "On arrete le programme car on essaye de read autre chose qu'un int ou un reel");
 			}
 		}
@@ -369,13 +369,13 @@ class Generation {
 	   	//On test si R1 est supérieur à la borne inf du fils
 	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneInf()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
-	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 	   	
 	   	//On test si R1 est supérieur à la borne sup du fils
 	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneSup()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
-	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 	   	
 	   	//On le replace en pile
@@ -389,10 +389,11 @@ class Generation {
 	   		//Trouver le nom puis trouver le décalage en parcours profondeur
 	   		int length = getLength(a);
 	   		//Trouver dynamiquement l'endroit où l'on veut écrire
+	   		//TODO faire la même chose que pour affect
 	   		Indice indice = load_Index(a);
 	   		Inst inst2 = Inst.creation2(Operation.CMP, indice.offset, Operande.creationOpEntier(length));
 	   		Prog.ajouter(inst2,"comparaison de la taille du tableau avec l'offset (pour les overflow)");
-	   		inst2 = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt")));
+	   		inst2 = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   		Prog.ajouter(inst2,"On arrete le programme car on essaye d'écrire à un endroit interdit");
 	   		inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(indice.placeEnPileOrigine, Registre.GB));
 	   		if(indice.offset.getNature().equals(NatureOperande.OpDirect))
@@ -509,7 +510,6 @@ class Generation {
    }
    
    private static Operande coder_EXP(Arbre a){
-	   Inst inst;
 	   //chercher en fonction du nom de la variable, sa position en pile,PUIS la charger dans un registre libre
 	   //Il faut donc utiliser la fonction getGrosRegistreLibre()
 	   //Il faut ensuite modifier le tableau regTab pour indiquer les registres qui ne sont plus disponible
@@ -1804,6 +1804,10 @@ class Generation {
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
+	   		case Index:
+	   			//TODO faire appel à load_index, verif que les intervalles sont dans la taille du tableau sinon retourner une erreur 
+	   			//(ou bien modif load_index pour que ce soit elle qui fasse la verification) , et retourner un registre (via OpIndirect)
+	   			//contenant l'adresse de la pile retourner par load_index (attribut offset et placeEnPile)
 
 		   }
 	   }
