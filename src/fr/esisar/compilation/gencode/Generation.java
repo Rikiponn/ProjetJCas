@@ -134,7 +134,7 @@ class Generation {
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                break;
            case Index:
-               Indice indice = load_Index(a.getFils1());
+               Indice indice = load_Index(a);
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
                GestionRegistre.libererRegistre(indice.offset.getRegistre());
@@ -545,6 +545,7 @@ class Generation {
 					   Prog.ajouter(loadInst3);
 					   return registreLibre3;
 				   }
+				   System.exit(0);
 			   }
   			   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
   			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
