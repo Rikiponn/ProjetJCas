@@ -269,6 +269,7 @@ class Generation {
     * @return void
     */
    private static void coder_Ecriture(Arbre a){
+	   if(a.getNoeud().equals(Noeud.Vide)) return;
 	   Registre r = null;
 
 	   //On descend dans l'arbre
