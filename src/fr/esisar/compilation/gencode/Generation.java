@@ -540,6 +540,7 @@ class Generation {
 			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
   			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre);
   			   Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + registreLibre.getRegistre());
+  			   return registreLibre;
 		   }
 	   }
 	   
