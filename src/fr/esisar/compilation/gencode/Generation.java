@@ -514,7 +514,21 @@ class Generation {
     */
    private static String getIdent(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   return (getIdent(a.getFils1())+"["+a.getDecor().getDefn().getType().getIndice().getBorneInf()+"]");
+		   String ident = getIdent2(a.getFils1());
+		   while(a.getNoeud().equals(Noeud.Index)){
+			   ident+="["+a.getDecor().getDefn().getType().getIndice().getBorneInf()+"]";
+			   a=a.getFils1();
+		   }
+		   return ident;
+	   }
+	   else {
+		   return(a.getChaine());
+	   }
+   }
+   
+   private static String getIdent2(Arbre a) {
+	   if(a.getNoeud().equals(Noeud.Index)) {
+		   return (getIdent2(a.getFils1()));
 	   }
 	   else {
 		   return(a.getChaine());
