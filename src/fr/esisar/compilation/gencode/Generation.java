@@ -1808,7 +1808,22 @@ class Generation {
 	   			//TODO faire appel à load_index, verif que les intervalles sont dans la taille du tableau sinon retourner une erreur 
 	   			//(ou bien modif load_index pour que ce soit elle qui fasse la verification) , et retourner un registre (via OpIndirect)
 	   			//contenant l'adresse de la pile retourner par load_index (attribut offset et placeEnPile)
-
+	   			Indice i = load_Index(a);
+	   			Operande reg = GestionRegistre.getFreeRegToOpTab();
+	   			if(reg == null){
+	   				//alors aucun registre est libre
+	   				//GestionRegistre.pushPile(i.offset.getRegistre());
+	   				//Faudrait modif le retour de coder_EXP pour indiquer si on a placé en Pile ou pas.
+	   			}
+	   			else{
+	   				
+		   			Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(i.placeEnPileOrigine, Registre.GB),reg);
+		   			Prog.ajouter(inst,"Stockage en registre de la valeur pointée par le tableau");
+	   			}
+	   			if(i.offset.getNature().equals(NatureOperande.OpDirect)){
+	   				GestionRegistre.libererRegistre(i.offset.getRegistre());
+	   			}
+	   			return reg;
 		   }
 	   }
 	   return null;
