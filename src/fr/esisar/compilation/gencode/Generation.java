@@ -516,8 +516,13 @@ class Generation {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   String ident = getIdent2(a.getFils1());
 		   while(a.getNoeud().equals(Noeud.Index)){
-			   ident+="["+a.getDecor().getDefn().getType().getIndice().getBorneInf()+"]";
+			   
 			   a=a.getFils1();
+		   }
+		   Type type = a.getDecor().getType();
+		   while(type.equals(NatureType.Array)) {
+			   ident+="["+type.getIndice().getBorneInf()+"]";
+			   type = type.getElement();
 		   }
 		   return ident;
 	   }
