@@ -465,6 +465,7 @@ class Generation {
    /**
     * Etant donné a un index, code la récupération de l'indice du tableau voulu, de façon récursive.
     * De la forme (Expression de Fils2 * dimension du tableau pointé par le Fils1) + expression retournée par le Fils1
+    * Vérifie également que cet index est inclue dans les bornes du tableau.
     * @param a un arbre index
     * @return un registre contenant l'offset de l'indice du tableau.
     */
@@ -473,6 +474,19 @@ class Generation {
 		   int len = getLength(a.getFils1()); // Dimension du tableau pointé par le Fils1
 		   Operande subexp = getSubIndex(a.getFils1()); // expression retournée par Fils1
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
+		   
+		   // vérification des bornes
+		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneInf()),exp);
+		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
+		   inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
+		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
+		   
+		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneSup()),exp);
+		   Prog.ajouter(inst, "Comparaison de la borne sup pour un index");
+		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
+		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
+		   // fin de vérification des bornes
+		   
 		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
 		   machin = Inst.creation2(Operation.ADD, exp,subexp);
