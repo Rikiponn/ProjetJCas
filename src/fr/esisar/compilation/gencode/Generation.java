@@ -391,11 +391,9 @@ class Generation {
 	   		//Trouver dynamiquement l'endroit où l'on veut écrire
 	   		//TODO faire la même chose que pour affect
 	   		Indice indice = load_Index(a);
-	   		Inst inst2 = Inst.creation2(Operation.CMP, indice.offset, Operande.creationOpEntier(length));
-	   		Prog.ajouter(inst2,"comparaison de la taille du tableau avec l'offset (pour les overflow)");
-	   		inst2 = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
-	   		Prog.ajouter(inst2,"On arrete le programme car on essaye d'écrire à un endroit interdit");
-	   		inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndirect(indice.placeEnPileOrigine, Registre.GB));
+	   		Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndexe(indice.placeEnPileOrigine, Registre.GB, indice.offset.getRegistre()));
+	   		Prog.ajouter(inst2);
+	   		
 	   		if(indice.offset.getNature().equals(NatureOperande.OpDirect))
 	   			GestionRegistre.libererRegistre(indice.offset.getRegistre());
 	   	}	   	
@@ -1831,7 +1829,7 @@ class Generation {
 	   			}
 	   			else{
 	   				
-		   			Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(i.placeEnPileOrigine, Registre.GB),reg);
+		   			Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()),reg);
 		   			Prog.ajouter(inst,"Stockage en registre de la valeur pointée par le tableau");
 	   			}
 	   			if(i.offset.getNature().equals(NatureOperande.OpDirect)){
