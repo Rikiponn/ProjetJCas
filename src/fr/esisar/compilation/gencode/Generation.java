@@ -367,13 +367,13 @@ class Generation {
 	    // On test si R1 possède une valeur correcte (pour les intervalles)
 	   	
 	   	//On test si R1 est supérieur à la borne inf du fils
-	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneInf()),Operande.R1);
+	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneInf()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 	   	
 	   	//On test si R1 est supérieur à la borne sup du fils
-	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneSup()),Operande.R1);
+	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneSup()),Operande.R1);
 	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
@@ -474,12 +474,12 @@ class Generation {
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
 		   
 		   // vérification des bornes
-		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneInf()),exp);
+		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneInf()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
 		   inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 		   
-		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getType().getIndice().getBorneSup()),exp);
+		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneSup()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne sup pour un index");
 		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
@@ -502,7 +502,7 @@ class Generation {
     */
    private static int getLength(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   return((a.getDecor().getType().getIndice().getBorneSup() - a.getDecor().getType().getIndice().getBorneInf() + 1)*getLength(a.getFils1()));
+		   return((a.getDecor().getDefn().getType().getIndice().getBorneSup() - a.getDecor().getDefn().getType().getIndice().getBorneInf() + 1)*getLength(a.getFils1()));
 	   }
 	   else {
 		   return 1;
@@ -514,7 +514,7 @@ class Generation {
     */
    private static String getIdent(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   return (getIdent(a.getFils1())+"["+a.getDecor().getType().getIndice().getBorneInf()+"]");
+		   return (getIdent(a.getFils1())+"["+a.getDecor().getDefn().getType().getIndice().getBorneInf()+"]");
 	   }
 	   else {
 		   return(a.getChaine());
