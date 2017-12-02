@@ -502,7 +502,16 @@ class Generation {
     */
    private static int getLength(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   return((a.getDecor().getDefn().getType().getIndice().getBorneSup() - a.getDecor().getDefn().getType().getIndice().getBorneInf() + 1)*getLength(a.getFils1()));
+		   while(a.getNoeud().equals(Noeud.Index)){
+			   a=a.getFils1();
+		   }
+		   Type type = a.getDecor().getType();
+		   int size = 1;
+		   while(type.equals(NatureType.Array)) {
+			   size = size*(type.getIndice().getBorneSup() - type.getIndice().getBorneInf() + 1);
+			   type = type.getElement();
+		   }
+		   return size;
 	   }
 	   else {
 		   return 1;
@@ -516,7 +525,6 @@ class Generation {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   String ident = getIdent2(a.getFils1());
 		   while(a.getNoeud().equals(Noeud.Index)){
-			   
 			   a=a.getFils1();
 		   }
 		   Type type = a.getDecor().getType();
