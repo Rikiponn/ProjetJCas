@@ -176,7 +176,7 @@ class Generation {
        nbEtiq++;
        Inst compareInst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
        Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre() + " par rapport a 0");
-       Inst jumpIfFalse = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinWhile));
+       Inst jumpIfFalse = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(etiqFinWhile));
        Prog.ajouter(jumpIfFalse, "Ajout de l'instruction de saut vers la fin du Tant Que");
        
        coder_Inst(a.getFils2());
@@ -255,7 +255,9 @@ class Generation {
    
    
 /**Fonction s'occupant de l'instruction write
-    * Etat : terminé
+ *  Se charge également de déplacer R1 si celui est occupé (le place en pile si aucun registre n'est libre)
+ *  Puis rétablit R1 a son état d'origine
+    * Etat : Fini
     * @param un arbre (Premier appel, a est un Noeud.ListeExp)
     * @return void
     */
@@ -396,8 +398,10 @@ class Generation {
 	   	}  
    }
    /**Code l'instruction Si
-    * 
-    * @param a
+    * Etat : Fini
+    * Prend en charge le cas Si Alors et le cas Si Alors Sinon
+    * @param a un Arbre décoré
+    * @return void
     */
    private static void coder_Si(Arbre a) {
 	   Operande fils1 = coder_EXP(a.getFils1());
@@ -563,11 +567,12 @@ class Generation {
 	   }
    }
    
+   /**
+    * Méthode permettant de coder toutes les expressions
+    * @param a un Arbre décoré
+    * @return l'Opérande qui contient le résultat
+    */
    private static Operande coder_EXP(Arbre a){
-	   //chercher en fonction du nom de la variable, sa position en pile,PUIS la charger dans un registre libre
-	   //Il faut donc utiliser la fonction getGrosRegistreLibre()
-	   //Il faut ensuite modifier le tableau regTab pour indiquer les registres qui ne sont plus disponible
-	   //
 	   
 	   if(a.getArite() == 0){
 		   switch(a.getNoeud()){
@@ -628,6 +633,8 @@ class Generation {
 	  			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
 			   }
   			   return registreLibre3;
+		   default:
+			   return null;
 		   }
 	   }
 	   
@@ -698,6 +705,8 @@ class Generation {
 		   			return null;
 		   		}
 	   			return registreLibre;
+		   	default:
+		   		return null;
 		   }
 	   }
 	   
@@ -1314,14 +1323,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils1().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1);
-				   				reg1 = coder_EXP(a.getFils1());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg1);
+			   				reg1 = coder_EXP(a.getFils1());
 			   			}
 		   			}
 		   		}
@@ -1357,39 +1360,33 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils2().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2);
-				   				reg2 = coder_EXP(a.getFils2());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg2);
+			   				reg2 = coder_EXP(a.getFils2());
 			   			}
 		   			}
 		   		}
 		   		String nomEtiqInegalite = "inegalite" + nbEtiq;
 		   		Etiq equalEtiq = Etiq.lEtiq(nomEtiqInegalite);
 		   		String nom = "Always" + nbEtiq;
-		   		Etiq Etiq = Etiq.lEtiq(nom);
+		   		Etiq Etiq1 = Etiq.lEtiq(nom);
 		   		nbEtiq++;
 		   		Inst compareInst = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq));	
+		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BEQ, Operande.creationOpEtiq(equalEtiq));	
 		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst, "Mise a true (1) du registre " + reg1.getRegistre());
 		   		
-		   		Inst inst1 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq));
+		   		Inst inst1 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq1));
 		   		Prog.ajouter(inst1);
 		   		
 		   		Prog.ajouter(equalEtiq);
 		   		Inst setFalseInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
 		   		Prog.ajouter(setFalseInst, "Mise a false (-1) du registre " + reg1.getRegistre());
 		   		
-		   		Prog.ajouter(Etiq);
+		   		Prog.ajouter(Etiq1);
 
 		   		
 	   			GestionRegistre.libererRegistre(reg2);
@@ -1430,14 +1427,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils1().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1);
-				   				reg1 = coder_EXP(a.getFils1());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg1);
+			   				reg1 = coder_EXP(a.getFils1());
 			   			}
 		   			}
 		   		}
@@ -1472,14 +1463,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils2().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-				   				reg2 = coder_EXP(a.getFils2());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   				reg2 = coder_EXP(a.getFils2());
 			   			}
 		   			}
 		   		}
@@ -1491,7 +1476,7 @@ class Generation {
 		   		Inst compareInst2 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst2, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq2));	
+		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(equalEtiq2));	
 		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1544,14 +1529,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils1().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
-				   				reg1 = coder_EXP(a.getFils1());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   				reg1 = coder_EXP(a.getFils1());
 			   			}
 		   			}
 		   		}
@@ -1586,14 +1565,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils2().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-				   				reg2 = coder_EXP(a.getFils2());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   				reg2 = coder_EXP(a.getFils2());
 			   			}
 		   			}
 		   		}
@@ -1605,7 +1578,7 @@ class Generation {
 		   		Inst compareInst3 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst3, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BGE, Operande.creationOpEtiq(equalEtiq3));	
+		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq3));	
 		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1658,14 +1631,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils1().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
-				   				reg1 = coder_EXP(a.getFils1());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   				reg1 = coder_EXP(a.getFils1());
 			   			}
 		   			}
 		   		}
@@ -1700,14 +1667,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils2().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-				   				reg2 = coder_EXP(a.getFils2());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   				reg2 = coder_EXP(a.getFils2());
 			   			}
 		   			}
 		   		}
@@ -1719,7 +1680,7 @@ class Generation {
 		   		Inst compareInst4 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst4, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst4 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq4));	
+		   		Inst jumpIfNonEqualInst4 = Inst.creation1(Operation.BGE, Operande.creationOpEtiq(equalEtiq4));	
 		   		Prog.ajouter(jumpIfNonEqualInst4, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1772,14 +1733,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils1().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
-				   				reg1 = coder_EXP(a.getFils1());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   				reg1 = coder_EXP(a.getFils1());
 			   			}
 		   			}
 		   		}
@@ -1827,7 +1782,7 @@ class Generation {
 		   		Inst compareInst5 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst5, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BNE, Operande.creationOpEtiq(equalEtiq5));	
+		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq5));	
 		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1962,9 +1917,11 @@ class Generation {
 	   			}
 	   			
 	   			return reg;
+   			default :
+   				return null;
 		   }
 	   }
-	   return null;
+	return null;
    }
 }
 
