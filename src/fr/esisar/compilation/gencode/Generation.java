@@ -137,10 +137,10 @@ class Generation {
                Indice indice = load_Index(a.getFils1());
                inst = Inst.creation2(Operation.STORE,opdroite,Operande.creationOpIndexe(indice.placeEnPileOrigine,Operande.GB.getRegistre(), indice.offset.getRegistre()));
                Prog.ajouter(inst, "écriture en mémoire (pile)");
-               GestionRegistre.libererRegistre(indice.offset.getRegistre());
+               GestionRegistre.libererRegistre(indice.offset);
                break;
            }
-           GestionRegistre.libererRegistre(opdroite.getRegistre());
+           GestionRegistre.libererRegistre(opdroite);
            break;
 	   case Si:
 		   coder_Si(a);
@@ -174,7 +174,12 @@ class Generation {
        String finWhile = "finWhile" + nbEtiq;
        Etiq etiqFinWhile = Etiq.lEtiq(finWhile);
        nbEtiq++;
-       
+       //test
+       Inst inst = Inst.creation2(Operation.LOAD, Operande.R0, Operande.R1);
+       Prog.ajouter(inst,"test");
+       inst = Inst.creation0(Operation.WINT);
+       Prog.ajouter(inst,"test");
+       //////////////
        Inst compareInst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
        Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre() + " par rapport a 0");
        Inst jumpIfFalse = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinWhile));
@@ -380,9 +385,7 @@ class Generation {
 	   		Indice indice = load_Index(a);
 	   		Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndexe(indice.placeEnPileOrigine, Registre.GB, indice.offset.getRegistre()));
 	   		Prog.ajouter(inst2);
-	   		
-	   		if(indice.offset.getNature().equals(NatureOperande.OpDirect))
-	   			GestionRegistre.libererRegistre(indice.offset.getRegistre());
+	   		GestionRegistre.libererRegistre(indice.offset);
 	   	}	   	
 	   	//On restore les états des registres si besoin
 	   	//Si r = R1 , on a placé le registre précédent en pile, on le replace donc dans R1
@@ -405,7 +408,7 @@ class Generation {
    private static void coder_Si(Arbre a) {
 	   Operande fils1 = coder_EXP(a.getFils1());
 	   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), fils1);
-	   GestionRegistre.libererRegistre(fils1.getRegistre());
+	   GestionRegistre.libererRegistre(fils1);
 	   Prog.ajouter(inst);
 	   if(a.getFils3().getFils2().getNoeud().equals(Noeud.Nop) && a.getFils3().getFils1().getNoeud().equals(Noeud.Vide)){
 		   String str = new String("FinSi"+nbEtiq);
@@ -499,7 +502,7 @@ class Generation {
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
 		   machin = Inst.creation2(Operation.ADD, exp,subexp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : (exp*dimf)+expf");
-		   GestionRegistre.libererRegistre(exp.getRegistre());
+		   GestionRegistre.libererRegistre(exp);
 		   return subexp;
 	   }
 	   else {
@@ -645,6 +648,7 @@ class Generation {
 		   	case Non:
 		   	case MoinsUnaire:
 	   			registreLibre = GestionRegistre.getFreeRegToOpTab();
+	   			Arbre b = a.getFils1();
 	   			
 	   			if(registreLibre==null) {
 	   				GestionRegistre.pushPile(Registre.R2);
@@ -652,18 +656,18 @@ class Generation {
 	   				needPop = true;
 	   			}
 	   			
-		   		if(a.getFils1().getNoeud()==Noeud.Ident){
+		   		if(b.getNoeud()==Noeud.Ident){
 		   			
-			   		varName = a.getFils1().getChaine();
+			   		varName = b.getChaine();
 		   			placeEnPile = decl.indexOf(varName) + 1;
 		   			
-		   			if(a.getFils1().getChaine().toLowerCase().equals("true")){
+		   			if(b.getChaine().toLowerCase().equals("true")){
 		   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), registreLibre);
 		   				Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + registreLibre.getRegistre());
 		   				return registreLibre;
 		   			}
 		   			else{ 
-		   				if(a.getFils1().getChaine().toLowerCase().equals("false")){
+		   				if(b.getChaine().toLowerCase().equals("false")){
 			   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), registreLibre);
 			   				Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + registreLibre.getRegistre());
 			   				return registreLibre;
@@ -677,20 +681,24 @@ class Generation {
 			 
 		   		}
 		   		else{
-		   			Operande reg = coder_EXP(a.getFils1());
-		   			GestionRegistre.libererRegistre(reg.getRegistre());
-	   				Inst loadInst = Inst.creation2(Operation.LOAD, reg, registreLibre);
-	   				Inst moinsUnaire = Inst.creation2(Operation.MUL, Operande.creationOpEntier(-1), registreLibre);
-		   			Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + registreLibre.getRegistre());
+		   			Operande reg = coder_EXP(b);
+		   			if(reg == null){
+		   				GestionRegistre.popPile(registreLibre);
+		   			}else{
+			   			GestionRegistre.libererRegistre(reg);
+		   				Inst loadInst = Inst.creation2(Operation.LOAD, reg, registreLibre);
+		   				Prog.ajouter(loadInst, "Chargement de la valeur reelle dans le registre " + registreLibre.getRegistre());
+		   			}
+	   				Inst moinsUnaire = Inst.creation2(Operation.MUL, Operande.creationOpEntier(-1), registreLibre);	
 		   			Prog.ajouter(moinsUnaire, "Operation moins unaire et resultat mis dans le registre " + registreLibre.getRegistre());
 		   		}
 		   		
 		   		if(needPop) {
 		   			GestionRegistre.popPile(Registre.R2);
+		   			GestionRegistre.pushPile(registreLibre);
+		   			return null;
 		   		}
-		   		
 	   			return registreLibre;
-		   
 		   }
 	   }
 	   
@@ -703,6 +711,7 @@ class Generation {
 		   Operande reg2;
 		   
 		   switch(a.getNoeud()){
+		   //TODO placé en pile quand plus de registre
 		   	case Mult :			   		
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -724,7 +733,7 @@ class Generation {
 					   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg1.getRegistre());
+					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(a.getFils1().getFils1());
 					   		}
 				   		}
@@ -747,7 +756,7 @@ class Generation {
 					   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg1.getRegistre());
+					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(a.getFils1());
 					   		}
 				   		}
@@ -771,7 +780,7 @@ class Generation {
 					   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg2.getRegistre());
+					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(a.getFils2().getFils1());
 					   		}
 				   		}
@@ -794,7 +803,7 @@ class Generation {
 					   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg2.getRegistre());
+					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(a.getFils2());
 					   		}
 				   		}
@@ -804,9 +813,9 @@ class Generation {
 		   		Inst multInst = Inst.creation2(Operation.MUL, reg1, reg2);
 		   		Prog.ajouter(multInst, "Ajout de l'instruction multiplication");
 		   		
-		   		GestionRegistre.libererRegistre(reg1.getRegistre());
+		   		GestionRegistre.libererRegistre(reg1);
 		   		return reg2;
- 
+		   	//TODO placé en pile quand plus de registre
 	   		case Plus :
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -828,7 +837,7 @@ class Generation {
 					   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg1.getRegistre());
+					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(a.getFils1().getFils1());
 					   		}
 				   		}
@@ -851,7 +860,7 @@ class Generation {
 					   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg1.getRegistre());
+					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(a.getFils1());
 					   		}
 				   		}
@@ -875,7 +884,7 @@ class Generation {
 					   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg2.getRegistre());
+					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(a.getFils2().getFils1());
 					   		}
 				   		}
@@ -898,7 +907,7 @@ class Generation {
 					   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg2.getRegistre());
+					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(a.getFils2());
 					   		}
 				   		}
@@ -908,9 +917,9 @@ class Generation {
 		   		Inst addInst = Inst.creation2(Operation.ADD, reg1, reg2);
 		   		Prog.ajouter(addInst, "Ajout de l'instruction addition");
 
-	   			GestionRegistre.libererRegistre(reg1.getRegistre());
+	   			GestionRegistre.libererRegistre(reg1);
 		   		return reg2;
-		   		
+		   	//TODO placé en pile quand plus de registre
 	   		case Moins :
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -932,7 +941,7 @@ class Generation {
 					   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg1.getRegistre());
+					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(a.getFils1().getFils1());
 					   		}
 				   		}
@@ -954,7 +963,7 @@ class Generation {
 					   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg1.getRegistre());
+					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(a.getFils1());
 					   		}
 				   		}
@@ -978,7 +987,7 @@ class Generation {
 					   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg2.getRegistre());
+					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(a.getFils2().getFils1());
 					   		}
 				   		}
@@ -1001,7 +1010,7 @@ class Generation {
 					   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 					   		}
 					   		else {
-					   			GestionRegistre.libererRegistre(reg2.getRegistre());
+					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(a.getFils2());
 					   		}
 				   		}
@@ -1011,9 +1020,9 @@ class Generation {
 		   		Inst subInst = Inst.creation2(Operation.SUB, reg2, reg1);
 		   		Prog.ajouter(subInst, "Ajout de l'instruction soustraction");
 
-	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+	   			GestionRegistre.libererRegistre(reg2);
 		   		return reg1;
-
+		   	//TODO placé en pile quand plus de registre
 	   		case Quotient :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1038,7 +1047,7 @@ class Generation {
 				   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 				   		}
 				   		else {
-				   			GestionRegistre.libererRegistre(reg1.getRegistre());
+				   			GestionRegistre.libererRegistre(reg1);
 				   			reg1 = coder_EXP(b.getFils1());
 				   		}
 			   		}
@@ -1062,16 +1071,16 @@ class Generation {
 		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 		   		}
 		   		else {
-		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   			GestionRegistre.libererRegistre(reg2);
 		   			reg2 = coder_EXP(b);
 		   		}		   			   		
 		   		
 		   		Inst divRInst = Inst.creation2(Operation.DIV, reg2, reg1);
 		   		Prog.ajouter(divRInst, "Ajout de l'instruction division");
 		   		
-	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+	   			GestionRegistre.libererRegistre(reg2);
 		   		return reg1;
-		   		
+		   	//TODO placé en pile quand plus de registre
 	   		case DivReel :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1098,7 +1107,7 @@ class Generation {
 				   			Prog.ajouter(loadFils1Inst, "Ajout de l'entier operande gauche pour la mult");
 				   		}
 				   		else {
-				   			GestionRegistre.libererRegistre(reg1.getRegistre());
+				   			GestionRegistre.libererRegistre(reg1);
 				   			reg1 = coder_EXP(b1);
 				   		}
 				   }
@@ -1122,15 +1131,16 @@ class Generation {
 		   			Prog.ajouter(loadFils2Inst, "Ajout de l'entier operande droit pour la mult");
 		   		}
 		   		else {
-		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		   			GestionRegistre.libererRegistre(reg2);
 		   			reg2 = coder_EXP(b1);
 		   		}		   			   		
 		   		
 		   		Inst divRInst1 = Inst.creation2(Operation.DIV, reg2, reg1);
 		   		Prog.ajouter(divRInst1, "Ajout de l'instruction division");
 		   		
-	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+	   			GestionRegistre.libererRegistre(reg2);
 		   		return reg1;
+		   	//TODO placé en pile quand plus de registre
 	   		case Reste:
                 reg1 = coder_EXP(a.getFils1());
                 reg2 = coder_EXP(a.getFils2());
@@ -1138,10 +1148,9 @@ class Generation {
                 Prog.ajouter(inst,"Calcul du modulo");  
                 inst = Inst.creation1(Operation.BOV,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
                 Prog.ajouter(inst, "OverFlow, on arrete le programme");
-                if(reg2.getNature().equals(NatureOperande.OpDirect)){
-                	GestionRegistre.libererRegistre(reg2.getRegistre());
-                }
+                GestionRegistre.libererRegistre(reg2);
 	   			return reg1;
+	   		//TODO placé en pile quand plus de registre
             case Et :
 
             	String nomEtiqNegative = "negative"+nbEtiq;
@@ -1173,7 +1182,7 @@ class Generation {
                     Prog.ajouter(jump, "On saute a la fin du et");
                 }
                 else{
-		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   			GestionRegistre.libererRegistre(reg1);
                     reg1 = coder_EXP(a.getFils1());            
                     
                 }
@@ -1200,13 +1209,13 @@ class Generation {
                         }
                     }
                     else{
-    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+    		   			GestionRegistre.libererRegistre(reg1);
                         reg1 = coder_EXP(a.getFils2());
                     }   
                 }
             	Prog.ajouter(Etiq.lEtiq(nomEtiqNegative));
                 return reg1;
-
+              //TODO placé en pile quand plus de registre
 	   		case Ou :
 	   			String nomEtiqPositive = "positive" + nbEtiq;
 	   			Etiq posEtiq = Etiq.lEtiq(nomEtiqPositive);
@@ -1237,7 +1246,7 @@ class Generation {
                     }
                 }
                 else{
-		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		   			GestionRegistre.libererRegistre(reg1);
                     reg1 = coder_EXP(a.getFils1());    
                 }
                                 
@@ -1263,14 +1272,14 @@ class Generation {
                         }
                     }
                     else{
-    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+    		   			GestionRegistre.libererRegistre(reg1);
                         reg1 = coder_EXP(a.getFils2());
                     }
                 	
                 }
             	Prog.ajouter(Etiq.lEtiq(nomEtiqPositive));
                 return reg1;
-                
+              //TODO placé en pile quand plus de registre
 	   		case Egal :
 		   		reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1311,7 +1320,7 @@ class Generation {
 		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 				   			}
 				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		    		   			GestionRegistre.libererRegistre(reg1);
 				   				reg1 = coder_EXP(a.getFils1());
 				   			}
 			   			}
@@ -1354,7 +1363,7 @@ class Generation {
 		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 				   			}
 				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+		    		   			GestionRegistre.libererRegistre(reg2);
 				   				reg2 = coder_EXP(a.getFils2());
 				   			}
 			   			}
@@ -1375,9 +1384,9 @@ class Generation {
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqInegalite));
 
 		   		
-	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+	   			GestionRegistre.libererRegistre(reg2);
 		   		return reg1;
-		   		
+		   	//TODO placé en pile quand plus de registre
 	   		case InfEgal :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1418,7 +1427,7 @@ class Generation {
 		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 				   			}
 				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+		    		   			GestionRegistre.libererRegistre(reg1);
 				   				reg1 = coder_EXP(a.getFils1());
 				   			}
 			   			}
@@ -1483,6 +1492,7 @@ class Generation {
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
+		   	//TODO placé en pile quand plus de registre
 	   		case Inf :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1576,18 +1586,19 @@ class Generation {
 		   		nbEtiq++;
 		   		Inst compareInst3 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Inst setFalseInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq("nomEtiqNonInferieurStrict")));
+		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq3));
 		   		Inst setTrueInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		
 		   		Prog.ajouter(compareInst3, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		Prog.ajouter(setFalseInst3, "Mise a false (-1) du registre " + reg1.getRegistre());
 		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il n'y a pas inferioritÃ© stricte");
 		   		Prog.ajouter(setTrueInst3, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(Etiq.lEtiq("nomEtiqNonInferieurStrict"));
+		   		Prog.ajouter(equalEtiq3);
 
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
+		   	//TODO placé en pile quand plus de registre
 	   		case SupEgal :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1693,6 +1704,7 @@ class Generation {
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
+		   	//TODO placé en pile quand plus de registre
 	   		case Sup :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1797,6 +1809,7 @@ class Generation {
 
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
+		   	//TODO placé en pile quand plus de registre
 	   		case NonEgal :
 	   			reg1 = GestionRegistre.getFreeRegToOpTab();
 		   		reg2 = GestionRegistre.getFreeRegToOpTab();
@@ -1900,27 +1913,22 @@ class Generation {
 		   		Prog.ajouter(Etiq.lEtiq(nomEtiqEgalite));
 
 		   		
-	   			GestionRegistre.libererRegistre(reg2.getRegistre());
+	   			GestionRegistre.libererRegistre(reg2);
 		   		return reg1;
+		   	//TODO placé en pile quand plus de registre
 	   		case Index:
-	   			//TODO faire appel à load_index, verif que les intervalles sont dans la taille du tableau sinon retourner une erreur 
-	   			//(ou bien modif load_index pour que ce soit elle qui fasse la verification) , et retourner un registre (via OpIndirect)
-	   			//contenant l'adresse de la pile retourner par load_index (attribut offset et placeEnPile)
 	   			Indice i = load_Index(a);
+	   			GestionRegistre.libererRegistre(i.offset);
 	   			Operande reg = GestionRegistre.getFreeRegToOpTab();
 	   			if(reg == null){
 	   				//alors aucun registre est libre
-	   				//GestionRegistre.pushPile(i.offset.getRegistre());
-	   				//Faudrait modif le retour de coder_EXP pour indiquer si on a placé en Pile ou pas.
+	   				GestionRegistre.pushPile(Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()));
 	   			}
 	   			else{
-	   				
 		   			Inst inst2 = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()),reg);
 		   			Prog.ajouter(inst2,"Stockage en registre de la valeur pointée par le tableau");
 	   			}
-	   			if(i.offset.getNature().equals(NatureOperande.OpDirect)){
-	   				GestionRegistre.libererRegistre(i.offset.getRegistre());
-	   			}
+	   			
 	   			return reg;
 		   }
 	   }

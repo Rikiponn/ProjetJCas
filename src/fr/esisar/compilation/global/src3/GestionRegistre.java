@@ -68,7 +68,15 @@ public class GestionRegistre {
 	   	return reg;
    }
 	
-	
+	/**
+	 * Méthode permettant de marquer un registre comme libéré.
+	 * @param Op Operande lié au registre à libérer.
+	 */
+	public static void libererRegistre(Operande op){
+		if(op.getNature().equals(NatureOperande.OpDirect)){
+			libererRegistre(op.getRegistre());	
+		}
+	}
 	/**
 	 * Méthode permettant de marquer un registre comme libéré.
 	 * @param reg Registre a libéré.
@@ -95,23 +103,38 @@ public class GestionRegistre {
 		regTab[i] = 1;
 	}
 	
+	/**
+	 * Méthode permettant de mettre en Pile un Operande ou un Registre
+	 * @param op ou reg
+	 */
 	public static void pushPile (Operande op){
 		Inst inst = Inst.creation1(Operation.PUSH,op);
 	   	Prog.ajouter(inst,"Placement en pile de "+op);
-	}
-	public static void popPile (Operande op){
-		Inst inst = Inst.creation1(Operation.POP, op);
-		Prog.ajouter(inst,"Operande"+op+" retablis depuis la pile");
 	}
 	public static void pushPile (Registre reg){
 		Inst inst = Inst.creation1(Operation.PUSH,Operande.opDirect(reg));
 	   	Prog.ajouter(inst,"Placement en pile de "+reg);
 	}
+	
+	/**
+	 * Methode permettant de recuperer depuis la pile vers un Operande ou un Registre
+	 * @param op ou reg
+	 */
+	public static void popPile (Operande op){
+		Inst inst = Inst.creation1(Operation.POP, op);
+		Prog.ajouter(inst,"Operande"+op+" retablis depuis la pile");
+	}
+	
 	public static void popPile (Registre reg){
 		Inst inst = Inst.creation1(Operation.POP, Operande.opDirect(reg));
 		Prog.ajouter(inst,"Registre"+reg+" retablis depuis la pile");
 	}
 	
+	/**
+	 * Méthode permettant de récupérer l'index d'un registre
+	 * @param reg
+	 * @return
+	 */
 	private static int getRegIndex(Registre reg){
 		int index = 0;
 		switch(reg){
@@ -172,6 +195,11 @@ public class GestionRegistre {
 		}
 		return index;		
 	}
+	/**
+	 * Méthode permettant de récupérer l'opérande associé à un Index
+	 * @param i
+	 * @return
+	 */
 	private static Operande getRegOp(int i){
 		Operande index=null;
 		switch(i){
