@@ -1952,7 +1952,7 @@ class Generation {
 	   				GestionRegistre.pushPile(Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()));
 	   			}
 	   			else{
-		   			Inst inst2 = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()),reg);
+		   			inst2 = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()),reg);
 		   			Prog.ajouter(inst2,"Stockage en registre de la valeur pointée par le tableau");
 	   			}
 	   			
