@@ -3,7 +3,7 @@ program
 begin 
     i := 0;
     new_line;
-    WHILE i < 5 DO  
+    WHILE i < 8 DO  
         i := i + 1; 
         write("boucle"); 
         new_line;
