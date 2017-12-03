@@ -188,6 +188,7 @@ class Generation {
        
    }
    
+   //TODO mettre en Pile lorsqu'il n'y a plus de registre
    private static void coder_Pour(Arbre a) {
        Operande reg1, borneInf, borneSup;
        
@@ -199,23 +200,26 @@ class Generation {
        Etiq etiqFinFor = Etiq.lEtiq(finFor);
        nbEtiq++;
        
-       String varName = a.getFils1().getChaine();
-       int placeEnPile = decl.indexOf(varName) + 1;
+       String varName = null;
+       int placeEnPile = 0;
        reg1 = GestionRegistre.getFreeRegToOpTab();
-       Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-       Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());       
        
        if(a.getFils1().getNoeud()==Noeud.Increment) {
-           borneInf = coder_EXP(a.getFils1().getFils2());
-           borneSup = coder_EXP(a.getFils1().getFils3());
+    	   Arbre b = a.getFils1();
+    	   varName = b.getFils1().getChaine();
+           placeEnPile = decl.indexOf(varName) + 1;
+           Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+           Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());       
+           borneInf = coder_EXP(b.getFils2());
+           borneSup = coder_EXP(b.getFils3());
            
            Inst compareInst = Inst.creation2(Operation.CMP, borneInf, reg1);
            Prog.ajouter(compareInst, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
-           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinFor));
            Prog.ajouter(jumpIfInf, "On saute a la fin du for si l identificateur est inferieur a la borne inferieure");
            Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
            Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
-           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
            Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
 
            coder_Inst(a.getFils2());
@@ -226,15 +230,21 @@ class Generation {
        }
        else{ 
     	   if(a.getFils1().getNoeud()==Noeud.Decrement) {
-	           borneSup = coder_EXP(a.getFils1().getFils2());
-	           borneInf = coder_EXP(a.getFils1().getFils3());
+    		   Arbre b = a.getFils1();
+        	   varName = b.getFils1().getChaine();
+               placeEnPile = decl.indexOf(varName) + 1;
+               Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+               Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());    
+               
+	           borneSup = coder_EXP(b.getFils2());
+	           borneInf = coder_EXP(b.getFils3());
 	           Inst compareInst = Inst.creation2(Operation.CMP, borneInf, reg1);
 	           Prog.ajouter(compareInst, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
-	           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+	           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinFor));
 	           Prog.ajouter(jumpIfInf, "On saute a la fin du for si l identificateur est inferieur a la borne inferieure");
 	           Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
 	           Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
-	           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(finFor)));
+	           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
 	           Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
 	
 	           coder_Inst(a.getFils2());
@@ -247,7 +257,7 @@ class Generation {
        Inst storeInst = Inst.creation2(Operation.STORE, reg1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
        Prog.ajouter(storeInst, "Remise de la valeur de l identificateur dans la pile");
        
-       Inst jumpForBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq.lEtiq(debutFor)));
+       Inst jumpForBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(etiqDebutFor));
        Prog.ajouter(jumpForBegin, "Ajout de l'instruction de saut vers le debut du For");
        
        Prog.ajouter(etiqFinFor, "Ajout de l etiquette a la fin du For");
