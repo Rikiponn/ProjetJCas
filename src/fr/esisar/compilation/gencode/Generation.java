@@ -469,7 +469,7 @@ class Generation {
 		   
 		   Arbre tamp = a;
 		   int calc1 = 0;
-		   int calc2 = 1;
+		   int calc2 = 0;
 		   int inf = 0;
 		   int sup = 0;
 		   Type tamptype;
