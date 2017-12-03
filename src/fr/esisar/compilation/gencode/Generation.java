@@ -299,6 +299,7 @@ class Generation {
 		   }else{
 			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
 			   Prog.ajouter(inst,"Chargement dans R1 d'un entier");
+			   GestionRegistre.libererRegistre(op);
 		   }
 		   Inst inst = Inst.creation0(Operation.WINT);
 		   Prog.ajouter(inst,"Ecriture de l'entier");
@@ -331,6 +332,7 @@ class Generation {
 		   }else{
 			   Inst inst = Inst.creation2(Operation.LOAD,op,Operande.R1);
 			   Prog.ajouter(inst,"Chargement dans R1 d'un réel");
+			   GestionRegistre.libererRegistre(op);
 		   }
 		   Inst inst = Inst.creation0(Operation.WFLOAT);
 		   Prog.ajouter(inst,"Ecriture d'un réel" );
