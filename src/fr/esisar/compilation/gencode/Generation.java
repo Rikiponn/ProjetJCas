@@ -487,7 +487,7 @@ class Generation {
 				   tamptype = tamptype.getElement();
 			   }
 			   inf = tamptype.getIndice().getBorneInf();
-			   inf = tamptype.getIndice().getBorneSup();
+			   sup = tamptype.getIndice().getBorneSup();
 			   while((tamptype = tamptype.getElement()).getNature().equals(NatureType.Array)) { // calcul de dimf
 				   len = len*(tamptype.getIndice().getBorneSup() - tamptype.getIndice().getBorneInf() + 1);
 			   }
