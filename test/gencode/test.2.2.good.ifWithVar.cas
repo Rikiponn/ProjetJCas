@@ -1,8 +1,11 @@
 program 
     c,d : boolean;
+    h : array[1..10] of array[1..5] of boolean;
 begin 
     c := true;
     d := false;
+    h[5][5] := true;
+    h[4][5] := false;
 
     if c and c then 
         write("1er if work"); 
@@ -31,6 +34,16 @@ begin
         if c or c then
             write("else"); 
         end; 
+    end;
+
+    if h[4][5] then
+        write("nope");
+    else
+        write("dernier else");
+        if h[5][5] then
+            write("if a afficher");
+            new_line;
+        end;
     end;
 end. 
  
