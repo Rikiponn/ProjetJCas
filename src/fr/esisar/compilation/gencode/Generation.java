@@ -365,9 +365,11 @@ class Generation {
 			}
 		}
 	    // On test si R1 possède une valeur correcte (pour les intervalles)
-	   	
+	   	/*
 	   	//On test si R1 est supérieur à la borne inf du fils
+	   	*/
 	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneInf()),Operande.R1);
+	   	/*
 	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
@@ -377,7 +379,7 @@ class Generation {
 	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
 	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
-	   	
+	   	*/
 	   	//On le replace en pile
 	   	if(!a.getDecor().getType().getNature().equals(NatureType.Array)){
 	   		String varName = a.getChaine();
@@ -474,6 +476,7 @@ class Generation {
 		   Operande subexp = getSubIndex(a.getFils1()); // expression retournée par Fils1
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
 		   
+		   /*
 		   // vérification des bornes
 		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneInf()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
@@ -485,7 +488,7 @@ class Generation {
 		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 		   // fin de vérification des bornes
-		   
+		   */
 		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
 		   machin = Inst.creation2(Operation.ADD, exp,subexp);
@@ -503,7 +506,16 @@ class Generation {
     */
    private static int getLength(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   return((a.getDecor().getDefn().getType().getIndice().getBorneSup() - a.getDecor().getDefn().getType().getIndice().getBorneInf() + 1)*getLength(a.getFils1()));
+		   while(a.getNoeud().equals(Noeud.Index)){
+			   a=a.getFils1();
+		   }
+		   Type type = a.getDecor().getType();
+		   int size = 1;
+		   while(type.equals(NatureType.Array)) {
+			   size = size*(type.getIndice().getBorneSup() - type.getIndice().getBorneInf() + 1);
+			   type = type.getElement();
+		   }
+		   return size;
 	   }
 	   else {
 		   return 1;
@@ -517,8 +529,12 @@ class Generation {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   String ident = getIdent2(a.getFils1());
 		   while(a.getNoeud().equals(Noeud.Index)){
-			   ident+="["+a.getDecor().getDefn().getType().getIndice().getBorneInf()+"]";
 			   a=a.getFils1();
+		   }
+		   Type type = a.getDecor().getType();
+		   while(type.equals(NatureType.Array)) {
+			   ident+="["+type.getIndice().getBorneInf()+"]";
+			   type = type.getElement();
 		   }
 		   return ident;
 	   }
