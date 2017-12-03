@@ -461,19 +461,40 @@ class Generation {
 		   Operande subexp = getSubIndex(a.getFils1()); // expression retournée par Fils1
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
 		   
-		   /*
-		   // vérification des bornes
-		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneInf()),exp);
+		   Arbre tamp = a;
+		   int calc1 = 0;
+		   int calc2 = 1;
+		   int inf = 0;
+		   int sup = 0;
+		   while((tamp = tamp.getFils1()).getNoeud().equals(Noeud.Index)) { // on veut savoir combien de dimensions il reste avant d'arriver au bout de la branche
+			   calc1++;
+		   }
+		   if(calc1 == 0) {
+			   inf = tamp.getDecor().getType().getIndice().getBorneInf();
+			   sup = tamp.getDecor().getType().getIndice().getBorneSup();
+		   }
+		   else {
+			   Type tamptype = tamp.getDecor().getType();
+			   while(calc2 < calc1) { // le nombre de dimensions total
+				   calc2++;
+				   tamptype = tamptype.getElement();
+			   }
+			   inf = tamptype.getIndice().getBorneInf();
+			   inf = tamptype.getIndice().getBorneSup();
+		   }
+		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(inf),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
 		   inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 		   
-		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneSup()),exp);
+		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(sup),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne sup pour un index");
 		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
-		   // fin de vérification des bornes
-		   */
+		   
+		   
+		   
+		   
 		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
 		   machin = Inst.creation2(Operation.ADD, exp,subexp);
