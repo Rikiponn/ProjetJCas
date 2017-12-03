@@ -1110,9 +1110,14 @@ class Generation {
 	   		case Reste:
                 reg1 = coder_EXP(a.getFils1());
                 reg2 = coder_EXP(a.getFils2());
-                Inst inst = Inst.creation2(Operation.MOD, reg1, reg2);
-                Prog.ajouter(inst,"Calcul du modulo");            
-	   			return reg2;
+                Inst inst = Inst.creation2(Operation.MOD, reg2, reg1);
+                Prog.ajouter(inst,"Calcul du modulo");  
+                inst = Inst.creation1(Operation.BOV,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
+                Prog.ajouter(inst, "OverFlow, on arrete le programme");
+                if(reg2.getNature().equals(NatureOperande.OpDirect)){
+                	GestionRegistre.libererRegistre(reg2.getRegistre());
+                }
+	   			return reg1;
             case Et :
 
             	String nomEtiqNegative = "negative"+nbEtiq;
