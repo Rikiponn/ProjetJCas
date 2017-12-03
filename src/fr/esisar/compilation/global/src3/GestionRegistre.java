@@ -53,6 +53,22 @@ public class GestionRegistre {
 		return getFreeRegToOpTab().getRegistre();
 	}
 	
+	public static void loadPush(Operande op1,Operande op2){
+		if(op2==null){
+			pushPile(op1);
+		}else{
+			Inst loadInst = Inst.creation2(Operation.LOAD, op1, op2);
+   			Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + op2.getRegistre());
+		}
+	}
+	public static void loadPush(Operande op1,Operande op2,String comment){
+		if(op2==null){
+			pushPile(op1);
+		}else{
+			Inst loadInst = Inst.creation2(Operation.LOAD, op1, op2);
+   			Prog.ajouter(loadInst, comment);
+		}
+	}
 	 /**
 	    * Déplace le contenu du registre en param, vers un autre registre libre ou en pile si aucun autre registre n'est dispo si celui-ci est occupé
 	    * @param reg
