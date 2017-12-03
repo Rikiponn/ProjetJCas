@@ -1086,7 +1086,12 @@ class Generation {
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
-
+	   		case Reste:
+                reg1 = coder_EXP(a.getFils1());
+                reg2 = coder_EXP(a.getFils2());
+                Inst inst = Inst.creation2(Operation.MOD, reg1, reg2);
+                Prog.ajouter(inst,"Calcul du modulo");            
+	   			return reg2;
             case Et :
 
             	String nomEtiqNegative = "negative"+nbEtiq;
@@ -1860,8 +1865,8 @@ class Generation {
 	   			}
 	   			else{
 	   				
-		   			Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()),reg);
-		   			Prog.ajouter(inst,"Stockage en registre de la valeur pointée par le tableau");
+		   			Inst inst2 = Inst.creation2(Operation.LOAD, Operande.creationOpIndexe(i.placeEnPileOrigine, Registre.GB,i.offset.getRegistre()),reg);
+		   			Prog.ajouter(inst2,"Stockage en registre de la valeur pointée par le tableau");
 	   			}
 	   			if(i.offset.getNature().equals(NatureOperande.OpDirect)){
 	   				GestionRegistre.libererRegistre(i.offset.getRegistre());
