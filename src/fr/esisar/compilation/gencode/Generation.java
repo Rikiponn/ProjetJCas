@@ -840,6 +840,8 @@ class Generation {
 		   		if(a.getNoeud().equals(Noeud.Mult)){
 			   		Inst multInst = Inst.creation2(Operation.MUL, reg2, reg1);
 			   		Prog.ajouter(multInst, "Ajout de l'instruction multiplication");
+			   		Inst inst = Inst.creation1(Operation.BOV, Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
+			   		Prog.ajouter(inst, "Overflow, on arrete le programme");
 		   		}
 		   		if(a.getNoeud().equals(Noeud.Plus)){
 		   			Inst addInst = Inst.creation2(Operation.ADD, reg2, reg1);
