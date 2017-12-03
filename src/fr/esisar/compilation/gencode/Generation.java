@@ -1365,17 +1365,26 @@ class Generation {
 		   		}
 		   		String nomEtiqInegalite = "inegalite" + nbEtiq;
 		   		Etiq equalEtiq = Etiq.lEtiq(nomEtiqInegalite);
+		   		String nom = "Always" + nbEtiq;
+		   		Etiq Etiq = Etiq.lEtiq(nom);
 		   		nbEtiq++;
 		   		Inst compareInst = Inst.creation2(Operation.CMP, reg1, reg2);
-		   		Inst setFalseInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BNE, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqInegalite)));
-		   		Inst setTrueInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
-		   		
 		   		Prog.ajouter(compareInst, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Prog.ajouter(setFalseInst, "Mise a false (-1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il n'y a pas Ã©galitÃ©");
+		   		
+		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq));	
+		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
+		   		
+		   		Inst setTrueInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(Etiq.lEtiq(nomEtiqInegalite));
+		   		
+		   		Inst inst1 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq));
+		   		Prog.ajouter(inst1);
+		   		
+		   		Prog.ajouter(equalEtiq);
+		   		Inst setFalseInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Prog.ajouter(setFalseInst, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		
+		   		Prog.ajouter(Etiq);
 
 		   		
 	   			GestionRegistre.libererRegistre(reg2);
@@ -1471,18 +1480,26 @@ class Generation {
 		   		}
 		   		String nomEtiqNonInferieurOuEgal = "nonInferieurOuEgal" + nbEtiq;
 		   		Etiq equalEtiq2 = Etiq.lEtiq(nomEtiqNonInferieurOuEgal);
+		   		String nom2 = "Always" + nbEtiq;
+		   		Etiq Etiq2 = Etiq.lEtiq(nom2);
 		   		nbEtiq++;
 		   		Inst compareInst2 = Inst.creation2(Operation.CMP, reg1, reg2);
-		   		Inst setFalseInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNonInferieurOuEgal)));
-		   		Inst setTrueInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
-		   		
 		   		Prog.ajouter(compareInst2, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Prog.ajouter(setFalseInst2, "Mise a false (-1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il n'y a pas inferioritÃ© ou Ã©galitÃ©");
+		   		
+		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq2));	
+		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
+		   		
+		   		Inst setTrueInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst2, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonInferieurOuEgal));
-
+		   		
+		   		Inst inst2 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq2));
+		   		Prog.ajouter(inst2);
+		   		
+		   		Prog.ajouter(equalEtiq2);
+		   		Inst setFalseInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Prog.ajouter(setFalseInst2, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		
+		   		Prog.ajouter(Etiq2);
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
@@ -1577,22 +1594,26 @@ class Generation {
 		   		}
 		   		String nomEtiqNonInferieurStrict = "nonInferieurStrict" + nbEtiq;
 		   		Etiq equalEtiq3 = Etiq.lEtiq(nomEtiqNonInferieurStrict);
-		   		String nom = "Always"+nbEtiq;
-		   		Etiq always = Etiq.lEtiq(nom);
+		   		String nom3 = "Always" + nbEtiq;
+		   		Etiq Etiq3 = Etiq.lEtiq(nom3);
 		   		nbEtiq++;
-		   		//TODO test
 		   		Inst compareInst3 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst3, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq3));
-		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il n'y a pas inferioritÃ© stricte");
+		   		
+		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BGE, Operande.creationOpEtiq(equalEtiq3));	
+		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
+		   		
 		   		Inst setTrueInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst3, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Inst always3 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(always));
-		   		Prog.ajouter(always3,"Branchement pour mettre à true");
-		   		Inst setFalseInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		
+		   		Inst inst3 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq3));
+		   		Prog.ajouter(inst3);
+		   		
 		   		Prog.ajouter(equalEtiq3);
+		   		Inst setFalseInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
 		   		Prog.ajouter(setFalseInst3, "Mise a false (-1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(always);
+		   		
+		   		Prog.ajouter(Etiq3);
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
@@ -1687,18 +1708,26 @@ class Generation {
 		   		}
 		   		String nomEtiqNonSuperieurOuEgal = "nonSuperieurOuEgal" + nbEtiq;
 		   		Etiq equalEtiq4 = Etiq.lEtiq(nomEtiqNonSuperieurOuEgal);
+		   		String nom4 = "Always" + nbEtiq;
+		   		Etiq Etiq4 = Etiq.lEtiq(nom4);
 		   		nbEtiq++;
 		   		Inst compareInst4 = Inst.creation2(Operation.CMP, reg1, reg2);
-		   		Inst setFalseInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst4 = Inst.creation1(Operation.BGE, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNonSuperieurOuEgal)));
-		   		Inst setTrueInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
-		   		
 		   		Prog.ajouter(compareInst4, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Prog.ajouter(setFalseInst4, "Mise a false (-1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(jumpIfNonEqualInst4, "Ajout de l'instruction de saut s'il n'y a pas supÃ©rioritÃ© ou Ã©galitÃ©");
+		   		
+		   		Inst jumpIfNonEqualInst4 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq4));	
+		   		Prog.ajouter(jumpIfNonEqualInst4, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
+		   		
+		   		Inst setTrueInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst4, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonSuperieurOuEgal));
-
+		   		
+		   		Inst inst4 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq4));
+		   		Prog.ajouter(inst4);
+		   		
+		   		Prog.ajouter(equalEtiq4);
+		   		Inst setFalseInst4 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Prog.ajouter(setFalseInst4, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		
+		   		Prog.ajouter(Etiq4);
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
@@ -1780,30 +1809,33 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils2().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-				   				reg2 = coder_EXP(a.getFils2());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   				reg2 = coder_EXP(a.getFils2());
 			   			}
 		   			}
 		   		}
 		   		String nomEtiqNonSuperieurStrict = "nonSuperieurStrict" + nbEtiq;
 		   		Etiq equalEtiq5 = Etiq.lEtiq(nomEtiqNonSuperieurStrict);
+		   		String nom5 = "Always" + nbEtiq;
+		   		Etiq Etiq5 = Etiq.lEtiq(nom5);
 		   		nbEtiq++;
 		   		Inst compareInst5 = Inst.creation2(Operation.CMP, reg1, reg2);
-		   		Inst setFalseInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNonSuperieurStrict)));
-		   		Inst setTrueInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
-		   		
 		   		Prog.ajouter(compareInst5, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Prog.ajouter(setFalseInst5, "Mise a false (-1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il n'y a pas supÃ©rioritÃ© stricte");
+		   		
+		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BNE, Operande.creationOpEtiq(equalEtiq5));	
+		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
+		   		
+		   		Inst setTrueInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst5, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(Etiq.lEtiq(nomEtiqNonSuperieurStrict));
+		   		
+		   		Inst inst5 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq5));
+		   		Prog.ajouter(inst5);
+		   		
+		   		Prog.ajouter(equalEtiq5);
+		   		Inst setFalseInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Prog.ajouter(setFalseInst5, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		
+		   		Prog.ajouter(Etiq5);
 
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
@@ -1843,14 +1875,8 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils1().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils1().getChaine()), reg1);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg1.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
-				   				reg1 = coder_EXP(a.getFils1());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg1.getRegistre());
+			   				reg1 = coder_EXP(a.getFils1());
 			   			}
 		   			}
 		   		}
@@ -1885,30 +1911,33 @@ class Generation {
 	                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
 			   			}
 			   			else{ 
-			   				if(a.getFils2().getDecor().getType()==Type.String){
-				   				Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpChaine(a.getFils2().getChaine()), reg2);
-		                        Prog.ajouter(loadInst, "Chargement de la valeur dans le registre " + reg2.getRegistre());
-				   			}
-				   			else{
-		    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
-				   				reg2 = coder_EXP(a.getFils2());
-				   			}
+	    		   			GestionRegistre.libererRegistre(reg2.getRegistre());
+			   				reg2 = coder_EXP(a.getFils2());
 			   			}
 		   			}
 		   		}
 		   		String nomEtiqEgalite = "egalite" + nbEtiq;
 		   		Etiq equalEtiq6 = Etiq.lEtiq(nomEtiqEgalite);
+		   		String nom6 = "Always" + nbEtiq;
+		   		Etiq Etiq6 = Etiq.lEtiq(nom6);
 		   		nbEtiq++;
 		   		Inst compareInst6 = Inst.creation2(Operation.CMP, reg1, reg2);
-		   		Inst setFalseInst6 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst6 = Inst.creation1(Operation.BEQ, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqEgalite)));
-		   		Inst setTrueInst6 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
-		   		
 		   		Prog.ajouter(compareInst6, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Prog.ajouter(setFalseInst6, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		
+		   		Inst jumpIfNonEqualInst6 = Inst.creation1(Operation.BEQ, Operande.creationOpEtiq(equalEtiq6));	
 		   		Prog.ajouter(jumpIfNonEqualInst6, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
+		   		
+		   		Inst setTrueInst6 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst6, "Mise a true (1) du registre " + reg1.getRegistre());
-		   		Prog.ajouter(Etiq.lEtiq(nomEtiqEgalite));
+		   		
+		   		Inst inst6 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq6));
+		   		Prog.ajouter(inst6);
+		   		
+		   		Prog.ajouter(equalEtiq6);
+		   		Inst setFalseInst6 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+		   		Prog.ajouter(setFalseInst6, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		
+		   		Prog.ajouter(Etiq6);
 
 		   		
 	   			GestionRegistre.libererRegistre(reg2);
