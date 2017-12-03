@@ -1,6 +1,6 @@
 program
 begin
-    if true and true then
+    if true or false then
         write("1er if work");
         new_line;
     end;
@@ -9,6 +9,45 @@ begin
     if true or true then
         write("2e if work");
         new_line;
+    end;
+    new_line;
+
+    if false or false then
+        write("3e if work");
+        new_line;
+    end;
+    new_line;
+
+    if false or true then
+        write("4e if work");
+        new_line;
+    end;
+    new_line;
+
+    if true and false then
+        write("nope");
+    else 
+        write("1e else work");
+    end;
+    new_line;
+
+    if true and true then
+        write("5e if work");
+        new_line;
+    end;
+    new_line;
+
+    if false and false then
+        write("nope");
+    else 
+        write("2e else work");
+    end;
+    new_line;
+
+    if false and true then
+        write("nope");
+    else 
+        write("3e else work");
     end;
     new_line;
 
