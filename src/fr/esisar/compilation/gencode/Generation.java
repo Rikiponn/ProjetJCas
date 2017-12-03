@@ -745,12 +745,8 @@ class Generation {
 					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(b.getFils1());
 					   			if(reg1 == null){
-					   				reg1 = Operande.R14;
-					   				Inst inst = Inst.creation2(Operation.LOAD, reg1, Operande.R15);
-					   				Prog.ajouter(inst, "Déplacement pour recup depuis la pile");
-					   				needpop1 = true;
+					   				reg1 = Operande.R15;
 					   				GestionRegistre.popPile(reg1);
-					   				GestionRegistre.pushPile(Operande.R15);
 					   			}
 					   		}
 				   		}
@@ -775,12 +771,8 @@ class Generation {
 					   			GestionRegistre.libererRegistre(reg1);
 					   			reg1 = coder_EXP(b);
 					   			if(reg1 == null){
-					   				reg1 = Operande.R14;
-					   				Inst inst = Inst.creation2(Operation.LOAD, reg1, Operande.R15);
-					   				Prog.ajouter(inst, "Déplacement pour recup depuis la pile");
-					   				needpop1 = true;
+					   				reg1 = Operande.R15;
 					   				GestionRegistre.popPile(reg1);
-					   				GestionRegistre.pushPile(Operande.R15);
 					   			}
 					   		}
 				   		}
@@ -807,8 +799,12 @@ class Generation {
 					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(b.getFils1());
 					   			if(reg2 == null){
-					   				reg2 = Operande.R15;
+					   				reg2 = Operande.R14;
+					   				Inst inst = Inst.creation2(Operation.LOAD, reg2, Operande.R15);
+					   				Prog.ajouter(inst, "Déplacement pour recup depuis la pile");
+					   				needpop1 = true;
 					   				GestionRegistre.popPile(reg2);
+					   				GestionRegistre.pushPile(Operande.R15);
 					   			}
 					   		}
 				   		}
@@ -833,31 +829,35 @@ class Generation {
 					   			GestionRegistre.libererRegistre(reg2);
 					   			reg2 = coder_EXP(b);
 					   			if(reg2 == null){
-					   				reg2 = Operande.R15;
+					   				reg2 = Operande.R14;
+					   				Inst inst = Inst.creation2(Operation.LOAD, reg2, Operande.R15);
+					   				Prog.ajouter(inst, "Déplacement pour recup depuis la pile");
+					   				needpop1 = true;
 					   				GestionRegistre.popPile(reg2);
+					   				GestionRegistre.pushPile(Operande.R15);
 					   			}
 					   		}
 				   		}
 			   		}
 		   		} 		
 		   		if(a.getNoeud().equals(Noeud.Mult)){
-			   		Inst multInst = Inst.creation2(Operation.MUL, reg1, reg2);
+			   		Inst multInst = Inst.creation2(Operation.MUL, reg2, reg1);
 			   		Prog.ajouter(multInst, "Ajout de l'instruction multiplication");
 		   		}
 		   		if(a.getNoeud().equals(Noeud.Plus)){
-		   			Inst addInst = Inst.creation2(Operation.ADD, reg1, reg2);
+		   			Inst addInst = Inst.creation2(Operation.ADD, reg2, reg1);
 			   		Prog.ajouter(addInst, "Ajout de l'instruction addition");
 		   		}
 		   		if(a.getNoeud().equals(Noeud.Moins)){
-		   			Inst subInst = Inst.creation2(Operation.SUB, reg1, reg2);
+		   			Inst subInst = Inst.creation2(Operation.SUB, reg2, reg1);
 			   		Prog.ajouter(subInst, "Ajout de l'instruction soustraction");
 		   		}
 		   		if(needpop1){
-		   			GestionRegistre.popPile(reg1);
+		   			GestionRegistre.popPile(reg2);
 		   		}else{
-		   			GestionRegistre.libererRegistre(reg1);
+		   			GestionRegistre.libererRegistre(reg2);
 		   		}
-		   		return reg2;
+		   		return reg1;
 		   
 		   	//TODO placé en pile quand plus de registre
 	   		case Quotient :
