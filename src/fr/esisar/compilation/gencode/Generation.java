@@ -203,6 +203,8 @@ class Generation {
        String varName = null;
        int placeEnPile = 0;
        reg1 = GestionRegistre.getFreeRegToOpTab();
+       borneInf = null;
+       borneSup = null;
        
        if(a.getFils1().getNoeud()==Noeud.Increment) {
     	   Arbre b = a.getFils1();
@@ -261,6 +263,9 @@ class Generation {
        Prog.ajouter(jumpForBegin, "Ajout de l'instruction de saut vers le debut du For");
        
        Prog.ajouter(etiqFinFor, "Ajout de l etiquette a la fin du For");
+       GestionRegistre.libererRegistre(reg1);
+       GestionRegistre.libererRegistre(borneSup);
+       GestionRegistre.libererRegistre(borneInf);
    }
    
    
