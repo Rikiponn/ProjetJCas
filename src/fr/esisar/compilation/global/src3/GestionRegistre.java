@@ -9,9 +9,12 @@ public class GestionRegistre {
 	 */
 	
 	public static void initRegTab(){
-		for(int i = 0; i<regTab.length; i++){
+		for(int i = 0; i<regTab.length-2; i++){
 			regTab[i] = 0;
 		}
+		// GB et LB ne sont pas des registres que l'on peut modif n'importe comment
+		regTab[16] = 1;
+		regTab[17] = 1;
 	}
 	
 	/**Méthode permettant de tester l'état d'occupation d'un registre.

@@ -275,7 +275,7 @@ class Generation {
 	   //Dans tous les cas, le fils 2 est une Expression, donc on l'écrit
 	   
 	   //Si on veut écrire un integer
-	   if(f2.getDecor().getType().equals(Type.Integer)){
+	   if(f2.getDecor().getType().getNature().equals(NatureType.Interval)){
 		   Operande op = coder_EXP(f2);
 		   //Si R1 est occupé
 		   if(!GestionRegistre.estRegistreLibre(1)){
@@ -364,22 +364,7 @@ class Generation {
 			   	Prog.ajouter(inst, "On arrete le programme car on essaye de read autre chose qu'un int ou un reel");
 			}
 		}
-	    // On test si R1 possède une valeur correcte (pour les intervalles)
-	   	/*
-	   	//On test si R1 est supérieur à la borne inf du fils
-	   	*/
-	   	Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneInf()),Operande.R1);
-	   	/*
-	   	Prog.ajouter(inst, "Comparaison de la borne inf pour l'affectation suite à un read");
-	   	inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
-	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
-	   	
-	   	//On test si R1 est supérieur à la borne sup du fils
-	   	inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(a.getDecor().getDefn().getType().getIndice().getBorneSup()),Operande.R1);
-	   	Prog.ajouter(inst, "Comparaison de la borne sup pour l'affectation suite à un read");
-	   	inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
-	   	Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
-	   	*/
+	    
 	   	//On le replace en pile
 	   	if(!a.getDecor().getType().getNature().equals(NatureType.Array)){
 	   		String varName = a.getChaine();
@@ -407,7 +392,7 @@ class Generation {
 	   	//Si r = Rm (on a changé sa valeur) et r != R1 (pour éviter le faire un LOAD R1 R1) , on rétablit le registre dans R1
 	   	else{
 	   		if(r != null){
-	   			inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
+	   			Inst inst = Inst.creation2(Operation.LOAD, Operande.opDirect(r), Operande.R1);
 	   			Prog.ajouter(inst,"Registre retablis depuis "+r+" après écriture");
 	   			GestionRegistre.libererRegistre(r);
 	   		}
