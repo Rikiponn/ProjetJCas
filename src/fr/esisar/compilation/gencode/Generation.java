@@ -195,8 +195,7 @@ class Generation {
        
        String debutFor = "debutFor" + nbEtiq;
        Etiq etiqDebutFor = Etiq.lEtiq(debutFor);
-       nbEtiq++;
-       Prog.ajouter(etiqDebutFor, "Ajout de l etiquette au debut du For");       
+       nbEtiq++; 
        String finFor = "finPour" + nbEtiq;
        Etiq etiqFinFor = Etiq.lEtiq(finFor);
        nbEtiq++;
@@ -211,19 +210,19 @@ class Generation {
     	   Arbre b = a.getFils1();
     	   varName = b.getFils1().getChaine();
            placeEnPile = decl.indexOf(varName) + 1;
-           Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-           Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());       
+                 
            borneInf = coder_EXP(b.getFils2());
            borneSup = coder_EXP(b.getFils3());
+           Inst loadInst = Inst.creation2(Operation.STORE,borneInf, Operande.creationOpIndirect(placeEnPile, Registre.GB));
+           Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre()); 
+           Prog.ajouter(etiqDebutFor, "Ajout de l etiquette au debut du For");  
            
-           Inst compareInst = Inst.creation2(Operation.CMP, borneInf, reg1);
-           Prog.ajouter(compareInst, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
-           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinFor));
-           Prog.ajouter(jumpIfInf, "On saute a la fin du for si l identificateur est inferieur a la borne inferieure");
+           Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB),reg1);
            Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
            Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
            Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
            Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
+           
            GestionRegistre.libererRegistre(borneSup);
            GestionRegistre.libererRegistre(borneInf);
            coder_Inst(a.getFils2());
@@ -236,20 +235,18 @@ class Generation {
     	   if(a.getFils1().getNoeud()==Noeud.Decrement) {
     		   Arbre b = a.getFils1();
         	   varName = b.getFils1().getChaine();
-               placeEnPile = decl.indexOf(varName) + 1;
-               Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
-               Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre());    
+               placeEnPile = decl.indexOf(varName) + 1;   
                
 	           borneSup = coder_EXP(b.getFils2());
 	           borneInf = coder_EXP(b.getFils3());
+	           Inst loadInst = Inst.creation2(Operation.STORE,borneInf, Operande.creationOpIndirect(placeEnPile, Registre.GB));
+	           Prog.ajouter(loadInst, "Ajout de la valeur de la variable dans le registre " + reg1.getRegistre()); 
+	           Prog.ajouter(etiqDebutFor, "Ajout de l etiquette au debut du For"); 
+	           
 	           Inst compareInst = Inst.creation2(Operation.CMP, borneInf, reg1);
 	           Prog.ajouter(compareInst, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
 	           Inst jumpIfInf = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinFor));
 	           Prog.ajouter(jumpIfInf, "On saute a la fin du for si l identificateur est inferieur a la borne inferieure");
-	           Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
-	           Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
-	           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
-	           Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
 	
 	           GestionRegistre.libererRegistre(borneSup);
 	           GestionRegistre.libererRegistre(borneInf);
