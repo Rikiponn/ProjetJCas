@@ -873,7 +873,7 @@ end.
 			   		Prog.ajouter(addInst, "Ajout de l'instruction addition");
 		   		}
 		   		if(a.getNoeud().equals(Noeud.Moins)){
-		   			Inst subInst = Inst.creation2(Operation.SUB, reg2, reg1);
+		   			Inst subInst = Inst.creation2(Operation.SUB, reg1, reg2);
 			   		Prog.ajouter(subInst, "Ajout de l'instruction soustraction");
 		   		}
 		   		if(needpop1){
