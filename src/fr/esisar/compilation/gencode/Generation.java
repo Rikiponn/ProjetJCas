@@ -1153,7 +1153,7 @@ class Generation {
                         forcementVrai = true;
                     }
                     else{ 
-                    	if(a.getFils1().getChaine().toLowerCase() == "false"){
+                    	if(a.getFils1().getChaine().toLowerCase().equals("false")){
 	                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
 	                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
 	                    }
@@ -1183,7 +1183,7 @@ class Generation {
                             Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
                         }
                         else{
-                        	if(a.getFils2().getChaine().toLowerCase() == "false"){
+                        	if(a.getFils2().getChaine().toLowerCase().equals("false")){
 	                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
 	                            Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
 	                        }
