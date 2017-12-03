@@ -255,7 +255,9 @@ class Generation {
    
    
 /**Fonction s'occupant de l'instruction write
-    * Etat : terminé
+ *  Se charge également de déplacer R1 si celui est occupé (le place en pile si aucun registre n'est libre)
+ *  Puis rétablit R1 a son état d'origine
+    * Etat : Fini
     * @param un arbre (Premier appel, a est un Noeud.ListeExp)
     * @return void
     */
@@ -396,8 +398,10 @@ class Generation {
 	   	}  
    }
    /**Code l'instruction Si
-    * 
-    * @param a
+    * Etat : Fini
+    * Prend en charge le cas Si Alors et le cas Si Alors Sinon
+    * @param a un Arbre décoré
+    * @return void
     */
    private static void coder_Si(Arbre a) {
 	   Operande fils1 = coder_EXP(a.getFils1());
@@ -563,11 +567,12 @@ class Generation {
 	   }
    }
    
+   /**
+    * Méthode permettant de coder toutes les expressions
+    * @param a un Arbre décoré
+    * @return l'Opérande qui contient le résultat
+    */
    private static Operande coder_EXP(Arbre a){
-	   //chercher en fonction du nom de la variable, sa position en pile,PUIS la charger dans un registre libre
-	   //Il faut donc utiliser la fonction getGrosRegistreLibre()
-	   //Il faut ensuite modifier le tableau regTab pour indiquer les registres qui ne sont plus disponible
-	   //
 	   
 	   if(a.getArite() == 0){
 		   switch(a.getNoeud()){
@@ -1380,7 +1385,7 @@ class Generation {
 		   		Inst compareInst = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq));	
+		   		Inst jumpIfNonEqualInst = Inst.creation1(Operation.BNE, Operande.creationOpEtiq(equalEtiq));	
 		   		Prog.ajouter(jumpIfNonEqualInst, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
@@ -1831,7 +1836,7 @@ class Generation {
 		   		Inst compareInst5 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst5, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BNE, Operande.creationOpEtiq(equalEtiq5));	
+		   		Inst jumpIfNonEqualInst5 = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(equalEtiq5));	
 		   		Prog.ajouter(jumpIfNonEqualInst5, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst5 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
