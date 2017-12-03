@@ -77,13 +77,15 @@ public class GestionRegistre {
 	    * @return indique si la fonction a mis le précédent registre en pile (aka si la valeur de retour est égale au param)
 	    */
 	public static Registre deplaceRegistre(Registre reg){
-	   	if(!estRegistreLibre(reg)){
-	   		Registre r1 = getFreeRegTab();
-	   		libererRegistre(reg);
-	   		return r1;
-	   	}
-	   	pushPile(reg);
-	   	return reg;
+		Operande r1 = getFreeRegToOpTab();
+   		if(r1 == null){
+   			pushPile(reg);
+   		   	return reg;
+   		}
+   		Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpDirect(reg), r1);
+   		Prog.ajouter(inst,"Déplacement du registre "+reg+" vers "+r1);
+		libererRegistre(reg);
+   		return r1.getRegistre();	   	
    }
 	
 	/**

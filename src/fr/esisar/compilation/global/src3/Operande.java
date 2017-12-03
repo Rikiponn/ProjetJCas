@@ -130,7 +130,7 @@ public abstract class Operande {
     * méthode opDirect qui ne re-crée
     * pas un nouvel opérande à chaque appel.
     */
-   private static Operande creationOpDirect(Registre reg) {
+   public static Operande creationOpDirect(Registre reg) {
       return new OperandeDirect(reg);
    }
 
