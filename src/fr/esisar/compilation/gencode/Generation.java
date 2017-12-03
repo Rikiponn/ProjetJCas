@@ -366,7 +366,7 @@ class Generation {
 			}
 		}
 	    
-	   	//On le replace en pile
+	   	//On le replace en pile à sa position
 	   	if(!a.getDecor().getType().getNature().equals(NatureType.Array)){
 	   		String varName = a.getChaine();
 			int placeEnPile = decl.indexOf(varName) + 1;
@@ -374,9 +374,7 @@ class Generation {
 			Prog.ajouter(inst2, "Ecriture dans la variable "+varName+" en pile à l'emplacement "+placeEnPile);
 			
 	   	}else{
-	   		//Trouver le nom puis trouver le décalage en parcours profondeur
 	   		//Trouver dynamiquement l'endroit où l'on veut écrire
-	   		//TODO faire la même chose que pour affect
 	   		Indice indice = load_Index(a);
 	   		Inst inst2 = Inst.creation2(Operation.STORE, Operande.R1, Operande.creationOpIndexe(indice.placeEnPileOrigine, Registre.GB, indice.offset.getRegistre()));
 	   		Prog.ajouter(inst2);
@@ -407,7 +405,9 @@ class Generation {
 	   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), fils1);
 	   GestionRegistre.libererRegistre(fils1);
 	   Prog.ajouter(inst);
+	   
 	   if(a.getFils3().getFils2().getNoeud().equals(Noeud.Nop) && a.getFils3().getFils1().getNoeud().equals(Noeud.Vide)){
+		//Cas du Si Alors
 		   String str = new String("FinSi"+nbEtiq);
 		   Etiq eti = Etiq.lEtiq(str);
 		   nbEtiq++;
@@ -417,6 +417,7 @@ class Generation {
 		   coder_Inst(a.getFils2());	// Instruction alors
 		   Prog.ajouter(eti);// etiquette du FinSi
 	   }else{
+		//Cas du Si Alors Sinon  
 		   String str = new String("Sinon"+nbEtiq);
 		   Etiq eti = Etiq.lEtiq(str);
 		   nbEtiq++;
@@ -692,8 +693,6 @@ class Generation {
 		   			return null;
 		   		}
 	   			return registreLibre;
-		   	default:
-		   		return null;
 		   }
 	   }
 	   
@@ -1889,7 +1888,6 @@ class Generation {
 		   		
 	   			GestionRegistre.libererRegistre(reg2);
 		   		return reg1;
-		   	//TODO placé en pile quand plus de registre
 	   		case Index:
 	   			Indice i = load_Index(a);
 	   			GestionRegistre.libererRegistre(i.offset);
@@ -1904,8 +1902,6 @@ class Generation {
 	   			}
 	   			
 	   			return reg;
-   			default :
-   				return null;
 		   }
 	   }
 	return null;
