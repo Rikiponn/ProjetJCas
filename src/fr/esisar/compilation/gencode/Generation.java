@@ -375,7 +375,6 @@ class Generation {
 			
 	   	}else{
 	   		//Trouver le nom puis trouver le décalage en parcours profondeur
-	   		int length = getLength(a);
 	   		//Trouver dynamiquement l'endroit où l'on veut écrire
 	   		//TODO faire la même chose que pour affect
 	   		Indice indice = load_Index(a);
@@ -444,7 +443,11 @@ class Generation {
     */
    private static Indice load_Index(Arbre a) {
 	   String ident = getIdent(a);
-	   Operande offset = getSubIndex(a);
+	   Operande exp = GestionRegistre.getFreeRegToOpTab();
+	   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
+	   Prog.ajouter(loadInst,"Fin du tableau");
+	   Operande offset = getSubIndex(a,exp);
+	   GestionRegistre.libererRegistre(exp);
 	   int placeEnPile = decl.indexOf(ident) + 1;
 	   Indice indice = new Indice(offset,placeEnPile);
 	   return indice;
@@ -456,17 +459,19 @@ class Generation {
     * @param a un arbre index
     * @return un registre contenant l'offset de l'indice du tableau.
     */
-   private static Operande getSubIndex(Arbre a) {
+   private static Operande getSubIndex(Arbre a, Operande expPere) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   int len = getLength(a.getFils1()); // Dimension du tableau pointé par le Fils1
-		   Operande subexp = getSubIndex(a.getFils1()); // expression retournée par Fils1
+		   int len = 1;
+		   
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
+		   getSubIndex(a.getFils1(),exp); // expression retournée par Fils1
 		   
 		   Arbre tamp = a;
 		   int calc1 = 0;
 		   int calc2 = 1;
 		   int inf = 0;
 		   int sup = 0;
+		   Type tamptype;
 		   // On va aller chercher les bornes du tableau dans le décor de la feuille des fils1
 		   while((tamp = tamp.getFils1()).getNoeud().equals(Noeud.Index)) { // on veut savoir combien de dimensions il reste avant d'arriver au bout de la branche
 			   calc1++;
@@ -476,13 +481,16 @@ class Generation {
 			   sup = tamp.getDecor().getType().getIndice().getBorneSup();
 		   }
 		   else {
-			   Type tamptype = tamp.getDecor().getType();
+			   tamptype = tamp.getDecor().getType();
 			   while(calc2 < calc1) { // le nombre de dimensions total
 				   calc2++;
 				   tamptype = tamptype.getElement();
 			   }
 			   inf = tamptype.getIndice().getBorneInf();
 			   inf = tamptype.getIndice().getBorneSup();
+			   while((tamptype = tamptype.getElement()).getNature().equals(NatureType.Array)) { // calcul de dimf
+				   len = len*(tamptype.getIndice().getBorneSup() - tamptype.getIndice().getBorneInf() + 1);
+			   }
 		   }
 		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(inf),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
@@ -498,37 +506,16 @@ class Generation {
 		   // On va ensuite récupérer et calculer la taille absolue du tableau avec les éventuelles dimensions inférieures
 		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
-		   machin = Inst.creation2(Operation.ADD, exp,subexp);
+		   machin = Inst.creation2(Operation.ADD, exp,expPere);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : (exp*dimf)+expf");
 		   GestionRegistre.libererRegistre(exp);
-		   return subexp;
+		   return expPere;
 	   }
 	   else {
 		   Operande exp = GestionRegistre.getFreeRegToOpTab();
 		   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
 		   Prog.ajouter(loadInst,"Fin du tableau");
 		   return exp;
-	   }
-   }
-   
-   /*
-    * Donne la longueur du tableau pointé par a, en incluant les éventuels sous-tableaux.
-    */
-   private static int getLength(Arbre a) {
-	   if(a.getNoeud().equals(Noeud.Index)) {
-		   while(a.getNoeud().equals(Noeud.Index)){
-			   a=a.getFils1();
-		   }
-		   Type type = a.getDecor().getType();
-		   int size = 1;
-		   while(type.equals(NatureType.Array)) {
-			   size = size*(type.getIndice().getBorneSup() - type.getIndice().getBorneInf() + 1);
-			   type = type.getElement();
-		   }
-		   return size;
-	   }
-	   else {
-		   return 1;
 	   }
    }
    
