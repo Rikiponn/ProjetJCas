@@ -69,5 +69,20 @@ begin
     write(2 / 5.0);
     new_line;
 
+    new_line;
+    write("Block div");
+    new_line;
+    write(5 div 2);
+    new_line;
+    write(2 div 5);
+    new_line;
+
+    new_line;
+    write("Block mod");
+    new_line;
+    write(5 mod 2);
+    new_line;
+    write(2 mod 5);
+    new_line;
 end.
 

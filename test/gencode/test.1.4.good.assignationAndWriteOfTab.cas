@@ -8,10 +8,18 @@ program
 begin
     a := 5;
     write(a);
+    new_line;
     b := 6;
     write(b);
+    new_line;
     e[1] := 1;
     write(e[1]);
-
+    new_line;
+    f[10] := 10;
+    write(f[10]);
+    new_line;
+    g[1][1] := -5;
+    write(g[1][1]);
+    new_line;
 end.
 
