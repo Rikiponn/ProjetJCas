@@ -475,10 +475,18 @@ class Generation {
 	   Operande exp = GestionRegistre.getFreeRegToOpTab();
 	   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
 	   Prog.ajouter(loadInst,"Fin du tableau");
-	   Operande offset = getSubIndex(a,exp);
+	   Arbre temp = a;
+	   while((temp=temp.getFils1()).getNoeud().equals(Noeud.Index)); // on va à la feuille
+	   Type type = temp.getDecor().getType();
+	   Type temptype = type;
+	   int nb = 1;
+	   while((temptype = temptype.getElement()).getNature().equals(NatureType.Array)) {
+		   nb++;
+	   }
+	   exp = getSubIndex(a,exp,1,type,nb);
 	   GestionRegistre.libererRegistre(exp);
 	   int placeEnPile = decl.indexOf(ident) + 1;
-	   Indice indice = new Indice(offset,placeEnPile);
+	   Indice indice = new Indice(exp,placeEnPile);
 	   return indice;
    }
    /**
@@ -488,53 +496,23 @@ class Generation {
     * @param a un arbre index
     * @return un registre contenant l'offset de l'indice du tableau.
     */
-   private static Operande getSubIndex(Arbre a, Operande expPere) {
+   private static Operande getSubIndex(Arbre a, Operande subexp, int len, Type type, int nbDim) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
-		   int len = 1;
-		   
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
-		   getSubIndex(a.getFils1(),exp); // expression retournée par Fils1
+		   int tempdim = 1;
+		   Type temptype = type;
+		   while(tempdim<nbDim) {
+			   temptype = temptype.getElement();
+			   tempdim++;
+		   }
+		   len = len*(temptype.getIndice().getBorneSup() - temptype.getIndice().getBorneInf() + 1);
 		   
-		   /*
-* program
-    h : array[1..10] of array[1..5] of boolean;
-begin
-h[11][6] := true;
-end.
-		    */
-		   
-		   Arbre tamp = a;
-		   int calc1 = 0;
-		   int calc2 = 0;
-		   int inf = 0;
-		   int sup = 0;
-		   Type tamptype;
-		   // On va aller chercher les bornes du tableau dans le décor de la feuille des fils1
-		   while((tamp = tamp.getFils1()).getNoeud().equals(Noeud.Index)) { // on veut savoir combien de dimensions il reste avant d'arriver au bout de la branche
-			   calc1++;
-		   }
-		   if(calc1 == 0) {
-			   inf = tamp.getDecor().getType().getIndice().getBorneInf();
-			   sup = tamp.getDecor().getType().getIndice().getBorneSup();
-		   }
-		   else {
-			   tamptype = tamp.getDecor().getType();
-			   while(calc2 < calc1) { // le nombre de dimensions total
-				   calc2++;
-				   tamptype = tamptype.getElement();
-			   }
-			   inf = tamptype.getIndice().getBorneInf();
-			   sup = tamptype.getIndice().getBorneSup();
-			   while((tamptype = tamptype.getElement()).getNature().equals(NatureType.Array)) { // calcul de dimf
-				   len = len*(tamptype.getIndice().getBorneSup() - tamptype.getIndice().getBorneInf() + 1);
-			   }
-		   }
-		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(inf),exp);
+		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(temptype.getIndice().getBorneInf()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
 		   inst = Inst.creation1(Operation.BLT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneInf intervale");
 		   
-		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(sup),exp);
+		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(temptype.getIndice().getBorneSup()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne sup pour un index");
 		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
@@ -543,16 +521,14 @@ end.
 		   // On va ensuite récupérer et calculer la taille absolue du tableau avec les éventuelles dimensions inférieures
 		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
-		   machin = Inst.creation2(Operation.ADD, exp,expPere);
+		   machin = Inst.creation2(Operation.ADD, exp,subexp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : (exp*dimf)+expf");
 		   GestionRegistre.libererRegistre(exp);
-		   return expPere;
+		   
+		   return getSubIndex(a.getFils1(),subexp,len,type,nbDim-1); // expression retournée par Fils1
 	   }
 	   else {
-		   Operande exp = GestionRegistre.getFreeRegToOpTab();
-		   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
-		   Prog.ajouter(loadInst,"Fin du tableau");
-		   return exp;
+		   return subexp;
 	   }
    }
    
@@ -568,7 +544,7 @@ end.
 		   Type type = a.getDecor().getType();
 		   // Le premier élément du tableau étant référencé par 
 		   //*ident tableau*[borne_inf1][borne_inf2]...[borne_infN], on créé un string qui lui correspond
-		   while(type.equals(NatureType.Array)) {
+		   while(type.getNature().equals(NatureType.Array)) {
 			   ident+="["+type.getIndice().getBorneInf()+"]";
 			   type = type.getElement();
 		   }
