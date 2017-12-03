@@ -1,0 +1,57 @@
+Le générateur ne renvoie pas d'erreurs.
+	Nous considérons que les erreurs n'ayant pas été détectées dans la passe 2 ne peuvent être vue que lors de l'exécution.
+	Nous testerons donc les éventuelles erreurs avec des instructions et sauterons à l'instruction HALT en cas d'erreur liée aux variables d'exécution.
+
+Concernant l'architecture du code et les décisions de développement :
+	- Le programme parcours l'arbre enrichi dans l'ordre, en revenant éventuellement en arrière dans quelques cas.
+		- Dans un premier temps nous allons parcourir les déclarations pour stocker toutes les variables dans une liste,
+			ce qui nous permettra ensuite d'empiler toutes les variables en même temps, indiquer leur place dans la pile
+			et les "garder sous le coude" lors de la génération
+		- Ensuite nous parcourerons les instructions, et selon les types d'instructions dans l'arbre, nous générerons le code, souvent de façon récursive.
+			Les fonctions notables permettent de coder les Instructions selon le type d'instruction, ainsi que la fonction coder_EXP() pour les différents type d'expressions
+		- Enfin, après les instructions, nous ajouterons l'instruction HALT qui termine le programme
+
+	- Pour gérer les registres, nous réserverons puis libérerons les registre selon les besoins, avec un système d'empilement d'Opérandes
+		en pile pour les réutiliser plus tard et libérer des registres.
+
+	- Nous avons créé une classe Indice permettant de récupérer, pour les indices des tableaux :
+		- placeEnPile : l'emplacement de l'origine du tableau en pile.
+		- Offset : l'emplacement par rapport à la valeur 1 du tableau de l'indice recherché.
+		Cela nous permet de charger facilement les valeurs des tableaux grâce à l'adressage indirect avec déplacement indexé.
+
+	- Certaines fonctions "détectent" les erreurs en ajoutant des saut conditionnels vers HALT :
+		- Si les types des variables ne correspondent pas à la sémantique du langage.
+		- Dans le cas d'une division par 0.
+		- Si les éventuels accès aux tableaux tentent d'accéder à des emplacements hors dimensions:
+			Exemple : tab[1..10][1..15][1..10]
+				read(tab[1][1][25]) -> cet accès est valide dans le sens de la mémoire, car l'emplacement pointé "appartient" au tableau en pile,
+				mais 25 est hors de l'intervalle 1..10, on va donc sauter à l'instruction HALT
+
+Algorithmes notables :
+- Déclarations :
+	Une sous fonction get_Idents(Arbre) va récupérer l'ensemble des variables déclarées sur une ligne données,
+	les mettre dans une liste et renvoyer la liste.
+
+- Mise en mémoire de tableaux à plusieurs dimensions :
+	La fonction create_Variables(Arbre, ArrayList<String>) va, de manière récursive, parcourir les dimensions du tableau
+	et pour chaque dimension créé dans une liste temporaire x nouvelles variables avec
+	x = nombre de variables à déclarer * (dimensions du tableau)
+	Le nom de la variable en pile sera sa notation mathématique (ex : a[1][3])
+	Exemple : la déclaration a,b : array[1..2] of array[1..4] of boolean;
+	- a,b sont ajoutés à la liste temporaire
+	- la liste temporaire est passée en argument de create_Variables
+	- les dimensions de l'array[1..2] sont calculées
+	- une nouvelle liste temporaire est créée selon les dimensions du tableau et la liste passée en argument
+		liste : a[1],a[2],b[1],b[2].
+		cette liste est passée récursivement en argument de create_Variables.
+	- une nouvelle liste temporaire est créée selon les dimensions du tableau de 2nd dimension,
+		cette liste sera ensuite ajoutée à la "vraie" liste des vraiables à ajouter en pile à la fin des déclarations.
+		liste : a[1][1], a[1][2], a[1][3], a[2][1], ... b[2][3].
+
+Récupération d'un indice de tableau dans la pile, et chargement dans un registre.
+	La fonction load_index() et ses sous-fonctions getSubIndex(), getLength, getIdent() getIdent2().
+	On veut calculer l'offset relatif de l'indice à chercher par rapport au premier élément du tableau en pile.
+	- Récupérer l'emplacement en pile du premier emplacement du tableau -> placeEnPile (renvoyé par la fonction).
+	- Récupérer l'indice absolu du tableau.
+		Pour faire cela, on a l'équation suivante (surtout utilisée pour les tableaux à multiples dimensions) :
+			offset = (valeur de l'expression de l'indice de cette dimension * taille totale du sous-tableau) + offset renvoyé par la dimension du sous-tableau
