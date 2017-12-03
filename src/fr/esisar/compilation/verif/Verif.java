@@ -244,7 +244,7 @@ public class Verif {
 			   return(a.getDecor().getType());
 			   
 		default:
-			   throw new ErreurInterneVerif("Arbre incorrect dans cherche_Type "+a.getNoeud());
+			   return verif_Exp(a);
 	   }
    }
    
@@ -452,7 +452,7 @@ public class Verif {
 		   //Si le fils n'est pas un ident mais un Index (contenant donc un ident)
 		   //TODO modifier cherche_type pour le noeud index
 		   if(a.getFils1().getNoeud().equals(Noeud.Index)){
-			   type1 = cherche_Type(a.getFils1());
+			   type1 = verif_Exp(a.getFils1());
 		   }
 		   else{
 			   // Si l'ident n'est pas une var (donc une constante) : erreur (interdit)
@@ -644,6 +644,7 @@ public class Verif {
 				   e = ErreurContext.ErreurEntierAttendu;
 				   e.leverErreurContext(null, a.getNumLigne());
 			   }
+			   System.out.println(a.getNoeud());
 			   return cherche_Type(a);
 		   }
 	   }
