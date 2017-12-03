@@ -482,7 +482,10 @@ class Generation {
 		   return subexp;
 	   }
 	   else {
-		   return GestionRegistre.getFreeRegToOpTab();
+		   Operande exp = GestionRegistre.getFreeRegToOpTab();
+		   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
+		   Prog.ajouter(loadInst,"Fin du tableau");
+		   return exp;
 	   }
    }
    
