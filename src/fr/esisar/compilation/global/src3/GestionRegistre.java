@@ -12,6 +12,8 @@ public class GestionRegistre {
 		for(int i = 0; i<regTab.length-2; i++){
 			regTab[i] = 0;
 		}
+		// Pour la pile , on se garde un registre
+		regTab[15] = 1;
 		// GB et LB ne sont pas des registres que l'on peut modif n'importe comment
 		regTab[16] = 1;
 		regTab[17] = 1;
@@ -89,7 +91,7 @@ public class GestionRegistre {
 	 * @param Op Operande lié au registre à libérer.
 	 */
 	public static void libererRegistre(Operande op){
-		if(op.getNature().equals(NatureOperande.OpDirect)){
+		if(op!= null && op.getNature().equals(NatureOperande.OpDirect)){
 			libererRegistre(op.getRegistre());	
 		}
 	}
@@ -98,7 +100,9 @@ public class GestionRegistre {
 	 * @param reg Registre a libéré.
 	 */
 	public static void libererRegistre(Registre reg){
-		regTab[getRegIndex(reg)] = 0;
+		if(reg != null){
+			regTab[getRegIndex(reg)] = 0;
+		}
 	}
 	/**
 	 * Méthode permettant de marquer un registre comme libéré.
