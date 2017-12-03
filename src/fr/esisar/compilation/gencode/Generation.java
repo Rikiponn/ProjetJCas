@@ -179,6 +179,7 @@ class Generation {
        Inst jumpIfFalse = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(etiqFinWhile));
        Prog.ajouter(jumpIfFalse, "Ajout de l'instruction de saut vers la fin du Tant Que");
        
+       GestionRegistre.libererRegistre(reg1);
        coder_Inst(a.getFils2());
        
        Inst jumpWhileBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(etiqDebutWhile));
@@ -223,12 +224,13 @@ class Generation {
            Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
            Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
            Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
-
+           GestionRegistre.libererRegistre(borneSup);
+           GestionRegistre.libererRegistre(borneInf);
            coder_Inst(a.getFils2());
            
            Inst incrementInst = Inst.creation2(Operation.ADD, Operande.creationOpEntier(1), reg1);
            Prog.ajouter(incrementInst, "On incremente la valeur du registre " + reg1.getRegistre());
-       
+           
        }
        else{ 
     	   if(a.getFils1().getNoeud()==Noeud.Decrement) {
@@ -249,6 +251,8 @@ class Generation {
 	           Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
 	           Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
 	
+	           GestionRegistre.libererRegistre(borneSup);
+	           GestionRegistre.libererRegistre(borneInf);
 	           coder_Inst(a.getFils2());
 	           
 	           Inst incrementInst = Inst.creation2(Operation.SUB, Operande.creationOpEntier(1), reg1);
@@ -258,14 +262,11 @@ class Generation {
        
        Inst storeInst = Inst.creation2(Operation.STORE, reg1, Operande.creationOpIndirect(placeEnPile, Registre.GB));
        Prog.ajouter(storeInst, "Remise de la valeur de l identificateur dans la pile");
-       
+       GestionRegistre.libererRegistre(reg1);
        Inst jumpForBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(etiqDebutFor));
        Prog.ajouter(jumpForBegin, "Ajout de l'instruction de saut vers le debut du For");
        
        Prog.ajouter(etiqFinFor, "Ajout de l etiquette a la fin du For");
-       GestionRegistre.libererRegistre(reg1);
-       GestionRegistre.libererRegistre(borneSup);
-       GestionRegistre.libererRegistre(borneInf);
    }
    
    
