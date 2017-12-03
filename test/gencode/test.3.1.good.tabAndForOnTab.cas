@@ -20,10 +20,7 @@ begin
     END;
     new_line;
 
-    a := 1;
-    b[a*2] = 1234;
-    write (b[a], " ", b[a*2]);
-    
+
 
 
 
