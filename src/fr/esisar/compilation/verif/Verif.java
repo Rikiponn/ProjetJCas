@@ -648,7 +648,6 @@ public class Verif {
 				   e = ErreurContext.ErreurEntierAttendu;
 				   e.leverErreurContext(null, a.getNumLigne());
 			   }
-			   System.out.println(a.getNoeud());
 			   return cherche_Type(a);
 		   }
 	   }

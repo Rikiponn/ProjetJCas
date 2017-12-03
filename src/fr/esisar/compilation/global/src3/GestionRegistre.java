@@ -95,6 +95,14 @@ public class GestionRegistre {
 		regTab[i] = 1;
 	}
 	
+	public static void pushPile (Operande op){
+		Inst inst = Inst.creation1(Operation.PUSH,op);
+	   	Prog.ajouter(inst,"Placement en pile de "+op);
+	}
+	public static void popPile (Operande op){
+		Inst inst = Inst.creation1(Operation.POP, op);
+		Prog.ajouter(inst,"Operande"+op+" retablis depuis la pile");
+	}
 	public static void pushPile (Registre reg){
 		Inst inst = Inst.creation1(Operation.PUSH,Operande.opDirect(reg));
 	   	Prog.ajouter(inst,"Placement en pile de "+reg);

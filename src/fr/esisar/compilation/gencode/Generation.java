@@ -571,14 +571,23 @@ class Generation {
 		   switch(a.getNoeud()){
 		   case Entier:
 			   Operande registreLibre = GestionRegistre.getFreeRegToOpTab();
-			   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getEntier()), registreLibre);
-			   Prog.ajouter(loadInst);
+			   if(registreLibre == null){
+				   //Il faut donc le placer en pile
+				   GestionRegistre.pushPile(Operande.creationOpEntier(a.getEntier()));
+			   }else{
+				   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(a.getEntier()), registreLibre);
+				   Prog.ajouter(loadInst);
+			   }
 			   return registreLibre;
 		   case Reel:
-
 			   Operande registreLibre2 = GestionRegistre.getFreeRegToOpTab();
-			   Inst loadInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), registreLibre2);
-			   Prog.ajouter(loadInst2);
+			   if(registreLibre2 == null){
+				 //Il faut donc le placer en pile
+				   GestionRegistre.pushPile(Operande.creationOpReel(a.getReel()));
+			   }else{
+				   Inst loadInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpReel(a.getReel()), registreLibre2);
+				   Prog.ajouter(loadInst2);
+			   }
 			   return registreLibre2;
 		   
 		   case Ident:
@@ -588,19 +597,34 @@ class Generation {
 			   int placeEnPile = decl.indexOf(varName) + 1;
 			   if(placeEnPile == 0) {
 				   if(varName.toLowerCase().equals("true")){
-					   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), registreLibre3);
-					   Prog.ajouter(loadInst3);
+					   if(registreLibre3 == null){
+						   //Il faut donc le placer en pile
+						   GestionRegistre.pushPile(Operande.creationOpEntier(1));
+					   }else{
+						   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), registreLibre3);
+						   Prog.ajouter(loadInst3);
+					   }
 					   return registreLibre3;
 				   }
 				   if(varName.toLowerCase().equals("false")){
-					   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), registreLibre3);
-					   Prog.ajouter(loadInst3);
+					   if(registreLibre3 == null){
+						   //Il faut donc le placer en pile
+						   GestionRegistre.pushPile(Operande.creationOpEntier(-1));
+					   }else{
+						   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), registreLibre3);
+						   Prog.ajouter(loadInst3);
+					   }
 					   return registreLibre3;
 				   }
 				   System.exit(0);
 			   }
-  			   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
-  			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
+			   if(registreLibre3 == null){
+				   //Il faut donc le placer en pile
+				   GestionRegistre.pushPile(Operande.creationOpIndirect(placeEnPile, Registre.GB));
+			   }else{
+	  			   loadInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), registreLibre3);
+	  			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
+			   }
   			   return registreLibre3;
 		   }
 	   }
