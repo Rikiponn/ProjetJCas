@@ -176,7 +176,7 @@ class Generation {
        nbEtiq++;
        Inst compareInst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
        Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre() + " par rapport a 0");
-       Inst jumpIfFalse = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinWhile));
+       Inst jumpIfFalse = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(etiqFinWhile));
        Prog.ajouter(jumpIfFalse, "Ajout de l'instruction de saut vers la fin du Tant Que");
        
        coder_Inst(a.getFils2());
@@ -1476,7 +1476,7 @@ class Generation {
 		   		Inst compareInst2 = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst2, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
 		   		
-		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(equalEtiq2));	
+		   		Inst jumpIfNonEqualInst2 = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(equalEtiq2));	
 		   		Prog.ajouter(jumpIfNonEqualInst2, "Ajout de l'instruction de saut s'il y a Ã©galitÃ©");
 		   		
 		   		Inst setTrueInst2 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
