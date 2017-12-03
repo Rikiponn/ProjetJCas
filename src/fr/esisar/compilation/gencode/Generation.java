@@ -18,7 +18,6 @@ class Generation {
     * Méthode principale de génération de code.
     * Génère du code pour l'arbre décoré a.
     */
-	
    static Prog coder(Arbre a) {
       Prog.ajouterGrosComment("Programme généré par JCasc");
       decl = new ArrayList<String>();
@@ -47,7 +46,8 @@ class Generation {
       // On retourne le programme assembleur généré
       return Prog.instance(); 
    }
-   // Remplis une ArrayList qui contient la liste des variables
+   
+   // Remplit une ArrayList qui contient la liste des variables, pour ensuite les empiler
    private static void coder_Decl(Arbre a){
 	   switch(a.getNoeud()){
    		case Vide:
@@ -463,6 +463,7 @@ class Generation {
 		   int calc2 = 1;
 		   int inf = 0;
 		   int sup = 0;
+		   // On va aller chercher les bornes du tableau dans le décor de la feuille des fils1
 		   while((tamp = tamp.getFils1()).getNoeud().equals(Noeud.Index)) { // on veut savoir combien de dimensions il reste avant d'arriver au bout de la branche
 			   calc1++;
 		   }
@@ -490,8 +491,7 @@ class Generation {
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 		   
 		   
-		   
-		   
+		   // On va ensuite récupérer et calculer la taille absolue du tableau avec les éventuelles dimensions inférieures
 		   Inst machin = Inst.creation2(Operation.MUL, Operande.creationOpEntier(len), exp);
 		   Prog.ajouter(machin,"calcul de la dimension du tableau : exp*dimf...");
 		   machin = Inst.creation2(Operation.ADD, exp,subexp);
@@ -529,7 +529,7 @@ class Generation {
    }
    
    /*
-    * Utilisé par load_index, va récupérer l'identifiant associé au premier élément du tableau de façon récursive.
+    * Utilisé par load_index, va récupérer Le string associé au premier élément du tableau dans la pile de façon récursive.
     */
    private static String getIdent(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
@@ -538,6 +538,8 @@ class Generation {
 			   a=a.getFils1();
 		   }
 		   Type type = a.getDecor().getType();
+		   // Le premier élément du tableau étant référencé par 
+		   //*ident tableau*[borne_inf1][borne_inf2]...[borne_infN], on créé un string qui lui correspond
 		   while(type.equals(NatureType.Array)) {
 			   ident+="["+type.getIndice().getBorneInf()+"]";
 			   type = type.getElement();
@@ -549,6 +551,9 @@ class Generation {
 	   }
    }
    
+   /*
+    * Va chercher le nom de l'ident en feuille
+    */
    private static String getIdent2(Arbre a) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   return (getIdent2(a.getFils1()));
