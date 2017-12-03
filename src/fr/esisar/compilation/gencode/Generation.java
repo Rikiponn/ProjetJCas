@@ -623,6 +623,8 @@ class Generation {
 	  			   Prog.ajouter(loadInst3, "Ajout de la valeur de la variable dans le registre " + registreLibre3.getRegistre());
 			   }
   			   return registreLibre3;
+		   default:
+			   return null;
 		   }
 	   }
 	   
@@ -693,6 +695,8 @@ class Generation {
 		   			return null;
 		   		}
 	   			return registreLibre;
+		   	default:
+		   		return null;
 		   }
 	   }
 	   
@@ -1366,7 +1370,7 @@ class Generation {
 		   		String nomEtiqInegalite = "inegalite" + nbEtiq;
 		   		Etiq equalEtiq = Etiq.lEtiq(nomEtiqInegalite);
 		   		String nom = "Always" + nbEtiq;
-		   		Etiq Etiq = Etiq.lEtiq(nom);
+		   		Etiq Etiq1 = Etiq.lEtiq(nom);
 		   		nbEtiq++;
 		   		Inst compareInst = Inst.creation2(Operation.CMP, reg1, reg2);
 		   		Prog.ajouter(compareInst, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
@@ -1377,14 +1381,14 @@ class Generation {
 		   		Inst setTrueInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst, "Mise a true (1) du registre " + reg1.getRegistre());
 		   		
-		   		Inst inst1 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq));
+		   		Inst inst1 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(Etiq1));
 		   		Prog.ajouter(inst1);
 		   		
 		   		Prog.ajouter(equalEtiq);
 		   		Inst setFalseInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
 		   		Prog.ajouter(setFalseInst, "Mise a false (-1) du registre " + reg1.getRegistre());
 		   		
-		   		Prog.ajouter(Etiq);
+		   		Prog.ajouter(Etiq1);
 
 		   		
 	   			GestionRegistre.libererRegistre(reg2);
@@ -1957,9 +1961,11 @@ class Generation {
 	   			}
 	   			
 	   			return reg;
+   			default :
+   				return null;
 		   }
 	   }
-	   return null;
+	return null;
    }
 }
 
