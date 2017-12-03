@@ -194,10 +194,6 @@ public class Verif {
 	   	   case Intervalle:
 	   		   return(Type.creationInterval(getIntArbre(a.getFils1()),getIntArbre(a.getFils2())));
 	   	   case Index:
-               if(a.getFils2().getNoeud().equals(Noeud.MoinsUnaire)){
-                   e = ErreurContext.ErreurIndexNegatif;
-                   e.leverErreurContext(null, a.getNumLigne());
-               }
 	   		   if(verif_Exp(a.getFils2()) != Type.Integer){
 	   			   e = ErreurContext.ErreurEntierAttendu;
 				   e.leverErreurContext(null, a.getNumLigne());
