@@ -179,9 +179,9 @@ class Generation {
        Inst jumpIfFalse = Inst.creation1(Operation.BLE, Operande.creationOpEtiq(etiqFinWhile));
        Prog.ajouter(jumpIfFalse, "Ajout de l'instruction de saut vers la fin du Tant Que");
        
-       GestionRegistre.libererRegistre(reg1);
-       coder_Inst(a.getFils2());
        
+       coder_Inst(a.getFils2());
+       GestionRegistre.libererRegistre(reg1);
        Inst jumpWhileBegin = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(etiqDebutWhile));
        Prog.ajouter(jumpWhileBegin, "Ajout de l'instruction de saut vers le debut du Tant Que");
        
