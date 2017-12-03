@@ -1,10 +1,22 @@
 program 
     i : integer; 
 begin 
-    i := 0; 
+    i := 0;
+    new_line;
     WHILE i < 5 DO  
         i := i + 1; 
         write("boucle"); 
+        new_line;
+    end; 
+    new_line;
+    new_line;
+
+    i := 10;
+    new_line;
+    WHILE i > 5 DO  
+        i := i - 1; 
+        write("boucle"); 
+        new_line;
     end; 
  
 end. 
