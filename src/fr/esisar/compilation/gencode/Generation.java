@@ -477,6 +477,14 @@ class Generation {
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
 		   getSubIndex(a.getFils1(),exp); // expression retournée par Fils1
 		   
+		   /*
+* program
+    h : array[1..10] of array[1..5] of boolean;
+begin
+h[11][6] := true;
+end.
+		    */
+		   
 		   Arbre tamp = a;
 		   int calc1 = 0;
 		   int calc2 = 0;
