@@ -1110,18 +1110,6 @@ class Generation {
 	   		case Reste:
                 reg1 = coder_EXP(a.getFils1());
                 reg2 = coder_EXP(a.getFils2());
-                Operande reg3 = null;
-                Operande reg4 = null;
-                if(!reg1.getNature().equals(NatureOperande.OpDirect)){
-                	reg3 = GestionRegistre.getFreeRegToOpTab();
-                	Inst inst = Inst.creation2(Operation.LOAD, reg1, reg3);
-                	reg1 = reg3;
-                }
-                if(!reg2.getNature().equals(NatureOperande.OpDirect)){
-                	reg4 = GestionRegistre.getFreeRegToOpTab();
-                	Inst inst = Inst.creation2(Operation.LOAD, reg2, reg4);
-                	reg2 = reg4;
-                }
                 Inst inst = Inst.creation2(Operation.MOD, reg2, reg1);
                 Prog.ajouter(inst,"Calcul du modulo");  
                 inst = Inst.creation1(Operation.BOV,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
