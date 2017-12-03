@@ -174,12 +174,6 @@ class Generation {
        String finWhile = "finWhile" + nbEtiq;
        Etiq etiqFinWhile = Etiq.lEtiq(finWhile);
        nbEtiq++;
-       //test
-       Inst inst = Inst.creation2(Operation.LOAD, Operande.R0, Operande.R1);
-       Prog.ajouter(inst,"test");
-       inst = Inst.creation0(Operation.WINT);
-       Prog.ajouter(inst,"test");
-       //////////////
        Inst compareInst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
        Prog.ajouter(compareInst, "Comparaison de la valeur du registre " + reg1.getRegistre() + " par rapport a 0");
        Inst jumpIfFalse = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(etiqFinWhile));
@@ -1583,18 +1577,22 @@ class Generation {
 		   		}
 		   		String nomEtiqNonInferieurStrict = "nonInferieurStrict" + nbEtiq;
 		   		Etiq equalEtiq3 = Etiq.lEtiq(nomEtiqNonInferieurStrict);
+		   		String nom = "Always"+nbEtiq;
+		   		Etiq always = Etiq.lEtiq(nom);
 		   		nbEtiq++;
+		   		//TODO test
 		   		Inst compareInst3 = Inst.creation2(Operation.CMP, reg1, reg2);
-		   		Inst setFalseInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
-		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq3));
-		   		Inst setTrueInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
-		   		
 		   		Prog.ajouter(compareInst3, "Ajout de l'instruction de comparaison entre " + reg1.getRegistre() + " et " + reg2.getRegistre());
-		   		Prog.ajouter(setFalseInst3, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		Inst jumpIfNonEqualInst3 = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(equalEtiq3));
 		   		Prog.ajouter(jumpIfNonEqualInst3, "Ajout de l'instruction de saut s'il n'y a pas inferioritÃ© stricte");
+		   		Inst setTrueInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
 		   		Prog.ajouter(setTrueInst3, "Mise a true (1) du registre " + reg1.getRegistre());
+		   		Inst always3 = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(always));
+		   		Prog.ajouter(always3,"Branchement pour mettre à true");
+		   		Inst setFalseInst3 = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
 		   		Prog.ajouter(equalEtiq3);
-
+		   		Prog.ajouter(setFalseInst3, "Mise a false (-1) du registre " + reg1.getRegistre());
+		   		Prog.ajouter(always);
 		   		
 	   			GestionRegistre.libererRegistre(reg2.getRegistre());
 		   		return reg1;
