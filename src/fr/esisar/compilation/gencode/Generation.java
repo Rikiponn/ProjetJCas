@@ -843,7 +843,7 @@ end.
 				   		} else{ 
 				   			if(b.getDecor().getType() == Type.Real){
 				   				String comment = "Ajout de l'entier operande droit";
-					   			GestionRegistre.loadPush(Operande.creationOpReel(b.getEntier()), reg2,comment);
+					   			GestionRegistre.loadPush(Operande.creationOpReel(b.getReel()), reg2,comment);
 					   		}
 					   		else {
 					   			GestionRegistre.libererRegistre(reg2);
@@ -896,7 +896,7 @@ end.
 			   		} else{
 			   			if(c.getFils1().getDecor().getType() == Type.Real){
 			   				String comment = "Ajout de l'entier operande gauche";
-				   			GestionRegistre.loadPush(Operande.creationOpEntier(c.getFils1().getEntier()), reg1,comment);
+				   			GestionRegistre.loadPush(Operande.creationOpEntier((int)c.getFils1().getReel()), reg1,comment);
 				   		}
 				   		else {
 				   			GestionRegistre.libererRegistre(reg1);
