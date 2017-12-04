@@ -456,6 +456,7 @@ class Generation {
 		   Prog.ajouter(inst,"Branch vers le sinon");
 		   coder_Inst(a.getFils2());	// Instruction alors
 		   inst = Inst.creation1(Operation.BRA, Operande.creationOpEtiq(eti2));
+		   Prog.ajouter(inst,"Branchement pour ne pas effectuer le sinon");
 		   Prog.ajouter(eti);	// etiquette du sinon
 		   coder_Inst(a.getFils3());	// Instruction sinon
 		   Prog.ajouter(eti2);	// etiquette du fin si
