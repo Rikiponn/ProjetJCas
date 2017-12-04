@@ -991,9 +991,87 @@ class Generation {
                 Prog.ajouter(inst, "OverFlow, on arrete le programme");
                 GestionRegistre.libererRegistre(reg2);
 	   			return reg1;
-	   		case Ou :
-            case Et :
 
+	   		case Ou :
+	   			String nomEtiqPositive = "positive" + nbEtiq;
+	   			Etiq posEtiq = Etiq.lEtiq(nomEtiqPositive);
+	   			nbEtiq++;
+                reg1 = GestionRegistre.getFreeRegToOpTab();
+                if(reg1==null){
+                	reg1 = Operande.R15;
+                }
+                boolean forcementVrai = false;
+                if(a.getFils1().getNoeud() == Noeud.Ident){
+                    if(a.getFils1().getChaine().toLowerCase().equals("true")){
+                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                        Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
+                        forcementVrai = true;
+                    }
+                    else{ 
+                    	if(a.getFils1().getChaine().toLowerCase().equals("false")){
+	                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+	                        Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
+	                    }
+	                    else{
+	                    	varName = a.getFils1().getChaine();
+	                        placeEnPile = decl.indexOf(varName) + 1;
+	                        Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+	                        Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
+	                    }                    
+	                    Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
+	                    Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre() + " Ã  0");
+	                    Inst jump = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqPositive)));
+	                    Prog.ajouter(jump, "On saute a la fin du ou");
+                    }
+                }
+                else{
+                	if(!reg1.equals(Operande.R15)){
+                		GestionRegistre.libererRegistre(reg1);
+                	}
+                    reg1 = coder_EXP(a.getFils1());
+                    if(reg1 == null){
+                    	reg1 = Operande.R15;
+                    	GestionRegistre.popPile(reg1);
+                    }   
+                }
+                                
+                if(forcementVrai){
+                }
+                else{
+                	if(a.getFils2().getNoeud() == Noeud.Ident){
+                        if(a.getFils2().getChaine().toLowerCase().equals("true")){
+                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
+                            Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
+                        }
+                        else{
+                        	if(a.getFils2().getChaine().toLowerCase().equals("false")){
+	                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(-1), reg1);
+	                            Prog.ajouter(loadInst, "Chargement de la variable booleenne false (-1) dans le registre " + reg1.getRegistre());
+	                        }
+	                        else{
+	                        	varName = a.getFils2().getChaine();
+	                            placeEnPile = decl.indexOf(varName) + 1;
+	                            Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB), reg1);
+	                            Prog.ajouter(loadInst, "Chargement de la variable booleenne dans le registre " + reg1.getRegistre());                            
+	                        }
+                        }
+                    }
+                    else{
+                    	if(!reg1.equals(Operande.R15)){
+                    		GestionRegistre.libererRegistre(reg1);
+                    	}
+                        reg1 = coder_EXP(a.getFils1());
+                        if(reg1 == null){
+                        	reg1 = Operande.R15;
+                        	GestionRegistre.popPile(reg1);
+                        }
+                    }
+                	
+                }
+            	Prog.ajouter(Etiq.lEtiq(nomEtiqPositive));
+                return reg1;
+            case Et :
+            	
             	String nomEtiqNegative = "negative"+nbEtiq;
                 Etiq negEtiq = Etiq.lEtiq(nomEtiqNegative);
                 nbEtiq++;
@@ -1006,6 +1084,9 @@ class Generation {
                     if(a.getFils1().getChaine().equals("true")){
                         Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(1), reg1);
                         Prog.ajouter(loadInst, "Chargement de la variable booleenne true (1) dans le registre " + reg1.getRegistre());
+                        if(a.getFils1().getNoeud().equals(Noeud.Et)){
+                        	
+                        }
                     }
                     else{
                     	if(a.getFils1().getChaine().equals("false")){
@@ -1022,13 +1103,8 @@ class Generation {
                     }
                     Inst compareToZero = Inst.creation2(Operation.CMP, Operande.creationOpEntier(0), reg1);
                     Prog.ajouter(compareToZero, "Comparaison du registre " + reg1.getRegistre() + "à 0");
-                    Inst jump;
-                    if(a.getNoeud().equals(Noeud.Et)){
-                    	jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNegative)));
-                    }else{
-                    	jump = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(Etiq.lEtiq(nomEtiqNegative)));
-                    }
-                    Prog.ajouter(jump, "On saute a la fin du et");
+                	Inst jump = Inst.creation1(Operation.BLT, Operande.creationOpEtiq(negEtiq));
+                	Prog.ajouter(jump, "On saute a la fin du et");
                 }
                 else{
                 	if(!reg1.equals(Operande.R15)){
