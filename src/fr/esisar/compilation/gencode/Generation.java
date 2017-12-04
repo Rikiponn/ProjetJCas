@@ -470,9 +470,7 @@ class Generation {
    private static Indice load_Index(Arbre a) {
 	   String ident = getIdent(a);
 	   Operande exp = GestionRegistre.getFreeRegToOpTab();
-	   Inst loadInst = Inst.creation2(Operation.ADD, Operande.creationOpEntier(-1), exp);
-	   Prog.ajouter(loadInst,"Fin du tableau");
-	   loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
+	   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
 	   Prog.ajouter(loadInst,"Fin du tableau");
 	   Arbre temp = a;
 	   while((temp=temp.getFils1()).getNoeud().equals(Noeud.Index)); // on va à la feuille
@@ -498,6 +496,7 @@ class Generation {
    private static Operande getSubIndex(Arbre a, Operande subexp, int len, Type type, int nbDim) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
+		   
 		   int tempdim = 1;
 		   Type temptype = type;
 		   while(tempdim<nbDim) {
@@ -515,6 +514,9 @@ class Generation {
 		   inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(temptype.getIndice().getBorneSup()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne sup pour un index");
 		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
+		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
+		   
+		   inst = Inst.creation2(Operation.ADD,Operande.creationOpEntier(-(temptype.getIndice().getBorneInf())),exp);
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 		   
 		   
