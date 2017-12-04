@@ -21,7 +21,6 @@ class Generation {
    static Prog coder(Arbre a) {
       Prog.ajouterGrosComment("Programme généré par JCasc");
       decl = new ArrayList<String>();
-      System.out.println("taille de base :"+decl.size());
       GestionRegistre.initRegTab();
       Inst inst;
       
@@ -58,7 +57,6 @@ class Generation {
 			coder_Decl(a.getFils2());
    			break;
    		case Decl :
-   			System.out.println("appel 1");
    			decl = create_Variables(a.getFils2(),get_Idents(a.getFils1()));
    			break;
    		default :
