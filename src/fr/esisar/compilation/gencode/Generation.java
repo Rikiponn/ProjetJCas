@@ -470,7 +470,9 @@ class Generation {
    private static Indice load_Index(Arbre a) {
 	   String ident = getIdent(a);
 	   Operande exp = GestionRegistre.getFreeRegToOpTab();
-	   Inst loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
+	   Inst loadInst = Inst.creation2(Operation.ADD, Operande.creationOpEntier(-1), exp);
+	   Prog.ajouter(loadInst,"Fin du tableau");
+	   loadInst = Inst.creation2(Operation.LOAD, Operande.creationOpEntier(0), exp);
 	   Prog.ajouter(loadInst,"Fin du tableau");
 	   Arbre temp = a;
 	   while((temp=temp.getFils1()).getNoeud().equals(Noeud.Index)); // on va à la feuille
@@ -503,7 +505,7 @@ class Generation {
 			   tempdim++;
 		   }
 		   if(temptype.getElement().getNature().equals(NatureType.Array))
-			   len = len*(temptype.getElement().getIndice().getBorneSup() - temptype.getElement().getIndice().getBorneInf());
+			   len = len*(temptype.getElement().getIndice().getBorneSup() - temptype.getElement().getIndice().getBorneInf() + 1);
 		   
 		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(temptype.getIndice().getBorneInf()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
