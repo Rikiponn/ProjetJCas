@@ -82,9 +82,9 @@ class Generation {
 		   for(int i=0;i<idents.size();i++) {
 			   for(int j=a.getFils1().getFils1().getEntier();j<=a.getFils1().getFils2().getEntier();j++) {
 				   identsPlus.add(idents.get(i)+"["+Integer.toString(j)+"]");
-				   create_Variables(a.getFils2(),identsPlus);
 			   }
 		   }
+		   create_Variables(a.getFils2(),identsPlus);
 		   break;
 	   default :
 		   break;
@@ -497,13 +497,15 @@ class Generation {
    private static Operande getSubIndex(Arbre a, Operande subexp, int len, Type type, int nbDim) {
 	   if(a.getNoeud().equals(Noeud.Index)) {
 		   Operande exp = coder_EXP(a.getFils2()); //Valeur de l'expression de Fils2
+		   
 		   int tempdim = 1;
 		   Type temptype = type;
 		   while(tempdim<nbDim) {
 			   temptype = temptype.getElement();
 			   tempdim++;
 		   }
-		   len = len*(temptype.getIndice().getBorneSup() - temptype.getIndice().getBorneInf() + 1);
+		   if(temptype.getElement().getNature().equals(NatureType.Array))
+			   len = len*(temptype.getElement().getIndice().getBorneSup() - temptype.getElement().getIndice().getBorneInf() + 1);
 		   
 		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(temptype.getIndice().getBorneInf()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
@@ -514,6 +516,9 @@ class Generation {
 		   Prog.ajouter(inst, "Comparaison de la borne sup pour un index");
 		   inst = Inst.creation1(Operation.BGT,Operande.creationOpEtiq(Etiq.lEtiq("Halt.1")));
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
+		   
+		   inst = Inst.creation2(Operation.ADD,Operande.creationOpEntier(-(temptype.getIndice().getBorneInf())),exp);
+		   Prog.ajouter(inst, "On soustrait la borne inf à l'exp de l'indice");
 		   
 		   
 		   // On va ensuite récupérer et calculer la taille absolue du tableau avec les éventuelles dimensions inférieures

@@ -49,7 +49,7 @@ Algorithmes notables :
 		liste : a[1][1], a[1][2], a[1][3], a[2][1], ... b[2][3].
 
 Récupération d'un indice de tableau dans la pile, et chargement dans un registre.
-	La fonction load_index() et ses sous-fonctions getSubIndex(), getLength, getIdent() getIdent2().
+	La fonction load_index() et ses sous-fonctions getSubIndex(), getIdent() getIdent2().
 	On veut calculer l'offset relatif de l'indice à chercher par rapport au premier élément du tableau en pile.
 	- Récupérer l'emplacement en pile du premier emplacement du tableau -> placeEnPile (renvoyé par la fonction).
 	- Récupérer l'indice absolu du tableau.
