@@ -11,6 +11,8 @@ Concernant l'architecture du code et les décisions de développement :
 			Les fonctions notables permettent de coder les Instructions selon le type d'instruction, ainsi que la fonction coder_EXP() pour les différents type d'expressions
 		- Enfin, après les instructions, nous ajouterons l'instruction HALT qui termine le programme
 
+	- Une fonction permet de coder toutes les instructions et est construite de manière récursive (au sens de l'arité du Noeud)
+	
 	- Pour gérer les registres, nous réserverons puis libérerons les registre selon les besoins, avec un système d'empilement d'Opérandes
 		en pile pour les réutiliser plus tard et libérer des registres.
 
@@ -48,10 +50,26 @@ Algorithmes notables :
 		cette liste sera ensuite ajoutée à la "vraie" liste des vraiables à ajouter en pile à la fin des déclarations.
 		liste : a[1][1], a[1][2], a[1][3], a[2][1], ... b[2][3].
 
-Récupération d'un indice de tableau dans la pile, et chargement dans un registre.
+- Récupération d'un indice de tableau dans la pile, et chargement dans un registre.
 	La fonction load_index() et ses sous-fonctions getSubIndex(), getIdent() getIdent2().
 	On veut calculer l'offset relatif de l'indice à chercher par rapport au premier élément du tableau en pile.
 	- Récupérer l'emplacement en pile du premier emplacement du tableau -> placeEnPile (renvoyé par la fonction).
 	- Récupérer l'indice absolu du tableau.
 		Pour faire cela, on a l'équation suivante (surtout utilisée pour les tableaux à multiples dimensions) :
 			offset = (valeur de l'expression de l'indice de cette dimension * taille totale du sous-tableau) + offset renvoyé par la dimension du sous-tableau
+
+- Mise En pile lorsqu'il ne reste plus aucun registre libre :
+	La fonction coder_EXP (celle qui code les instructions) retourne l'opérande dans lequel se trouve le résultat de l'expression
+	Si, lors de l'execution de cette fonction, tous les registres ont été vérouillé, celle-ci empile le registre et retourne null
+	Afin de toujours pouvoir mettre en pile son résultat, nous avons réservé un Registre (en l'occurrence le 15) afin de déplacer un registre occupé vers celui-ci
+	puis, récupérer notre valeur dans le registre qui était occupé, faire les calculs nécessaire, Pop, depuis la pile vers R15, Push notre registre occupé, et enfin déplacé R15 vers le registre occupé.
+	
+- Création des étiquettes :
+	Dans le but de pouvoir récupérer facilement le numéro après le nom de l'étiquette, nous avons utilisé une variable globale qui est incrémenté à chaque création d'étiquette
+	Nous utilisons ensuite cette étiquette à plusieurs endroit dans le programme	
+	
+Méthode de test:
+	Nous avons codé la fonction write en premier afin de pouvoir testé chaque fonction en ajoutant un write après celle-ci (du résultat ou d'une valeur arbitraire pour les boucles/saut)
+	Nous avons testé que chaque sous-fonctions fonctionnent avec elle-même
+	Puis nous avons testé que chaque sous-fonctions fonctionnent entre-elles
+	Enfin, nous avons testé avec des programmes suffisament long (en prenant le plus de registre possible) que l'utilisation de la pile était effectué correctement
