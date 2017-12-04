@@ -76,6 +76,7 @@ class Generation {
 		   for(int i=0;i<idents.size();i++) {
 			   decl.add(idents.get(i));
 		   }
+		   System.out.println("taille : "+decl.size());
 		   break;
 	   case Tableau :
 		   ArrayList<String> identsPlus = new ArrayList<String>();
@@ -517,7 +518,7 @@ class Generation {
 		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
 		   
 		   inst = Inst.creation2(Operation.ADD,Operande.creationOpEntier(-(temptype.getIndice().getBorneInf())),exp);
-		   Prog.ajouter(inst, "On arrete le programme s'il y a une erreur BorneSup intervale");
+		   Prog.ajouter(inst, "On soustrait la borne inf à l'exp de l'indice");
 		   
 		   
 		   // On va ensuite récupérer et calculer la taille absolue du tableau avec les éventuelles dimensions inférieures
