@@ -502,7 +502,8 @@ class Generation {
 			   temptype = temptype.getElement();
 			   tempdim++;
 		   }
-		   len = len*(temptype.getIndice().getBorneSup() - temptype.getIndice().getBorneInf() + 1);
+		   if(temptype.getElement().getNature().equals(NatureType.Array))
+			   len = len*(temptype.getElement().getIndice().getBorneSup() - temptype.getElement().getIndice().getBorneInf());
 		   
 		   Inst inst = Inst.creation2(Operation.CMP, Operande.creationOpEntier(temptype.getIndice().getBorneInf()),exp);
 		   Prog.ajouter(inst, "Comparaison de la borne inf pour un index");
