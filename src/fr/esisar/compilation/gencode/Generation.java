@@ -218,8 +218,9 @@ class Generation {
            Prog.ajouter(etiqDebutFor, "Ajout de l etiquette au debut du For");  
            
            Inst inst = Inst.creation2(Operation.LOAD, Operande.creationOpIndirect(placeEnPile, Registre.GB),reg1);
+           Prog.ajouter(inst,"Chargement dans "+reg);
            Inst compareInst2 = Inst.creation2(Operation.CMP, borneSup, reg1);
-           Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneInf.getRegistre());
+           Prog.ajouter(compareInst2, "Comparaison du registre " + reg1.getRegistre() + " par rapport au registre " + borneSup.getRegistre());
            Inst jumpIfInf2 = Inst.creation1(Operation.BGT, Operande.creationOpEtiq(etiqFinFor));
            Prog.ajouter(jumpIfInf2, "On saute a la fin du for si l identificateur est superieur a la borne superieure");
            
