@@ -57,7 +57,7 @@ class Generation {
 			coder_Decl(a.getFils2());
    			break;
    		case Decl :
-   			decl = create_Variables(a.getFils2(),get_Idents(a.getFils1()));
+   			create_Variables(a.getFils2(),get_Idents(a.getFils1()));
    			break;
    		default :
    			break;
@@ -69,11 +69,14 @@ class Generation {
     * @param a le sous-arbre
     * @param idents un array d'idents qui doivent être déclarés avec le type de a
     */
-   private static ArrayList<String> create_Variables(Arbre a, ArrayList<String> idents) {
+   private static void create_Variables(Arbre a, ArrayList<String> idents) {
 	   switch(a.getNoeud()) {
 	   case Ident :
 	   case Intervalle :
-		   return idents;
+		   for(int i=0;i<idents.size();i++) {
+			   decl.add(idents.get(i));
+		   }
+		   break;
 	   case Tableau :
 		   ArrayList<String> identsPlus = new ArrayList<String>();
 		   for(int i=0;i<idents.size();i++) {
@@ -81,9 +84,10 @@ class Generation {
 				   identsPlus.add(idents.get(i)+"["+Integer.toString(j)+"]");
 			   }
 		   }
-		   return create_Variables(a.getFils2(),identsPlus);
+		   create_Variables(a.getFils2(),identsPlus);
+		   break;
 	   default :
-		   return idents;
+		   break;
 	   }
    }
    
