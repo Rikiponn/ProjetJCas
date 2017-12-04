@@ -4,7 +4,7 @@ program
     e : array[1..10] of integer;
     f : Array[1..10] of integer;
     g : array[1..5] of array[1..10] of integer;
-    h : array[1..10] of array[1..5] of boolean;
+    h : array[1..15] of array[1..10] of array[1..5] of boolean;
 begin
     a := 5;
     b := 6;
@@ -15,8 +15,8 @@ begin
     g[1][1] := -5;
     g[6][11] := -5;
     write(g[6][11]);
-    h[10][5] := true;
     new_line;
-    h[11][6] := true;
+    h[15][10][5] := true;
+    write("pouet");
 end.
 
